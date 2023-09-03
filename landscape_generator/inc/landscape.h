@@ -1,7 +1,7 @@
 #ifndef LANDSCAPE_H
 #define LANDSCAPE_H
 
-#include "../my_matrix_lib/Matrix.hpp"
+#include "../myMatrixLib/Matrix.hpp"
 #include "point.h"
 #include <QGraphicsScene>
 

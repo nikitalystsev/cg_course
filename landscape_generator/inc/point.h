@@ -17,6 +17,8 @@ public:
     Point3D();
     Point3D(const T x, const T y, const T z);
     explicit Point3D(const Point3D<T> &other);
+    template <typename T2>
+    explicit Point3D(const Point3D<T2> &other);
     ~Point3D();
 
     void setPoint3D(const T x, const T y, const T z);
@@ -47,6 +49,15 @@ Point3D<T>::Point3D(const T x, const T y, const T z) :
 
 template <typename T>
 Point3D<T>::Point3D(const Point3D<T> &other)
+{
+    this->_x = other._x;
+    this->_y = other._y;
+    this->_z = other._z;
+}
+
+template <typename T>
+template <typename T2>
+Point3D<T>::Point3D(const Point3D<T2> &other)
 {
     this->_x = other._x;
     this->_y = other._y;
@@ -155,6 +166,31 @@ void pointToIsometric(Point3D<T> &point)
 {
     rotateByZ(point, 45);
     rotateByX(point, -60);
+}
+
+template <typename T>
+void swapPoints(Point3D<T> &p1, Point3D<T> &p2)
+{
+    Point3D<T> tmp(p1);
+    p1 = p2;
+    p2 = tmp;
+}
+
+template <typename T>
+void sortByIncreaseY(Point3D<T> &p1, Point3D<T> &p2, Point3D<T> &p3)
+{
+    // Упорядочиваем точки p1(x1, y1),
+    // p2(x2, y2), p3(x3, y3)
+    if (p2.getY() < p1.getY())
+        swapPoints(p1, p2);
+    // точки p1, p2 упорядочены
+    if (p3.getY() < p1.getY())
+        swapPoints(p1, p3);
+    // точки p1, p3 упорядочены
+    // теперь p1 самая верхняя
+    // осталось упорядочить p2 и p3
+    if (p2.getY() > p3.getY())
+        swapPoints(p2, p3);
 }
 
 #endif // POINT_H

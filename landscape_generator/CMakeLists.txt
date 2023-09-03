@@ -20,17 +20,18 @@ set(PROJECT_SOURCES
         inc/point.h
 #        inc/vector3d.h
 #        inc/vector2d.h
-        my_matrix_lib/Concepts.hpp
-        my_matrix_lib/ConstIterator.hpp
-        my_matrix_lib/MatrixBase.hpp
-        my_matrix_lib/MatrixExceptions.hpp
-        my_matrix_lib/Matrix.hpp
         inc/landscape.h
         src/landscape.cpp
         inc/perlinNoise.h
         src/perlinNoise.cpp
         inc/zbuffer.h
         src/zbuffer.cpp
+
+        myMatrixLib/Concepts.hpp
+        myMatrixLib/ConstIterator.hpp
+        myMatrixLib/MatrixBase.hpp
+        myMatrixLib/MatrixExceptions.hpp
+        myMatrixLib/Matrix.hpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

@@ -1,7 +1,7 @@
 #ifndef ZBUFFER_H
 #define ZBUFFER_H
 
-#include "../my_matrix_lib/Matrix.hpp"
+#include "../myMatrixLib/Matrix.hpp"
 #include "point.h"
 #include <QColor>
 
@@ -32,10 +32,10 @@ public:
     static planeCoeff_t calcPlaneCoeff(const Point3D<double> &p1,
                                        const Point3D<double> &p2,
                                        const Point3D<double> &p3);
-    //    static int convert_to_bitmap(const Point3D<double> &p1,
-    //                                 const Point3D<double> &p2,
-    //                                 const Point3D<double> &p3,
-    //                                 planeCoeff_t coeff);
+    static int planeToBitmap(const Point3D<double> &p1,
+                             const Point3D<double> &p2,
+                             const Point3D<double> &p3,
+                             planeCoeff_t coeff);
 };
 
 #endif
