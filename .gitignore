@@ -32,3 +32,5 @@
 *.app
 
 landscape_generator/.idea/
+docs/summer_practice/others/
+docs/summer_practice/.idea/
