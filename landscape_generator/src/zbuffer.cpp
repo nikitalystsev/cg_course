@@ -1,56 +1,42 @@
 #include "../inc/zbuffer.h"
+#include <climits>
 
 Zbuffer::Zbuffer() :
-    _width(default_width), _height(default_height), _zbuffer(default_width, default_height), _framebuffer(default_width, default_height)
-{
-    int rows = this->_zbuffer.get_rows();
-    int cols = this->_zbuffer.get_cols();
-
-    for (int i = 0; i < rows; ++i)
-        for (int j = 0; j < cols; ++j)
-        {
-            double min_z = std::numeric_limits<int>().min();
-            this->_zbuffer[i][j] = min_z;
-
-            this->_framebuffer[i][j] = QColor(255, 255, 255);
-        }
-}
+    Zbuffer(default_width, default_height) {}
 
 Zbuffer::Zbuffer(const int width, const int height) :
     _width(width), _height(height), _zbuffer(width, height)
 {
-    int rows = this->_zbuffer.get_rows();
-    int cols = this->_zbuffer.get_cols();
+    const int rows = this->_zbuffer.get_rows();
+    const int cols = this->_zbuffer.get_cols();
 
     for (int i = 0; i < rows; ++i)
         for (int j = 0; j < cols; ++j)
         {
-            double min_z = std::numeric_limits<int>().min();
-            this->_zbuffer[i][j] = min_z;
-
+            this->_zbuffer[i][j] = INT_MIN;
             this->_framebuffer[i][j] = QColor(255, 255, 255);
         }
 }
 
 Zbuffer::~Zbuffer() {}
 
-// plane_coeff_t Zbuffer::calc_plane_coeff(const Point3D<double> &p1,
-//                                         const Point3D<double> &p2,
-//                                         const Point3D<double> &p3)
-//{
-//     // плоскость, заданная тремя точками p1, p2, p3
-//     double m = p2.x() - p1.x(), n = p2.y() - p1.y(), p = p2.z() - p1.z();
-//     double k = p3.x() - p1.x(), s = p3.y() - p1.y(), e = p3.z() - p1.z();
+planeCoeff_t Zbuffer::calcPlaneCoeff(const Point3D<double> &p1,
+                                     const Point3D<double> &p2,
+                                     const Point3D<double> &p3)
+{
+    // плоскость, заданная тремя точками p1, p2, p3
+    double m = p2.getX() - p1.getX(), n = p2.getY() - p1.getY(), p = p2.getZ() - p1.getZ();
+    double k = p3.getX() - p1.getX(), s = p3.getY() - p1.getY(), e = p3.getZ() - p1.getZ();
 
-//    plane_coeff_t coeff;
+    planeCoeff_t coeff;
 
-//    coeff.A = n * e - s * p;
-//    coeff.B = k * p - m * e;
-//    coeff.C = m * s - k * n;
-//    coeff.D = -(coeff.A * p1.x() + coeff.B * p1.y() + coeff.C * p1.z());
+    coeff.A = n * e - s * p;
+    coeff.B = k * p - m * e;
+    coeff.C = m * s - k * n;
+    coeff.D = -(coeff.A * p1.getX() + coeff.B * p1.getY() + coeff.C * p1.getZ());
 
-//    return coeff;
-//}
+    return coeff;
+}
 
 // static void swap_two_points(Point<int> &p1, Point<int> &p2)
 //{

@@ -29,8 +29,8 @@ set(PROJECT_SOURCES
         src/landscape.cpp
         inc/perlinNoise.h
         src/perlinNoise.cpp
-#        inc/zbuffer.h
-#        src/zbuffer.cpp
+        inc/zbuffer.h
+        src/zbuffer.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

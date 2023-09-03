@@ -25,7 +25,7 @@ public:
                 const double lacunarity,
                 const double amplitude,
                 const double persistence);
-
+    ~PerlinNoise() = default;
     double generateHeight(const double x, const double y);
 
 public:
