@@ -32,7 +32,7 @@
      </rectf>
     </property>
    </widget>
-   <widget class="QPushButton" name="print_landscape">
+   <widget class="QPushButton" name="printLandscape">
     <property name="geometry">
      <rect>
       <x>1040</x>

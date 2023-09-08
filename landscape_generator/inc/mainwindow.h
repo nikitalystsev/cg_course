@@ -22,9 +22,10 @@ public:
     void create_landscape();
 
 private slots:
-    void on_print_landscape_clicked();
 
     void on_spinBox_waterlevel_valueChanged(int arg1);
+
+    void on_printLandscape_clicked();
 
 private:
     Ui::MainWindow *ui;
