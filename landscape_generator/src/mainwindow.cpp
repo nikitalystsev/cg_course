@@ -24,7 +24,7 @@ void MainWindow::create_landscape()
     this->_landscape.generateHeightMap();
 }
 
-void MainWindow::on_print_landscape_clicked()
+void MainWindow::on_printLandscape_clicked()
 {
     //    std::cout << "call print_landscape" << std::endl;
 
