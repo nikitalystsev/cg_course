@@ -59,9 +59,9 @@ template <typename T>
 template <typename T2>
 Point3D<T>::Point3D(const Point3D<T2> &other)
 {
-    this->_x = other._x;
-    this->_y = other._y;
-    this->_z = other._z;
+    this->_x = other.getX();
+    this->_y = other.getY();
+    this->_z = other.getZ();
 }
 
 template <typename T>
