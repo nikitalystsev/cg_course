@@ -1,4 +1,5 @@
 #include "../inc/zbuffer.h"
+#include "../inc/transform.h"
 #include <climits>
 
 Zbuffer::Zbuffer() :
@@ -12,33 +13,14 @@ Zbuffer::Zbuffer(const int width, const int height) :
 
 Zbuffer::~Zbuffer() {}
 
-planeCoeff_t Zbuffer::calcPlaneCoeff(const Point3D<double> &p1,
-                                     const Point3D<double> &p2,
-                                     const Point3D<double> &p3)
+int Zbuffer::planeToBitmap(Plane &plane)
 {
-    // плоскость, заданная тремя точками p1, p2, p3
-    double m = p2.getX() - p1.getX(), n = p2.getY() - p1.getY(), p = p2.getZ() - p1.getZ();
-    double k = p3.getX() - p1.getX(), s = p3.getY() - p1.getY(), e = p3.getZ() - p1.getZ();
+    Point3D<int> lowP(plane.getP1());
+    Point3D<int> midP(plane.getP2());
+    Point3D<int> highP(plane.getP3());
 
-    planeCoeff_t coeff;
-
-    coeff.A = n * e - s * p;
-    coeff.B = k * p - m * e;
-    coeff.C = m * s - k * n;
-    coeff.D = -(coeff.A * p1.getX() + coeff.B * p1.getY() + coeff.C * p1.getZ());
-
-    return coeff;
-}
-
-int Zbuffer::planeToBitmap(const Point3D<double> &p1,
-                           const Point3D<double> &p2,
-                           const Point3D<double> &p3,
-                           planeCoeff_t coeff)
-{
-    Point3D<int> lowPoint(p1), midPoint(p2), highPoint(p3);
-
-    // сортируем по неубыванию ординаты
-    //    sortByIncreaseY(lowPoint, midPoint, highPoint);
+    //    сортируем по неубыванию ординаты
+    sortByIncreaseY(lowP, midP, highP);
 
     return 0;
 }

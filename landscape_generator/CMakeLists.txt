@@ -18,6 +18,7 @@ set(PROJECT_SOURCES
         src/mainwindow.cpp
         inc/mainwindow.h
         inc/point.h
+        inc/transform.h
 #        inc/vector3d.h
 #        inc/vector2d.h
         inc/landscape.h
@@ -26,6 +27,8 @@ set(PROJECT_SOURCES
         src/perlinNoise.cpp
         inc/zbuffer.h
         src/zbuffer.cpp
+        inc/plane.h
+        src/plane.cpp
 
         myMatrixLib/Concepts.hpp
         myMatrixLib/ConstIterator.hpp

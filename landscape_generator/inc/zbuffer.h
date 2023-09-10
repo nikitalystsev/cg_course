@@ -2,17 +2,9 @@
 #define ZBUFFER_H
 
 #include "../myMatrixLib/Matrix.hpp"
+#include "plane.h"
 #include "point.h"
 #include <QColor>
-
-typedef struct planeCoeff_t planeCoeff_t;
-struct planeCoeff_t // они же координаты вектора нормали (без D)
-{
-    double A;
-    double B;
-    double C;
-    double D;
-};
 
 class Zbuffer
 {
@@ -29,13 +21,7 @@ public:
 public:
     static const int default_width = 1031, default_height = 671;
 
-    static planeCoeff_t calcPlaneCoeff(const Point3D<double> &p1,
-                                       const Point3D<double> &p2,
-                                       const Point3D<double> &p3);
-    static int planeToBitmap(const Point3D<double> &p1,
-                             const Point3D<double> &p2,
-                             const Point3D<double> &p3,
-                             planeCoeff_t coeff);
+    static int planeToBitmap(Plane &plane);
 };
 
 #endif
