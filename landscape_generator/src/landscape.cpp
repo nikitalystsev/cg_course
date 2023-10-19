@@ -28,7 +28,6 @@ void Landscape::generateHeightMap()
 
             double height = alg.generateHeight(nx, ny);
 
-            //            std::cout << "height = " << height << std::endl;
             height *= 1000;
 
             this->_map[i][j].setPoint3D(i * this->poly_size, j * this->poly_size, height);

@@ -6,11 +6,6 @@ Plane::Plane(const Point3D<int> p1, const Point3D<int> p2, const Point3D<int> p3
     this->_calcPlaneCoeff();
 }
 
-Point3D<int> &Plane::getP1()
-{
-    return this->_p1;
-}
-
 void Plane::_calcPlaneCoeff()
 {
     // плоскость, заданная тремя точками _p1, _p2, _p3

@@ -1,0 +1,9 @@
+[0] Config.pm:307> INFO - This is Biber 2.17
+[0] Config.pm:310> INFO - Logfile is 'coursework.blg'
+[44] biber:340> INFO - === Ср окт 18, 2023, 22:36:45
+[52] Biber.pm:418> INFO - Reading 'coursework.bcf'
+[107] Biber.pm:972> INFO - Found 0 citekeys in bib section 0
+[116] bbl.pm:654> INFO - Writing 'coursework.bbl' with encoding 'UTF-8'
+[116] bbl.pm:757> INFO - Output to coursework.bbl
+[116] Biber.pm:130> WARN - The file 'coursework.bcf' does not contain any citations!
+[116] Biber.pm:132> INFO - WARNINGS: 1
