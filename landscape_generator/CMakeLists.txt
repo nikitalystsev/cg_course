@@ -29,12 +29,6 @@ set(PROJECT_SOURCES
         src/zbuffer.cpp
         inc/plane.h
         src/plane.cpp
-
-        myMatrixLib/Concepts.hpp
-        myMatrixLib/ConstIterator.hpp
-        myMatrixLib/MatrixBase.hpp
-        myMatrixLib/MatrixExceptions.hpp
-        myMatrixLib/Matrix.hpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

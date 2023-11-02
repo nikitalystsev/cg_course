@@ -78,7 +78,7 @@ double PerlinNoise::smooth(const double t) // функция сглаживан�
     return t * t * t * (t * (6 * t - 15) + 10);
 }
 
-double PerlinNoise::lerp(const double a, const double b, const double t) // функция "масштабирования"
+double PerlinNoise::lerp(const double a, const double b, const double t) // функция линейной интерполяции
 {
     return a + t * (b - a);
 }

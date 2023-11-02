@@ -5,8 +5,8 @@
 %\usepackage[T2A]{fontenc} % Поддержка русских букв
 %\usepackage[utf8]{inputenc} % Кодировка utf8
 
-\usepackage{svg}
-\svgpath{../task7/postproc_data/}
+\usepackage[inkscapeformat=png]{svg}
+\svgpath{/inc/img}
 
 % Настройка полей
 \usepackage{geometry}
@@ -31,3 +31,29 @@
 \titlespacing{\section}{12.5mm}{10pt}{10pt}
 \titlespacing{\subsection}{12.5mm}{10pt}{10pt}
 \titlespacing{\subsubsection}{12.5mm}{10pt}{10pt}
+
+% Команда создания рисунка
+\newcommand{\includesvgimage}[5]
+{
+	\ifthenelse{\equal{#2}{f}}
+	{
+		\begin{figure}[#3]
+			\center{\includesvg[width=#4]{inc/img/#1}}
+			\caption{#5}
+			\label{img:#1}
+		\end{figure}
+	}
+	{
+		\ifthenelse{\equal{#2}{w}}
+		{
+			\begin{wrapfigure}{#3}{#4}
+				\center{\includesvg[width=#4]{inc/img/#1}}
+				\caption{#5}
+				\label{img:#1}
+			\end{wrapfigure}
+		}
+		{
+			\PackageError{bmstu}{unknown image type}{}	
+		}
+	}
+}
