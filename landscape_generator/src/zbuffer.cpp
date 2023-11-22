@@ -1,6 +1,4 @@
 #include "../inc/zbuffer.h"
-#include "../inc/transform.h"
-#include <climits>
 
 ZBuffer::ZBuffer() :
     ZBuffer(default_width, default_height) {}
@@ -48,6 +46,16 @@ void ZBuffer::calcZBufferByPlane(Plane &plane)
                     this->_framebuffer[x][y] = QColor(143, 16, 16);
                 }
             }
+        }
+}
+
+void ZBuffer::clean()
+{
+    for (int i = 0; i < this->_width; ++i)
+        for (int j = 0; j < this->_height; ++j)
+        {
+            this->_zbuffer[i][j] = INT_MIN;
+            this->_framebuffer[i][j] = QColor(255, 255, 255);
         }
 }
 

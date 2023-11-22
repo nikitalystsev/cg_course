@@ -71,8 +71,8 @@ vector<vector<Point3D<double>>> Landscape::_mapToScreen() const
 
 void Landscape::_drawMap(QGraphicsScene *scene) const
 {
-    const int width = zBuf.getWidth();
-    const int height = zBuf.getHeight();
+    const int width = zBuffer.getWidth();
+    const int height = zBuffer.getHeight();
 
     QPixmap pixmap(width, height);
     pixmap.fill(Qt::white);
@@ -82,7 +82,7 @@ void Landscape::_drawMap(QGraphicsScene *scene) const
     for (int i = 0; i < width; i++)
         for (int j = 0; j < height; j++)
         {
-            zBuf.getFramebufElem(i, j).getRgb(&r, &g, &b);
+            zBuffer.getFramebufElem(i, j).getRgb(&r, &g, &b);
             image.setPixelColor(i, j, QColor(r, g, b));
         }
 
@@ -93,6 +93,8 @@ void Landscape::_drawMap(QGraphicsScene *scene) const
 
 void Landscape::_calcZBuffer(const vector<vector<Point3D<double>>> &screenMap)
 {
+    zBuffer.clean();
+
     const int rows = this->_map.size();
     const int cols = this->_map[0].size();
 
@@ -105,8 +107,8 @@ void Landscape::_calcZBuffer(const vector<vector<Point3D<double>>> &screenMap)
             Plane plane2(screenMap[i + 1][j + 1], screenMap[i][j + 1], screenMap[i][j]);
 
             // определяем текущее состояние z-буффера
-            zBuf.calcZBufferByPlane(plane1);
-            zBuf.calcZBufferByPlane(plane2);
+            zBuffer.calcZBufferByPlane(plane1);
+            zBuffer.calcZBufferByPlane(plane2);
         }
 }
 

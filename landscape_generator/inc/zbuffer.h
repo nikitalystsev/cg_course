@@ -5,6 +5,7 @@
 #include "point/point2D.h"
 #include "point/point3D.h"
 #include <QColor>
+#include <climits>
 #include <vector>
 
 template <typename T>
@@ -24,6 +25,7 @@ public:
     ~ZBuffer();
 
     void calcZBufferByPlane(Plane &plane);
+    void clean();
 
     int getWidth() const;
     int getHeight() const;

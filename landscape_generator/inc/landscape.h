@@ -17,7 +17,7 @@ private:
     vector<vector<Point3D<double>>> _map;
     int _width, _lenght; // в количестве полигонов
     int _waterlevel;
-    ZBuffer zBuf; // класс алгоритма zbuffer
+    ZBuffer zBuffer; // класс алгоритма zbuffer
 
     Point3D<double> _centerLandscapePoint;
 
