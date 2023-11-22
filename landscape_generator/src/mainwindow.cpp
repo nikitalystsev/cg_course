@@ -6,10 +6,10 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->view->setScene(new QGraphicsScene);
+    ui->view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     this->create_landscape();
-    //        std::cout << ui->view->width() << std::endl;
-    //        std::cout << ui->view->height() << std::endl;
 }
 
 MainWindow::~MainWindow()
@@ -33,12 +33,34 @@ void MainWindow::on_printLandscape_clicked()
 
 void MainWindow::on_spinBox_waterlevel_valueChanged(int arg1)
 {
-    std::cout << "arg1 = " << arg1 << std::endl;
+    //    std::cout << "new waterlevel = " << arg1 << std::endl;
 
-    //    this->_landscape.waterlevel(arg1);
+    this->_landscape.setWaterlevel(arg1);
 
-    //    this->_landscape.generate();
-    //    this->_landscape.points_to_screen();
+    this->_landscape.generateHeightMap();
+    this->_landscape.draw(ui->view->scene());
+}
 
-    //    this->_landscape.draw(ui->view->scene());
+void MainWindow::on_verticalSlider_actionTriggered(int action)
+{
+    //    std::cout << "call verticalSlider actionTriggered" << std::endl;
+    //    std::cout << "action = " << action << std::endl;
+}
+
+void MainWindow::on_verticalSlider_rangeChanged(int min, int max)
+{
+    //    std::cout << "call verticalSlider rangeChanged" << std::endl;
+    //    std::cout << "min = " << min << std::endl;
+    //    std::cout << "max = " << max << std::endl;
+}
+
+void MainWindow::on_verticalSlider_valueChanged(int value)
+{
+    //    std::cout << "call verticalSlider valueChanged" << std::endl;
+    //    std::cout << "value = " << value << std::endl;
+
+    this->_landscape.setWaterlevel(value);
+
+    this->_landscape.generateHeightMap();
+    this->_landscape.draw(ui->view->scene());
 }

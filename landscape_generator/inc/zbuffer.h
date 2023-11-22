@@ -1,27 +1,37 @@
 #ifndef ZBUFFER_H
 #define ZBUFFER_H
 
-#include "../myMatrixLib/Matrix.hpp"
 #include "plane.h"
-#include "point.h"
+#include "point/point2D.h"
+#include "point/point3D.h"
 #include <QColor>
+#include <vector>
 
-class Zbuffer
+template <typename T>
+using vector = std::vector<T>;
+
+// класс алгоритма z-buffer удаления невидимых линий
+class ZBuffer
 {
 private:
-    Matrix<double> _zbuffer;
-    Matrix<QColor> _framebuffer; // буфер кадра
-    int _width, _height;         // ширина и высота экрана
+    vector<vector<double>> _zbuffer;
+    vector<vector<QColor>> _framebuffer; // буфер кадра
+    int _width, _height;                 // ширина и высота экрана вывода изображения
 
 public:
-    Zbuffer();
-    Zbuffer(const int width, const int height);
-    ~Zbuffer();
+    ZBuffer();
+    ZBuffer(const int width, const int height);
+    ~ZBuffer();
+
+    void calcZBufferByPlane(Plane &plane);
+
+    int getWidth() const;
+    int getHeight() const;
+
+    QColor getFramebufElem(const int x, const int y) const;
 
 public:
     static const int default_width = 1031, default_height = 671;
-
-    static int planeToBitmap(Plane &plane);
 };
 
 #endif

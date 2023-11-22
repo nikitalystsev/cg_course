@@ -15,7 +15,7 @@ PerlinNoise::PerlinNoise(const int seed,
     this->_createPtable();
 }
 
-double PerlinNoise::generateHeight(const double x, const double y)
+double PerlinNoise::generateNoise(const double x, const double y)
 {
     int octaves = this->_octaves;
     double frequency = this->_frequency;
@@ -41,9 +41,9 @@ void PerlinNoise::_createPtable()
     for (int i = 0; i < 256; ++i)
         this->_ptable.push_back(i);
 
-    std::shuffle(this->_ptable.begin(),
-                 this->_ptable.end(),
-                 std::default_random_engine(this->_seed));
+    shuffle(this->_ptable.begin(),
+            this->_ptable.end(),
+            std::default_random_engine(this->_seed));
 
     for (int i = 0; i < 256; ++i)
         this->_ptable.push_back(this->_ptable[i]);
@@ -51,11 +51,11 @@ void PerlinNoise::_createPtable()
 
 double PerlinNoise::_noise(double x, double y)
 {
-    int xi = (int)(std::floor(x)) & 255; // = % 256
-    int yi = (int)(std::floor(y)) & 255; // для того, чтобы не выйти за пределы массива
+    int xi = (int)(floor(x)) & 255; // = % 256
+    int yi = (int)(floor(y)) & 255; // для того, чтобы не выйти за пределы массива
 
-    x -= std::floor(x);
-    y -= std::floor(y);
+    x -= floor(x);
+    y -= floor(y);
 
     double u = smooth(x);
     double v = smooth(y);
@@ -68,7 +68,7 @@ double PerlinNoise::_noise(double x, double y)
     double x1 = this->lerp(tl, br, u);
     double x2 = this->lerp(tr, bl, u);
 
-    double res = this->lerp(x1, x2, v);
+    double res = this->lerp(0, 1, this->lerp(x1, x2, v));
 
     return res;
 }

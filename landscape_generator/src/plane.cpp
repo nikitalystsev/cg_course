@@ -1,9 +1,10 @@
 #include "../inc/plane.h"
 
-Plane::Plane(const Point3D<int> p1, const Point3D<int> p2, const Point3D<int> p3) :
+Plane::Plane(const Point3D<double> &p1, const Point3D<double> &p2, const Point3D<double> &p3) :
     _p1(p1), _p2(p2), _p3(p3)
 {
     this->_calcPlaneCoeff();
+    this->_defCircumRect();
 }
 
 void Plane::_calcPlaneCoeff()
@@ -21,4 +22,45 @@ void Plane::_calcPlaneCoeff()
     this->B = k * p - m * e;
     this->C = m * s - k * n;
     this->D = -(this->A * this->_p1.getX() + this->B * this->_p1.getY() + this->C * this->_p1.getZ());
+}
+
+void Plane::_defCircumRect()
+{
+    this->_pMin.setX(std::min({this->_p1.getX(), this->_p2.getX(), this->_p3.getX()}));
+    this->_pMin.setY(std::min({this->_p1.getY(), this->_p2.getY(), this->_p3.getY()}));
+
+    this->_pMax.setX(std::max({this->_p1.getX(), this->_p2.getX(), this->_p3.getX()}));
+    this->_pMax.setY(std::max({this->_p1.getY(), this->_p2.getY(), this->_p3.getY()}));
+}
+
+double Plane::caclZ(const double x, const double y)
+{
+    double z = -(this->A * x + this->B * y + D) / C;
+
+    return z;
+}
+
+Point3D<double> Plane::getP1() const
+{
+    return Point3D<double>(this->_p1);
+}
+
+Point3D<double> Plane::getP2() const
+{
+    return Point3D<double>(this->_p2);
+}
+
+Point3D<double> Plane::getP3() const
+{
+    return Point3D<double>(this->_p3);
+}
+
+Point2D<double> Plane::getPMin() const
+{
+    return Point2D<double>(this->_pMin);
+}
+
+Point2D<double> Plane::getPMax() const
+{
+    return Point2D<double>(this->_pMax);
 }

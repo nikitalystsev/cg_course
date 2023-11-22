@@ -3,6 +3,9 @@
 
 #include <vector>
 
+template <typename T>
+using vector = std::vector<T>;
+
 class PerlinNoise
 {
 private:
@@ -13,7 +16,7 @@ private:
     double _amplitude;   // амплитуда
     double _persistence; // стойкость - параметр, отвечающий за изменение амплидуты
 
-    std::vector<int> _ptable;
+    vector<int> _ptable;
 
     void _createPtable();
     double _noise(double x, double y);
@@ -26,7 +29,7 @@ public:
                 const double amplitude,
                 const double persistence);
     ~PerlinNoise() = default;
-    double generateHeight(const double x, const double y);
+    double generateNoise(const double x, const double y);
 
 public:
     static double smooth(const double t);
