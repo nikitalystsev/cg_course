@@ -65,3 +65,23 @@ Point2D<double> Plane::getPMax() const
 {
     return Point2D<double>(this->_pMax);
 }
+
+double Plane::getA() const
+{
+    return this->A;
+}
+
+double Plane::getB() const
+{
+    return this->B;
+}
+
+double Plane::getC() const
+{
+    return this->C;
+}
+
+double Plane::getD() const
+{
+    return this->D;
+}

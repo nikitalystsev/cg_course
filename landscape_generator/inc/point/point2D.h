@@ -170,7 +170,7 @@ T Point2D<T>::getY() const
 template <typename T>
 void Point2D<T>::print() const
 {
-    std::cout << "(" << this->_x << "," << this->_y << ")" << std::endl;
+    std::cout << "Point2D(" << this->_x << "," << this->_y << ")" << std::endl;
 }
 
 #endif // __POINT2D_H__

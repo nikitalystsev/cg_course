@@ -193,7 +193,7 @@ T Point3D<T>::getZ() const
 template <typename T>
 void Point3D<T>::print() const
 {
-    std::cout << "(" << this->_x << "," << this->_y << "," << this->_z << ")" << std::endl;
+    std::cout << "Point3D(" << this->_x << "," << this->_y << "," << this->_z << ")" << std::endl;
 }
 
 #endif // __POINT3D_H__

@@ -10,7 +10,7 @@ class Plane
 {
 private:
     Point3D<double> _p1, _p2, _p3; // точки плоскости на экране
-    double A, B, C, D;             // коэф-ты плоскости
+    double A, B, C, D;             // коэф-ты плоскости (они же координаты внешней нормали)
 
     // точки описывающего прямоугольника
     Point2D<double> _pMin, _pMax;
@@ -30,6 +30,11 @@ public:
 
     Point2D<double> getPMin() const;
     Point2D<double> getPMax() const;
+
+    double getA() const;
+    double getB() const;
+    double getC() const;
+    double getD() const;
 };
 
 #endif

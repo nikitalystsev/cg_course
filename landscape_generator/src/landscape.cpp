@@ -8,7 +8,9 @@ Landscape::Landscape() :
 
 Landscape::Landscape(const int width, const int lenght, const int waterlevel) :
     _width(width), _lenght(lenght), _waterlevel(waterlevel),
-    _map(width + 1, vector<Point3D<double>>(lenght + 1))
+    _map(width + 1, vector<Point3D<double>>(lenght + 1)),
+    _normalMap(width + 1, vector<pair<Vector3D<double>, Vector3D<double>>>(lenght + 1)),
+    _normalVertexMap(width + 1, vector<Vector3D<double>>(lenght + 1))
 {
 }
 
@@ -45,6 +47,8 @@ void Landscape::draw(QGraphicsScene *scene)
     vector<vector<Point3D<double>>> screenMap = this->_mapToScreen();
 
     this->_calcZBuffer(screenMap);
+    this->_caclNormalForEachPlane(screenMap);
+    this->_caclNormalForEachVertex(screenMap);
     this->_drawMap(scene);
 }
 
@@ -165,6 +169,100 @@ void Landscape::_movePointToCenter(Point3D<double> &point)
 
     point.set(x, y, z);
 }
+
+void Landscape::_caclNormalForEachPlane(const vector<vector<Point3D<double>>> &screenMap)
+{
+    const int rows = this->_map.size();
+    const int cols = this->_map[0].size();
+
+    // идем по всем квадратам ландшафной сетки
+    for (int i = 0; i < rows - 1; ++i)
+        for (int j = 0; j < cols - 1; ++j)
+        {
+            // в каждом квадрате сетки 2 треугольника - 2 плоскости
+            Plane plane1(screenMap[i][j], screenMap[i + 1][j], screenMap[i + 1][j + 1]);
+            Plane plane2(screenMap[i + 1][j + 1], screenMap[i][j + 1], screenMap[i][j]);
+
+            // получаем вектора внешних нормалей к граням
+            Vector3D<double> normalPlane1(plane1.getA(), plane1.getB(), plane1.getC());
+            Vector3D<double> normalPlane2(plane2.getA(), plane2.getB(), plane2.getC());
+
+            pair<Vector3D<double>, Vector3D<double>> normals(normalPlane1, normalPlane2);
+
+            this->_normalMap[i][j] = normals;
+        }
+}
+
+void Landscape::_caclNormalForEachVertex(const vector<vector<Point3D<double>>> &screenMap)
+{
+    std::cout << " call _caclNormalForEachVertex" << std::endl;
+
+    const int rows = this->_map.size();
+    const int cols = this->_map[0].size();
+
+    // идем по всем квадратам ландшафной сетки
+    for (int i = 0; i < rows; ++i)
+        for (int j = 0; j < cols; ++j)
+        {
+            Vector3D<double> avgNormal;
+            // левая верхняя и правая нижняя вершины
+            if ((i == 0 && j == 0) || (i == rows - 1 && j == cols - 1))
+            {
+                if (i == 0 && j == 0) // левая верхняя
+                {
+                    Vector3D<double> normal1(this->_normalMap[i][j].first);
+                    Vector3D<double> normal2(this->_normalMap[i][j].second);
+                    avgNormal = (normal1 + normal2) / 2;
+                }
+                else // правая нижняя
+                {
+                    Vector3D<double> normal1(this->_normalMap[i - 1][j - 1].first);
+                    Vector3D<double> normal2(this->_normalMap[i - 1][j - 1].second);
+                    avgNormal = (normal1 + normal2) / 2;
+                }
+                this->_normalVertexMap[i][j] = avgNormal;
+            }
+            // правая верхняя и левая нижняя вершина
+            else if ((i == 0 && j == cols - 1) || (i == rows - 1 && j == 0))
+            {
+                if (i == 0 && j == cols - 1) // правая верхняя
+                    this->_normalVertexMap[i][j] = this->_normalMap[i][j - 1].first;
+                else // левая верхняя
+                    this->_normalVertexMap[i][j] = this->_normalMap[i - 1][j].second;
+            }
+            // вершины по краям карты (с 3-мя примыкающими гранями)
+            else if (i == 0 || j == 0)
+            {
+                if (i == 0) // первая строка
+                {
+                    Vector3D<double> normal1(this->_normalMap[i][j].first);
+                    Vector3D<double> normal2(this->_normalMap[i][j].second);
+                    Vector3D<double> normal3(this->_normalMap[i][j - 1].first);
+                    avgNormal = (normal1 + normal2 + normal3) / 3;
+                }
+                else // первый столбец
+                {
+                    Vector3D<double> normal1(this->_normalMap[i][j].first);
+                    Vector3D<double> normal2(this->_normalMap[i][j].second);
+                    Vector3D<double> normal3(this->_normalMap[i - 1][j].second);
+                    avgNormal = (normal1 + normal2 + normal3) / 3;
+                }
+                this->_normalVertexMap[i][j] = avgNormal;
+            }
+            else // внутренние точки
+            {
+                Vector3D<double> normal1(this->_normalMap[i - 1][j - 1].first);
+                Vector3D<double> normal2(this->_normalMap[i - 1][j - 1].second);
+                Vector3D<double> normal3(this->_normalMap[i][j].first);
+                Vector3D<double> normal4(this->_normalMap[i][j].second);
+                Vector3D<double> normal5(this->_normalMap[i][j - 1].first);
+                Vector3D<double> normal6(this->_normalMap[i - 1][j].second);
+                avgNormal = (normal1 + normal2 + normal3 + normal4 + normal5 + normal6) / 6;
+                this->_normalVertexMap[i][j] = avgNormal;
+            }
+        }
+}
+
 int Landscape::getWaterlevel() const
 {
     return this->_waterlevel;
