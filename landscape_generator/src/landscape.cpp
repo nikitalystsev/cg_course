@@ -48,22 +48,24 @@ void Landscape::draw(QGraphicsScene *scene)
     this->_drawMap(scene);
 }
 
-vector<vector<Point3D<double>>> Landscape::_mapToScreen() const
+vector<vector<Point3D<double>>> Landscape::_mapToScreen()
 {
     const int rows = this->_map.size();
     const int cols = this->_map[0].size();
+
+    this->_calcCenterPoint();
 
     vector<vector<Point3D<double>>> tmp(this->_map);
 
     for (int i = 0; i < rows; ++i)
         for (int j = 0; j < cols; ++j)
         {
-            int x = this->_map[i][j].getX();
-            int y = this->_map[i][j].getY();
-            int z = this->_map[i][j].getZ();
+            this->_shiftPointToOrigin(tmp[i][j]);
 
-            tmp[i][j].set(x + 515 - 125, y + 330 - 125, z);
             Transform::pointToIsometric(tmp[i][j]);
+
+            this->_shiftPointBackToOrigin(tmp[i][j]);
+            this->_movePointToCenter(tmp[i][j]);
         }
 
     return tmp;
@@ -112,6 +114,57 @@ void Landscape::_calcZBuffer(const vector<vector<Point3D<double>>> &screenMap)
         }
 }
 
+void Landscape::_calcCenterPoint()
+{
+    const int rows = this->_map.size();
+    const int cols = this->_map[0].size();
+
+    Point3D<double> p1(this->_map[0][0]);
+    Point3D<double> p2(this->_map[rows - 1][cols - 1]);
+
+    this->_centerPoint.setX((p1.getX() + p2.getX()) / 2);
+    this->_centerPoint.setY((p1.getY() + p2.getY()) / 2);
+
+    double zMin = p1.getZ(), zMax = p1.getZ();
+
+    for (int i = 0; i < rows; ++i)
+        for (int j = 0; j < cols; ++j)
+        {
+            if (this->_map[i][j].getZ() < zMin)
+                zMin = this->_map[i][j].getZ();
+            if (this->_map[i][j].getZ() > zMax)
+                zMax = this->_map[i][j].getZ();
+        }
+
+    this->_centerPoint.setZ((zMin + zMax) / 2);
+}
+
+void Landscape::_shiftPointToOrigin(Point3D<double> &point)
+{
+    double x = point.getX() - this->_centerPoint.getX();
+    double y = point.getY() - this->_centerPoint.getY();
+    double z = point.getZ() - this->_centerPoint.getZ();
+
+    point.set(x, y, z);
+}
+
+void Landscape::_shiftPointBackToOrigin(Point3D<double> &point)
+{
+    double x = point.getX() + this->_centerPoint.getX();
+    double y = point.getY() + this->_centerPoint.getY();
+    double z = point.getZ() + this->_centerPoint.getZ();
+
+    point.set(x, y, z);
+}
+
+void Landscape::_movePointToCenter(Point3D<double> &point)
+{
+    double x = point.getX() + this->zBuffer.getWidth() / 2 - this->_centerPoint.getX();
+    double y = point.getY() + this->zBuffer.getHeight() / 2 - this->_centerPoint.getY();
+    double z = point.getZ();
+
+    point.set(x, y, z);
+}
 int Landscape::getWaterlevel() const
 {
     return this->_waterlevel;
@@ -122,12 +175,12 @@ void Landscape::setWaterlevel(const int waterlevel)
     this->_waterlevel = waterlevel;
 }
 
-Point3D<double> Landscape::getCenterLandscapePoint() const
+Point3D<double> Landscape::getCenterPoint() const
 {
-    return Point3D<double>(this->_centerLandscapePoint);
+    return Point3D<double>(this->_centerPoint);
 }
 
-void Landscape::setCenterLandscapePoint(const Point3D<double> &centerLandscapePoint)
+void Landscape::setCenterPoint(const Point3D<double> &centerPoint)
 {
-    this->_centerLandscapePoint = centerLandscapePoint;
+    this->_centerPoint = centerPoint;
 }

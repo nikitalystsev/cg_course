@@ -21,6 +21,7 @@ void Plane::_calcPlaneCoeff()
     this->A = n * e - s * p;
     this->B = k * p - m * e;
     this->C = m * s - k * n;
+
     this->D = -(this->A * this->_p1.getX() + this->B * this->_p1.getY() + this->C * this->_p1.getZ());
 }
 

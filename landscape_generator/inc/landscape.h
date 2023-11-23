@@ -19,12 +19,16 @@ private:
     int _waterlevel;
     ZBuffer zBuffer; // класс алгоритма zbuffer
 
-    Point3D<double> _centerLandscapePoint;
+    Point3D<double> _centerPoint;
 
 private:
-    vector<vector<Point3D<double>>> _mapToScreen() const;
+    vector<vector<Point3D<double>>> _mapToScreen();
     void _calcZBuffer(const vector<vector<Point3D<double>>> &screenMap);
     void _drawMap(QGraphicsScene *scene) const;
+    void _calcCenterPoint();
+    void _shiftPointToOrigin(Point3D<double> &point);
+    void _shiftPointBackToOrigin(Point3D<double> &point);
+    void _movePointToCenter(Point3D<double> &point);
 
 public:
     Landscape();
@@ -37,12 +41,13 @@ public:
     int getWaterlevel() const;
     void setWaterlevel(const int waterlevel);
 
-    Point3D<double> getCenterLandscapePoint() const;
-    void setCenterLandscapePoint(const Point3D<double> &centerLandscapePoint);
+    Point3D<double> getCenterPoint() const;
+    void setCenterPoint(const Point3D<double> &centerPoint);
 
 public:
-    static const int default_width = 50, default_lenght = 50;
+    static const int default_width = 100, default_lenght = 100;
     static const int default_waterlevel = 100;
+
     static const int poly_size = 5;
 };
 

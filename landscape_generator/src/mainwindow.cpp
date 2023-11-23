@@ -9,6 +9,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
+    std::cout << "width = " << ui->view->width() << std::endl;
+    std::cout << "height = " << ui->view->height() << std::endl;
+
     this->create_landscape();
 }
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1297</width>
-    <height>722</height>
+    <width>1632</width>
+    <height>815</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,8 +19,8 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>1031</width>
-      <height>671</height>
+      <width>1366</width>
+      <height>768</height>
      </rect>
     </property>
     <property name="sceneRect">
@@ -35,8 +35,8 @@
    <widget class="QPushButton" name="printLandscape">
     <property name="geometry">
      <rect>
-      <x>1040</x>
-      <y>10</y>
+      <x>1370</x>
+      <y>0</y>
       <width>251</width>
       <height>61</height>
      </rect>
@@ -48,8 +48,8 @@
    <widget class="QSlider" name="verticalSlider">
     <property name="geometry">
      <rect>
-      <x>1060</x>
-      <y>90</y>
+      <x>1380</x>
+      <y>70</y>
       <width>16</width>
       <height>181</height>
      </rect>
@@ -70,7 +70,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1297</width>
+     <width>1632</width>
      <height>22</height>
     </rect>
    </property>

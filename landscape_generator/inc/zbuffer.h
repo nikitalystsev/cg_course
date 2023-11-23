@@ -33,7 +33,7 @@ public:
     QColor getFramebufElem(const int x, const int y) const;
 
 public:
-    static const int default_width = 1031, default_height = 671;
+    static const int default_width = 1366, default_height = 768;
 };
 
 #endif
