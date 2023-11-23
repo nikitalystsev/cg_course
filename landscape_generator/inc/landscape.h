@@ -7,6 +7,7 @@
 #include "zbuffer.h"
 #include <QGraphicsScene>
 #include <QPainter>
+#include <cstdarg>
 #include <utility>
 #include <vector>
 

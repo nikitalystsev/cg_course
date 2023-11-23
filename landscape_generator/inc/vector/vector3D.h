@@ -13,7 +13,7 @@ private:
 public:
     Vector3D();
     Vector3D(const T x, const T y, const T z);
-    explicit Vector3D(const Vector3D<T> &other);
+    Vector3D(const Vector3D<T> &other);
     Vector3D(Vector3D<T> &&other) noexcept;
     ~Vector3D();
 
