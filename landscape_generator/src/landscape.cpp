@@ -10,7 +10,9 @@ Landscape::Landscape(const int width, const int lenght, const int waterlevel) :
     _width(width), _lenght(lenght), _waterlevel(waterlevel),
     _map(width + 1, vector<Point3D<double>>(lenght + 1)),
     _normalMap(width + 1, vector<pair<Vector3D<double>, Vector3D<double>>>(lenght + 1)),
-    _normalVertexMap(width + 1, vector<Vector3D<double>>(lenght + 1))
+    _normalVertexMap(width + 1, vector<Vector3D<double>>(lenght + 1)),
+    _intensityVertexMap(width + 1, vector<double>(lenght + 1)),
+    _light(Point3D<int>(100, 100, 100), 1, 0.5)
 {
 }
 
@@ -49,6 +51,7 @@ void Landscape::draw(QGraphicsScene *scene)
     this->_calcZBuffer(screenMap);
     this->_caclNormalForEachPlane(screenMap);
     this->_caclNormalForEachVertex(screenMap);
+    this->_caclIntensityForEachVertex(screenMap);
     this->_drawMap(scene);
 }
 
@@ -77,8 +80,8 @@ vector<vector<Point3D<double>>> Landscape::_mapToScreen()
 
 void Landscape::_drawMap(QGraphicsScene *scene) const
 {
-    const int width = zBuffer.getWidth();
-    const int height = zBuffer.getHeight();
+    const int width = this->_zBuffer.getWidth();
+    const int height = this->_zBuffer.getHeight();
 
     QPixmap pixmap(width, height);
     pixmap.fill(Qt::white);
@@ -88,7 +91,7 @@ void Landscape::_drawMap(QGraphicsScene *scene) const
     for (int i = 0; i < width; i++)
         for (int j = 0; j < height; j++)
         {
-            zBuffer.getFramebufElem(i, j).getRgb(&r, &g, &b);
+            _zBuffer.getFramebufElem(i, j).getRgb(&r, &g, &b);
             image.setPixelColor(i, j, QColor(r, g, b));
         }
 
@@ -99,7 +102,9 @@ void Landscape::_drawMap(QGraphicsScene *scene) const
 
 void Landscape::_calcZBuffer(const vector<vector<Point3D<double>>> &screenMap)
 {
-    zBuffer.clean();
+    std::cout << "call _caclZBuffer" << std::endl;
+
+    this->_zBuffer.clean();
 
     const int rows = this->_map.size();
     const int cols = this->_map[0].size();
@@ -113,8 +118,8 @@ void Landscape::_calcZBuffer(const vector<vector<Point3D<double>>> &screenMap)
             Plane plane2(screenMap[i + 1][j + 1], screenMap[i][j + 1], screenMap[i][j]);
 
             // определяем текущее состояние z-буффера
-            zBuffer.calcZBufferByPlane(plane1);
-            zBuffer.calcZBufferByPlane(plane2);
+            _zBuffer.calcZBufferByPlane(plane1);
+            _zBuffer.calcZBufferByPlane(plane2);
         }
 }
 
@@ -163,8 +168,8 @@ void Landscape::_shiftPointBackToOrigin(Point3D<double> &point)
 
 void Landscape::_movePointToCenter(Point3D<double> &point)
 {
-    double x = point.getX() + this->zBuffer.getWidth() / 2 - this->_centerPoint.getX();
-    double y = point.getY() + this->zBuffer.getHeight() / 2 - this->_centerPoint.getY();
+    double x = point.getX() + this->_zBuffer.getWidth() / 2 - this->_centerPoint.getX();
+    double y = point.getY() + this->_zBuffer.getHeight() / 2 - this->_centerPoint.getY();
     double z = point.getZ();
 
     point.set(x, y, z);
@@ -260,6 +265,24 @@ void Landscape::_caclNormalForEachVertex(const vector<vector<Point3D<double>>> &
                 avgNormal = (normal1 + normal2 + normal3 + normal4 + normal5 + normal6) / 6;
                 this->_normalVertexMap[i][j] = avgNormal;
             }
+        }
+}
+
+void Landscape::_caclIntensityForEachVertex(const vector<vector<Point3D<double>>> &screenMap)
+{
+    std::cout << " call _caclIntensityForEachVertex" << std::endl;
+
+    const int rows = this->_map.size();
+    const int cols = this->_map[0].size();
+
+    // цикл по всем вершинам ландшафтной сетки
+    for (int i = 0; i < rows; ++i)
+        for (int j = 0; j < cols; ++j)
+        {
+            // получили вектор направления света
+            Vector3D<double> direction = this->_light.caclDirectionVector(screenMap[i][j]);
+            // вот она, интенсивность в вершине
+            this->_intensityVertexMap[i][j] = this->_light.caclIntensityAtVertex(direction, this->_normalVertexMap[i][j]);
         }
 }
 

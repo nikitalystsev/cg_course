@@ -1,6 +1,7 @@
 #ifndef LANDSCAPE_H
 #define LANDSCAPE_H
 
+#include "light.h"
 #include "point/point3D.h"
 #include "transform.h"
 #include "vector/vector3D.h"
@@ -23,14 +24,19 @@ private:
     vector<vector<Point3D<double>>> _map;
     int _width, _lenght; // в количестве полигонов
     int _waterlevel;
-    ZBuffer zBuffer; // класс алгоритма zbuffer
 
+    ZBuffer _zBuffer; // класс алгоритма zbuffer
+
+    // центральная точка всего ландшафта
     Point3D<double> _centerPoint;
 
+    Light _light; // источник освещения
     // матрица векторов внешней нормали к каждой из граней
     vector<vector<pair<Vector3D<double>, Vector3D<double>>>> _normalMap;
     // матрица векторов нормалей для каждой вершины
     vector<vector<Vector3D<double>>> _normalVertexMap;
+    // матрица интенсивностей света для каждой вершины
+    vector<vector<double>> _intensityVertexMap;
 
 private:
     vector<vector<Point3D<double>>> _mapToScreen();
@@ -46,6 +52,8 @@ private:
     // методы работы с освещением и закраской
     void _caclNormalForEachPlane(const vector<vector<Point3D<double>>> &screenMap);
     void _caclNormalForEachVertex(const vector<vector<Point3D<double>>> &screenMap);
+    void _caclIntensityForEachVertex(const vector<vector<Point3D<double>>> &screenMap);
+    //    void _
 
 public:
     Landscape();

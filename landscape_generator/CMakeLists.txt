@@ -21,6 +21,8 @@ set(PROJECT_SOURCES
         inc/point/point2D.h
         inc/vector/vector3D.h
         inc/vector/vector2D.h
+        src/light.cpp
+        inc/light.h
         inc/transform.h
 #        inc/vector3d.h
 #        inc/vector2d.h
