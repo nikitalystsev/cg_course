@@ -41,4 +41,5 @@ landscape_generator/CMakeFiles/
 landscape_generator/Makefile
 landscape_generator/cmake_install.cmake
 landscape_generator/build/
+landscape_generator/landscape_generator
 landscape_generator/landscape_generator_autogen/
