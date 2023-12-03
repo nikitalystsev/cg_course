@@ -26,7 +26,7 @@ double Light::caclIntensityAtVertex(const Vector3D<double> &direction,
 {
     // согласно с формулой для модели освещения Ламберта
     double _scalar_product = Vector3D<double>::scalar_product(direction, normal);
-    double I = this->_I_0 * this->_K_d * _scalar_product;
+    double I = _scalar_product;
 
     return I;
 }

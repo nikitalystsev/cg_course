@@ -9,8 +9,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    std::cout << "width = " << ui->view->width() << std::endl;
-    std::cout << "height = " << ui->view->height() << std::endl;
+    std::cout << "[=] view width  = " << ui->view->width() << std::endl;
+    std::cout << "[=] view height = " << ui->view->height() << std::endl;
 
     this->create_landscape();
 }
@@ -31,16 +31,6 @@ void MainWindow::on_printLandscape_clicked()
 {
     //    std::cout << "call print_landscape" << std::endl;
 
-    this->_landscape.draw(ui->view->scene());
-}
-
-void MainWindow::on_spinBox_waterlevel_valueChanged(int arg1)
-{
-    //    std::cout << "new waterlevel = " << arg1 << std::endl;
-
-    this->_landscape.setWaterlevel(arg1);
-
-    this->_landscape.generateHeightMap();
     this->_landscape.draw(ui->view->scene());
 }
 

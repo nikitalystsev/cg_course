@@ -41,6 +41,10 @@ double Plane::caclZ(const double x, const double y)
     return z;
 }
 
+int Plane::equASide(const int x, const int y)
+{
+}
+
 Point3D<double> Plane::getP1() const
 {
     return Point3D<double>(this->_p1);

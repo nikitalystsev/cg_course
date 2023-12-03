@@ -9,6 +9,8 @@ class Point2D
 private:
     T _x, _y;
 
+    double _I; // интенсивность
+
 public:
     Point2D();
     Point2D(const T x, const T y);
@@ -34,9 +36,11 @@ public:
 
     void setX(const T x);
     void setY(const T y);
+    void setI(const double I);
 
     T getX() const;
     T getY() const;
+    double getI() const;
 
     void print() const;
 };
@@ -50,7 +54,7 @@ Point2D<T>::Point2D() :
 
 template <typename T>
 Point2D<T>::Point2D(const T x, const T y) :
-    _x(x), _y(y)
+    _x(x), _y(y), _I(0)
 {
 }
 
@@ -156,6 +160,12 @@ void Point2D<T>::setY(const T y)
 }
 
 template <typename T>
+void Point2D<T>::setI(const double I)
+{
+    this->_I = I;
+}
+
+template <typename T>
 T Point2D<T>::getX() const
 {
     return this->_x;
@@ -165,6 +175,12 @@ template <typename T>
 T Point2D<T>::getY() const
 {
     return this->_y;
+}
+
+template <typename T>
+double Point2D<T>::getI() const
+{
+    return this->_I;
 }
 
 template <typename T>

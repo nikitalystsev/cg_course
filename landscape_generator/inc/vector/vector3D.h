@@ -4,6 +4,8 @@
 #include <cmath>
 #include <iostream>
 
+#include "../point/point3D.h"
+
 template <typename T>
 class Vector3D
 {
@@ -13,12 +15,14 @@ private:
 public:
     Vector3D();
     Vector3D(const T x, const T y, const T z);
-    Vector3D(const Vector3D<T> &other);
+    explicit Vector3D(const Vector3D<T> &other);
     Vector3D(Vector3D<T> &&other) noexcept;
     ~Vector3D();
 
     template <typename T2>
     explicit Vector3D(const Vector3D<T2> &other);
+
+    Vector3D(const Point3D<T> &other);
 
     Vector3D<T> &operator=(const Vector3D<T> &other);
     template <typename T2>
@@ -98,6 +102,14 @@ Vector3D<T>::~Vector3D()
 template <typename T>
 template <typename T2>
 Vector3D<T>::Vector3D(const Vector3D<T2> &other)
+{
+    this->_x = other.getX();
+    this->_y = other.getY();
+    this->_z = other.getZ();
+}
+
+template <typename T>
+Vector3D<T>::Vector3D(const Point3D<T> &other)
 {
     this->_x = other.getX();
     this->_y = other.getY();

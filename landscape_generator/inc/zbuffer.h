@@ -4,20 +4,32 @@
 #include "plane.h"
 #include "point/point2D.h"
 #include "point/point3D.h"
+#include "vector/vector3D.h"
 #include <QColor>
 #include <climits>
+#include <utility>
 #include <vector>
+
+#define EPS 1e-7
 
 template <typename T>
 using vector = std::vector<T>;
+
+template <typename T1, typename T2>
+using pair = std::pair<T1, T2>;
+
+template <typename T>
+using Matrix = std::vector<std::vector<T>>;
 
 // класс алгоритма z-buffer удаления невидимых линий
 class ZBuffer
 {
 private:
-    vector<vector<double>> _zbuffer;
-    vector<vector<QColor>> _framebuffer; // буфер кадра
-    int _width, _height;                 // ширина и высота экрана вывода изображения
+    Matrix<double> _zbuffer;
+    Matrix<QColor> _framebuffer; // буфер кадра
+    int _width, _height;         // ширина и высота экрана вывода изображения
+
+    vector<Point2D<int>> _getLineByBresenham(Point3D<double> &p1, Point3D<double> &p2);
 
 public:
     ZBuffer();
@@ -25,6 +37,7 @@ public:
     ~ZBuffer();
 
     void calcZBufferByPlane(Plane &plane);
+    void calсFramebufferByPlane(Plane &plane, double IP1, double IP2, double IP3);
     void clean();
 
     int getWidth() const;

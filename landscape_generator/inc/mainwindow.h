@@ -22,9 +22,6 @@ public:
     void create_landscape();
 
 private slots:
-
-    void on_spinBox_waterlevel_valueChanged(int arg1);
-
     void on_printLandscape_clicked();
 
     void on_verticalSlider_actionTriggered(int action);

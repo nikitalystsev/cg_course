@@ -12,7 +12,7 @@ Landscape::Landscape(const int width, const int lenght, const int waterlevel) :
     _normalMap(width + 1, vector<pair<Vector3D<double>, Vector3D<double>>>(lenght + 1)),
     _normalVertexMap(width + 1, vector<Vector3D<double>>(lenght + 1)),
     _intensityVertexMap(width + 1, vector<double>(lenght + 1)),
-    _light(Point3D<int>(100, 100, 100), 1, 0.5)
+    _light(Point3D<int>(0, 0, 150), 1, 0.5)
 {
 }
 
@@ -44,25 +44,26 @@ void Landscape::generateHeightMap()
 
 void Landscape::draw(QGraphicsScene *scene)
 {
-    std::cout << "call draw" << std::endl;
+    std::cout << "[B] draw" << std::endl;
 
-    vector<vector<Point3D<double>>> screenMap = this->_mapToScreen();
+    Matrix<Point3D<double>> screenMap = this->_mapToScreen();
 
     this->_calcZBuffer(screenMap);
-    this->_caclNormalForEachPlane(screenMap);
-    this->_caclNormalForEachVertex(screenMap);
-    this->_caclIntensityForEachVertex(screenMap);
+    this->_calcNormalForEachPlane();
+    this->_calcNormalForEachVertex();
+    this->_calcIntensityForEachVertex();
+    this->_calcFramebuffer(screenMap);
     this->_drawMap(scene);
 }
 
-vector<vector<Point3D<double>>> Landscape::_mapToScreen()
+Matrix<Point3D<double>> Landscape::_mapToScreen()
 {
     const int rows = this->_map.size();
     const int cols = this->_map[0].size();
 
     this->_calcCenterPoint();
 
-    vector<vector<Point3D<double>>> tmp(this->_map);
+    Matrix<Point3D<double>> tmp(this->_map);
 
     for (int i = 0; i < rows; ++i)
         for (int j = 0; j < cols; ++j)
@@ -100,9 +101,9 @@ void Landscape::_drawMap(QGraphicsScene *scene) const
     scene->addPixmap(pixmap);
 }
 
-void Landscape::_calcZBuffer(const vector<vector<Point3D<double>>> &screenMap)
+void Landscape::_calcZBuffer(const Matrix<Point3D<double>> &screenMap)
 {
-    std::cout << "call _caclZBuffer" << std::endl;
+    std::cout << "[B] _calcZBuffer" << std::endl;
 
     this->_zBuffer.clean();
 
@@ -125,6 +126,8 @@ void Landscape::_calcZBuffer(const vector<vector<Point3D<double>>> &screenMap)
 
 void Landscape::_calcCenterPoint()
 {
+    //    std::cout << "call _calcCenterPoint" << std::endl;
+
     const int rows = this->_map.size();
     const int cols = this->_map[0].size();
 
@@ -175,8 +178,10 @@ void Landscape::_movePointToCenter(Point3D<double> &point)
     point.set(x, y, z);
 }
 
-void Landscape::_caclNormalForEachPlane(const vector<vector<Point3D<double>>> &screenMap)
+void Landscape::_calcNormalForEachPlane()
 {
+    std::cout << "[B] _calcNormalForEachPlane" << std::endl;
+
     const int rows = this->_map.size();
     const int cols = this->_map[0].size();
 
@@ -185,12 +190,16 @@ void Landscape::_caclNormalForEachPlane(const vector<vector<Point3D<double>>> &s
         for (int j = 0; j < cols - 1; ++j)
         {
             // в каждом квадрате сетки 2 треугольника - 2 плоскости
-            Plane plane1(screenMap[i][j], screenMap[i + 1][j], screenMap[i + 1][j + 1]);
-            Plane plane2(screenMap[i + 1][j + 1], screenMap[i][j + 1], screenMap[i][j]);
+            Plane plane1(this->_map[i][j], this->_map[i + 1][j], this->_map[i + 1][j + 1]);
+            Plane plane2(this->_map[i + 1][j + 1], this->_map[i][j + 1], this->_map[i][j]);
 
             // получаем вектора внешних нормалей к граням
             Vector3D<double> normalPlane1(plane1.getA(), plane1.getB(), plane1.getC());
             Vector3D<double> normalPlane2(plane2.getA(), plane2.getB(), plane2.getC());
+
+            // нормализуем вектора, чтобы были единичной длины
+            normalPlane1.normalize();
+            normalPlane2.normalize();
 
             pair<Vector3D<double>, Vector3D<double>> normals(normalPlane1, normalPlane2);
 
@@ -198,14 +207,14 @@ void Landscape::_caclNormalForEachPlane(const vector<vector<Point3D<double>>> &s
         }
 }
 
-void Landscape::_caclNormalForEachVertex(const vector<vector<Point3D<double>>> &screenMap)
+void Landscape::_calcNormalForEachVertex()
 {
-    std::cout << " call _caclNormalForEachVertex" << std::endl;
+    std::cout << "[B] _calcNormalForEachVertex" << std::endl;
 
     const int rows = this->_map.size();
     const int cols = this->_map[0].size();
 
-    // идем по всем квадратам ландшафной сетки
+    // идем по всем вершинам ландшафтной сетки
     for (int i = 0; i < rows; ++i)
         for (int j = 0; j < cols; ++j)
         {
@@ -268,9 +277,9 @@ void Landscape::_caclNormalForEachVertex(const vector<vector<Point3D<double>>> &
         }
 }
 
-void Landscape::_caclIntensityForEachVertex(const vector<vector<Point3D<double>>> &screenMap)
+void Landscape::_calcIntensityForEachVertex()
 {
-    std::cout << " call _caclIntensityForEachVertex" << std::endl;
+    std::cout << "[B] _caclIntensityForEachVertex" << std::endl;
 
     const int rows = this->_map.size();
     const int cols = this->_map[0].size();
@@ -280,9 +289,39 @@ void Landscape::_caclIntensityForEachVertex(const vector<vector<Point3D<double>>
         for (int j = 0; j < cols; ++j)
         {
             // получили вектор направления света
-            Vector3D<double> direction = this->_light.caclDirectionVector(screenMap[i][j]);
+            Vector3D<double> direction = this->_light.caclDirectionVector(this->_map[i][j]);
+            // // нормализуем вектора, чтобы были единичной длины
+            direction.normalize();
+            this->_normalVertexMap[i][j].normalize();
             // вот она, интенсивность в вершине
             this->_intensityVertexMap[i][j] = this->_light.caclIntensityAtVertex(direction, this->_normalVertexMap[i][j]);
+        }
+}
+
+void Landscape::_calcFramebuffer(const Matrix<Point3D<double>> &screenMap)
+{
+    std::cout << "[B] _calcFramebuffer" << std::endl;
+
+    const int rows = this->_map.size();
+    const int cols = this->_map[0].size();
+
+    // идем по всем квадратам ландшафной сетки
+    for (int i = 0; i < rows - 1; ++i)
+        for (int j = 0; j < cols - 1; ++j)
+        {
+            // в каждом квадрате сетки 2 треугольника - 2 плоскости
+            Plane plane1(screenMap[i][j], screenMap[i + 1][j], screenMap[i + 1][j + 1]);
+            Plane plane2(screenMap[i + 1][j + 1], screenMap[i][j + 1], screenMap[i][j]);
+
+            // определяем интенсивности вершин квадрата
+            double I1 = this->_intensityVertexMap[i][j];
+            double I2 = this->_intensityVertexMap[i + 1][j];
+            double I3 = this->_intensityVertexMap[i + 1][j + 1];
+            double I4 = this->_intensityVertexMap[i][j + 1];
+
+            // определяем текущее состояние буфера кадра
+            _zBuffer.calсFramebufferByPlane(plane1, I1, I2, I3);
+            _zBuffer.calсFramebufferByPlane(plane2, I3, I4, I1);
         }
 }
 

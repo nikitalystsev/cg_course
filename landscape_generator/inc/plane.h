@@ -24,7 +24,17 @@ public:
 
     double caclZ(const double x, const double y);
 
-    Point3D<double> getP1() const;
+    /* Cторона А - на точках _p1 _p2
+     * Cторона B - на точках _p3 _p3
+     * Cторона C - на точках _p3 _p1
+     */
+
+    int equASide(const int x, const int y);
+    int equBSide(const int x, const int y);
+    int equCSide(const int x, const int y);
+
+    Point3D<double>
+    getP1() const;
     Point3D<double> getP2() const;
     Point3D<double> getP3() const;
 

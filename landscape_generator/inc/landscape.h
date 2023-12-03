@@ -18,42 +18,37 @@ using vector = std::vector<T>;
 template <typename T1, typename T2>
 using pair = std::pair<T1, T2>;
 
+template <typename T>
+using Matrix = std::vector<std::vector<T>>;
+
 class Landscape
 {
 private:
-    vector<vector<Point3D<double>>> _map;
-    int _width, _lenght; // в количестве полигонов
-    int _waterlevel;
+    Matrix<Point3D<double>> _map; // карта высот
+    int _width, _lenght;          // длина и ширина карты высот (в количестве полигонов)
+    int _waterlevel;              // уровень воды
 
-    ZBuffer _zBuffer; // класс алгоритма zbuffer
+    ZBuffer _zBuffer; //  удаление невидимых линий
+    void _calcZBuffer(const Matrix<Point3D<double>> &screenMap);
 
-    // центральная точка всего ландшафта
-    Point3D<double> _centerPoint;
-
-    Light _light; // источник освещения
-    // матрица векторов внешней нормали к каждой из граней
-    vector<vector<pair<Vector3D<double>, Vector3D<double>>>> _normalMap;
-    // матрица векторов нормалей для каждой вершины
-    vector<vector<Vector3D<double>>> _normalVertexMap;
-    // матрица интенсивностей света для каждой вершины
-    vector<vector<double>> _intensityVertexMap;
-
-private:
-    vector<vector<Point3D<double>>> _mapToScreen();
-    // методы для z-буффера
-    void _calcZBuffer(const vector<vector<Point3D<double>>> &screenMap);
-    // методы для визуализации изображения
-    void _drawMap(QGraphicsScene *scene) const;
+    Point3D<double> _centerPoint; // центральная точка всего ландшафта
     void _calcCenterPoint();
+
+    Light _light;                                                // источник освещения
+    Matrix<pair<Vector3D<double>, Vector3D<double>>> _normalMap; // матрица векторов внешней нормали к каждой из граней
+    Matrix<Vector3D<double>> _normalVertexMap;                   // матрица векторов нормалей для каждой вершины
+    Matrix<double> _intensityVertexMap;                          // матрица интенсивностей света для каждой вершины
+    void _calcNormalForEachPlane();                              // расчет нормалей для каждой грани
+    void _calcNormalForEachVertex();                             // расчет нормалей для каждой вершины
+    void _calcIntensityForEachVertex();                          // расчет интенсивности в каждой вершине
+    void _calcFramebuffer(const Matrix<Point3D<double>> &screenMap);
+
+    // методы для визуализации изображения
+    Matrix<Point3D<double>> _mapToScreen();
+    void _drawMap(QGraphicsScene *scene) const;
     void _shiftPointToOrigin(Point3D<double> &point);
     void _shiftPointBackToOrigin(Point3D<double> &point);
     void _movePointToCenter(Point3D<double> &point);
-
-    // методы работы с освещением и закраской
-    void _caclNormalForEachPlane(const vector<vector<Point3D<double>>> &screenMap);
-    void _caclNormalForEachVertex(const vector<vector<Point3D<double>>> &screenMap);
-    void _caclIntensityForEachVertex(const vector<vector<Point3D<double>>> &screenMap);
-    //    void _
 
 public:
     Landscape();

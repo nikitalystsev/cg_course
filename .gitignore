@@ -35,3 +35,9 @@ landscape_generator/.idea/
 docs/summer_practice/.idea/
 build-landscape_generator-Qt_5_15_3_PATH_qt5-Debug/
 docs/course/others/
+
+landscape_generator/CMakeCache.txt
+landscape_generator/CMakeFiles/
+landscape_generator/Makefile
+landscape_generator/cmake_install.cmake
+
