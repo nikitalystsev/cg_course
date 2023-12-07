@@ -50,6 +50,10 @@ private:
     void _shiftPointBackToOrigin(Point3D<double> &point);
     void _movePointToCenter(Point3D<double> &point);
 
+    void _printPlaneNormals();
+    void _printVertexNormals();
+    void _printVertexIntensity();
+
 public:
     Landscape();
     Landscape(const int width, const int lenght, const int waterlevel);

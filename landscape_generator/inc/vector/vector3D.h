@@ -33,9 +33,9 @@ public:
     template <typename T2>
     decltype(auto) operator-(const Vector3D<T2> &other) const;
     template <typename T2>
-    decltype(auto) operator*(const T2 &elem) const;
+    decltype(auto) operator*(const T2 & elem) const;
     template <typename T2>
-    decltype(auto) operator/(const T2 &elem) const;
+    decltype(auto) operator/(const T2 & elem) const;
 
     template <typename T2>
     Vector3D<T> &operator+=(const Vector3D<T2> &other);
@@ -240,7 +240,7 @@ void Vector3D<T>::set(const T x, const T y, const T z)
 {
     this->_x = x;
     this->_y = y;
-    this->_z = y;
+    this->_z = z;
 }
 
 template <typename T>
@@ -302,7 +302,7 @@ void Vector3D<T>::normalize()
 template <typename T>
 void Vector3D<T>::print()
 {
-    std::cout << "Vector3D(" << _x << ", " << _y << ", " << _z << ")" << std::endl;
+    std::cout << "[=] Vector3D(" << _x << ", " << _y << ", " << _z << ")" << std::endl;
 }
 
 template <typename T>

@@ -63,6 +63,7 @@ Point2D<T>::Point2D(const Point2D<T> &other)
 {
     this->_x = other._x;
     this->_y = other._y;
+    this->_I = other._I;
 }
 
 template <typename T>
@@ -70,6 +71,7 @@ Point2D<T>::Point2D(Point2D<T> &&other) noexcept
 {
     this->_x = other._x;
     this->_y = other._y;
+    this->_I = other._I;
 }
 
 template <typename T>
@@ -83,6 +85,7 @@ Point2D<T>::Point2D(const Point2D<T2> &other)
 {
     this->_x = other.getX();
     this->_y = other.getY();
+    this->_I = other.getI();
 }
 
 template <typename T>
@@ -90,6 +93,7 @@ Point2D<T> &Point2D<T>::operator=(const Point2D<T> &other)
 {
     this->_x = other._x;
     this->_y = other._y;
+    this->_I = other._I;
 
     return *this;
 }
@@ -100,6 +104,7 @@ Point2D<T> &Point2D<T>::operator=(const Point2D<T2> &other)
 {
     this->_x = other.getX();
     this->_y = other.getY();
+    this->_I = other.getI();
 
     return *this;
 }
@@ -112,6 +117,7 @@ decltype(auto) Point2D<T>::operator+(const Point2D<T2> &other) const
 
     tmp.setX(this->_x + other.getX());
     tmp.setY(this->_y + other.getY());
+    tmp.setI(this->_I + other.getI());
 
     return tmp;
 }
@@ -124,6 +130,7 @@ decltype(auto) Point2D<T>::operator-(const Point2D<T2> &other) const
 
     tmp.setX(this->_x - other.getX());
     tmp.setY(this->_y - other.getY());
+    tmp.setI(this->_I - other.getI());
 
     return tmp;
 }

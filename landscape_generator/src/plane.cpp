@@ -18,11 +18,21 @@ void Plane::_calcPlaneCoeff()
     double s = this->_p3.getY() - this->_p1.getY();
     double e = this->_p3.getZ() - this->_p1.getZ();
 
+    // std::cout << m << std::endl;
+    // std::cout << n << std::endl;
+    // std::cout << p << std::endl;
+    // std::cout << k << std::endl;
+    // std::cout << s << std::endl;
+    // std::cout << e << std::endl;
+
     this->A = n * e - s * p;
     this->B = k * p - m * e;
     this->C = m * s - k * n;
 
     this->D = -(this->A * this->_p1.getX() + this->B * this->_p1.getY() + this->C * this->_p1.getZ());
+
+    // std::cout << "Got koeff plane: " << std::endl;
+    // std::cout << "A = " << this->A << " B = " << this->B << " C = " << this->C << std::endl;
 }
 
 void Plane::_defCircumRect()
@@ -39,10 +49,6 @@ double Plane::caclZ(const double x, const double y)
     double z = -(this->A * x + this->B * y + D) / C;
 
     return z;
-}
-
-int Plane::equASide(const int x, const int y)
-{
 }
 
 Point3D<double> Plane::getP1() const

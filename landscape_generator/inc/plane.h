@@ -29,9 +29,9 @@ public:
      * Cторона C - на точках _p3 _p1
      */
 
-    int equASide(const int x, const int y);
-    int equBSide(const int x, const int y);
-    int equCSide(const int x, const int y);
+    // int equASide(const int x, const int y);
+    // int equBSide(const int x, const int y);
+    // int equCSide(const int x, const int y);
 
     Point3D<double>
     getP1() const;

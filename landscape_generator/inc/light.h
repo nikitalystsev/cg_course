@@ -3,6 +3,7 @@
 
 #include "point/point3D.h"
 #include "vector/vector3D.h"
+#include <algorithm>
 
 // класс точечного источника освещения
 class Light

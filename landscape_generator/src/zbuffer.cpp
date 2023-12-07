@@ -95,6 +95,10 @@ vector<Point2D<int>> ZBuffer::_getLineByBresenham(Point3D<double> &p1, Point3D<d
 
 void ZBuffer::calсFramebufferByPlane(Plane &plane, double IP1, double IP2, double IP3)
 {
+    // std::cout << "[=] IP1 = " << IP1 << std::endl;
+    // std::cout << "[=] IP2 = " << IP2 << std::endl;
+    // std::cout << "[=] IP3 = " << IP3 << std::endl;
+
     // получаем координаты описывающего прямоугольника
     Point2D<double> pMin = plane.getPMin();
     Point2D<double> pMax = plane.getPMax();
@@ -116,7 +120,8 @@ void ZBuffer::calсFramebufferByPlane(Plane &plane, double IP1, double IP2, doub
     for (int i = 0; i < line1.size(); ++i)
     {
         // длина, она же  AQ/AB из Роджерса
-        double u = (i + 1) / line1.size();
+        double u = (double)(i + 1) / line1.size();
+        //        std::cout << "[=] line1: u = " << u << std::endl;
         // интенсивность в текущей точке на ребре
         double I = u * IP1 + (1 - u) * IP2;
         // std::cout << "[=] line1[i]: I = " << I << std::endl;
@@ -127,7 +132,8 @@ void ZBuffer::calсFramebufferByPlane(Plane &plane, double IP1, double IP2, doub
     for (int i = 0; i < line2.size(); ++i)
     {
         // длина, она же  AQ/AB из Роджерса
-        double u = (i + 1) / line2.size();
+        double u = (double)(i + 1) / line2.size();
+        //        std::cout << "[=] line2: u = " << u << std::endl;
         // интенсивность в текущей точке на ребре
         double I = u * IP2 + (1 - u) * IP3;
         // std::cout << "[=] line2[i]: I = " << I << std::endl;
@@ -138,7 +144,8 @@ void ZBuffer::calсFramebufferByPlane(Plane &plane, double IP1, double IP2, doub
     for (int i = 0; i < line3.size(); ++i)
     {
         // длина, она же  AQ/AB из Роджерса
-        double u = (i + 1) / line3.size();
+        double u = (double)(i + 1) / line3.size();
+        // std::cout << "[=] line3: u = " << u << std::endl;
         // интенсивность в текущей точке на ребре
         double I = u * IP3 + (1 - u) * IP1;
         // std::cout << "[=] line3[i]: I = " << I << std::endl;
@@ -186,14 +193,24 @@ void ZBuffer::calсFramebufferByPlane(Plane &plane, double IP1, double IP2, doub
                 if (yn[yn.size() - 1].getX() - yn[0].getX() == 0) // такое возможно только в вершинах треугольника
                 {
                     double I = yn[0].getI();
-                    this->_framebuffer[x][y] = QColor(12 * I, 71 * I, 14 * I);
+                    int r = 12 * I, g = 71 * I, b = 14 * I;
+                    // std::cout << "[=] I = " << I << std::endl;
+                    // std::cout << "[=] r = " << r << " g = " << g << " b = " << b << std::endl;
+                    this->_framebuffer[x][y] = QColor(r, g, b);
                 }
                 else
                 {
-                    double u = (x - yn[0].getX()) / (yn[yn.size() - 1].getX() - yn[0].getX());
+                    double u = (double)(x - yn[0].getX()) / (yn[yn.size() - 1].getX() - yn[0].getX());
                     double I = u * yn[0].getI() + (1 - u) * yn[yn.size() - 1].getI();
 
-                    this->_framebuffer[x][y] = QColor(12 * I, 71 * I, 14 * I);
+                    // std::cout << "[=] u                        = " << u << std::endl;
+                    // std::cout << "[=] yn[0].getI()             = " << yn[0].getI() << std::endl;
+                    // std::cout << "[=] yn[yn.size() - 1].getI() = " << yn[yn.size() - 1].getI() << std::endl;
+
+                    int r = 12 * I, g = 71 * I, b = 14 * I;
+                    // std::cout << "[=] I = " << I << std::endl;
+                    // std::cout << "[=] r = " << r << " g = " << g << " b = " << b << std::endl;
+                    this->_framebuffer[x][y] = QColor(r, g, b);
                 }
             }
         }
