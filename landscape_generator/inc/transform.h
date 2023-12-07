@@ -72,7 +72,6 @@ void Transform::pointToIsometric(Point3D<T> &point)
 {
     rotateByZ(point, 45);
     rotateByX(point, -60);
-    // rotateByX(point, -50);
 }
 
 #endif

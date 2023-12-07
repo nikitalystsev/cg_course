@@ -9,9 +9,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    std::cout << "[=] view width  = " << ui->view->width() << std::endl;
-    std::cout << "[=] view height = " << ui->view->height() << std::endl;
-
     this->create_landscape();
 }
 
@@ -22,7 +19,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::create_landscape()
 {
-    //    std::cout << "call create_landscape" << std::endl;
+    // std::cout << "[B] create_landscape" << std::endl;
 
     this->_landscape.generateHeightMap();
 }

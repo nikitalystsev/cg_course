@@ -10,7 +10,7 @@ class Plane
 {
 private:
     Point3D<double> _p1, _p2, _p3; // точки плоскости на экране
-    double A, B, C, D;             // коэф-ты плоскости (они же координаты внешней нормали)
+    double _A, _B, _C, _D;         // коэф-ты плоскости (они же координаты внешней нормали)
 
     // точки описывающего прямоугольника
     Point2D<double> _pMin, _pMax;
@@ -24,17 +24,7 @@ public:
 
     double caclZ(const double x, const double y);
 
-    /* Cторона А - на точках _p1 _p2
-     * Cторона B - на точках _p3 _p3
-     * Cторона C - на точках _p3 _p1
-     */
-
-    // int equASide(const int x, const int y);
-    // int equBSide(const int x, const int y);
-    // int equCSide(const int x, const int y);
-
-    Point3D<double>
-    getP1() const;
+    Point3D<double> getP1() const;
     Point3D<double> getP2() const;
     Point3D<double> getP3() const;
 

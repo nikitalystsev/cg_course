@@ -4,7 +4,7 @@
 #include <iostream>
 
 template <typename T>
-class Point2D
+class Point2D // ака точка на двумерной плоскости, ака пиксель
 {
 private:
     T _x, _y;

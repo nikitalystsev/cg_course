@@ -24,9 +24,6 @@ void ZBuffer::calcZBufferByPlane(Plane &plane)
     // обходим только ту часть матрицы z-буфера, что является
     // описывающим прямоугольником
     for (int y = pMin.getY(); y <= pMax.getY(); ++y)
-    {
-        int isCacl = 0; // флаг первого вычисленного значения на сканирующей строке
-        double z;
         for (int x = pMin.getX(); x <= pMax.getX(); ++x)
         {
             // уравнения сторон
@@ -39,17 +36,12 @@ void ZBuffer::calcZBufferByPlane(Plane &plane)
 
             if (isInTriangle)
             {
-                z = (isCacl) ? (this->_zbuffer[x][y - 1] - plane.getA() / plane.getC()) : plane.caclZ(x, y);
+                double z = plane.caclZ(x, y);
 
                 if (z > this->_zbuffer[x][y])
-                {
                     this->_zbuffer[x][y] = z;
-                }
-
-                isCacl = 1;
             }
         }
-    }
 }
 
 vector<Point2D<int>> ZBuffer::_getLineByBresenham(Point3D<double> &p1, Point3D<double> &p2)
@@ -71,8 +63,6 @@ vector<Point2D<int>> ZBuffer::_getLineByBresenham(Point3D<double> &p1, Point3D<d
     {
         result.push_back(Point2D<int>(x1, y1));
 
-        //        std::cout << "[?] what?" << std::endl;
-
         int error2 = error * 2;
         if (error2 > -dy)
         {
@@ -88,17 +78,24 @@ vector<Point2D<int>> ZBuffer::_getLineByBresenham(Point3D<double> &p1, Point3D<d
 
     result.push_back(Point2D<int>(x2, y2));
 
-    //    std::cout << "[+] Success" << std::endl;
-
     return result;
+}
+
+void ZBuffer::_calcIntensityForLine(vector<Point2D<int>> &line, double IPStart, double IPEnd)
+{
+    for (int i = 0; i < line.size(); ++i)
+    {
+        // длина, она же  AQ/AB из Роджерса
+        double u = (double)(i + 1) / line.size();
+        // интенсивность в текущей точке на ребре
+        double I = u * IPStart + (1 - u) * IPEnd;
+        // устанавливаем значение I
+        line[i].setI(I);
+    }
 }
 
 void ZBuffer::calсFramebufferByPlane(Plane &plane, double IP1, double IP2, double IP3)
 {
-    // std::cout << "[=] IP1 = " << IP1 << std::endl;
-    // std::cout << "[=] IP2 = " << IP2 << std::endl;
-    // std::cout << "[=] IP3 = " << IP3 << std::endl;
-
     // получаем координаты описывающего прямоугольника
     Point2D<double> pMin = plane.getPMin();
     Point2D<double> pMax = plane.getPMax();
@@ -117,41 +114,9 @@ void ZBuffer::calсFramebufferByPlane(Plane &plane, double IP1, double IP2, doub
     vector<Point2D<int>> line3 = this->_getLineByBresenham(p3, p1);
 
     // расчет интенсивности на ребрах
-    for (int i = 0; i < line1.size(); ++i)
-    {
-        // длина, она же  AQ/AB из Роджерса
-        double u = (double)(i + 1) / line1.size();
-        //        std::cout << "[=] line1: u = " << u << std::endl;
-        // интенсивность в текущей точке на ребре
-        double I = u * IP1 + (1 - u) * IP2;
-        // std::cout << "[=] line1[i]: I = " << I << std::endl;
-        // устанавливаем значение I
-        line1[i].setI(I);
-    }
-
-    for (int i = 0; i < line2.size(); ++i)
-    {
-        // длина, она же  AQ/AB из Роджерса
-        double u = (double)(i + 1) / line2.size();
-        //        std::cout << "[=] line2: u = " << u << std::endl;
-        // интенсивность в текущей точке на ребре
-        double I = u * IP2 + (1 - u) * IP3;
-        // std::cout << "[=] line2[i]: I = " << I << std::endl;
-        // устанавливаем значение I
-        line2[i].setI(I);
-    }
-
-    for (int i = 0; i < line3.size(); ++i)
-    {
-        // длина, она же  AQ/AB из Роджерса
-        double u = (double)(i + 1) / line3.size();
-        // std::cout << "[=] line3: u = " << u << std::endl;
-        // интенсивность в текущей точке на ребре
-        double I = u * IP3 + (1 - u) * IP1;
-        // std::cout << "[=] line3[i]: I = " << I << std::endl;
-        // устанавливаем значение I
-        line3[i].setI(I);
-    }
+    this->_calcIntensityForLine(line1, IP1, IP2);
+    this->_calcIntensityForLine(line2, IP2, IP3);
+    this->_calcIntensityForLine(line3, IP3, IP1);
 
     // обходим только ту часть матрицы буфера, что является
     // описывающим прямоугольником
@@ -171,8 +136,6 @@ void ZBuffer::calсFramebufferByPlane(Plane &plane, double IP1, double IP2, doub
         for (int i = 0; i < line3.size(); ++i)
             if (line3[i].getY() == y)
                 yn.push_back(line3[i]);
-
-        // std::cout << "[=] yn size = " << yn.size() << std::endl;
 
         // Сортировка вектора объектов Point по x
         std::sort(yn.begin(), yn.end(), [](const Point2D<int> &a, const Point2D<int> &b)
@@ -194,8 +157,7 @@ void ZBuffer::calсFramebufferByPlane(Plane &plane, double IP1, double IP2, doub
                 {
                     double I = yn[0].getI();
                     int r = 12 * I, g = 71 * I, b = 14 * I;
-                    // std::cout << "[=] I = " << I << std::endl;
-                    // std::cout << "[=] r = " << r << " g = " << g << " b = " << b << std::endl;
+
                     this->_framebuffer[x][y] = QColor(r, g, b);
                 }
                 else
@@ -203,13 +165,8 @@ void ZBuffer::calсFramebufferByPlane(Plane &plane, double IP1, double IP2, doub
                     double u = (double)(x - yn[0].getX()) / (yn[yn.size() - 1].getX() - yn[0].getX());
                     double I = u * yn[0].getI() + (1 - u) * yn[yn.size() - 1].getI();
 
-                    // std::cout << "[=] u                        = " << u << std::endl;
-                    // std::cout << "[=] yn[0].getI()             = " << yn[0].getI() << std::endl;
-                    // std::cout << "[=] yn[yn.size() - 1].getI() = " << yn[yn.size() - 1].getI() << std::endl;
-
                     int r = 12 * I, g = 71 * I, b = 14 * I;
-                    // std::cout << "[=] I = " << I << std::endl;
-                    // std::cout << "[=] r = " << r << " g = " << g << " b = " << b << std::endl;
+
                     this->_framebuffer[x][y] = QColor(r, g, b);
                 }
             }

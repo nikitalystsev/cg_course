@@ -18,21 +18,11 @@ void Plane::_calcPlaneCoeff()
     double s = this->_p3.getY() - this->_p1.getY();
     double e = this->_p3.getZ() - this->_p1.getZ();
 
-    // std::cout << m << std::endl;
-    // std::cout << n << std::endl;
-    // std::cout << p << std::endl;
-    // std::cout << k << std::endl;
-    // std::cout << s << std::endl;
-    // std::cout << e << std::endl;
+    this->_A = n * e - s * p;
+    this->_B = k * p - m * e;
+    this->_C = m * s - k * n;
 
-    this->A = n * e - s * p;
-    this->B = k * p - m * e;
-    this->C = m * s - k * n;
-
-    this->D = -(this->A * this->_p1.getX() + this->B * this->_p1.getY() + this->C * this->_p1.getZ());
-
-    // std::cout << "Got koeff plane: " << std::endl;
-    // std::cout << "A = " << this->A << " B = " << this->B << " C = " << this->C << std::endl;
+    this->_D = -(this->_A * this->_p1.getX() + this->_B * this->_p1.getY() + this->_C * this->_p1.getZ());
 }
 
 void Plane::_defCircumRect()
@@ -46,7 +36,7 @@ void Plane::_defCircumRect()
 
 double Plane::caclZ(const double x, const double y)
 {
-    double z = -(this->A * x + this->B * y + D) / C;
+    double z = -(this->_A * x + this->_B * y + this->_D) / this->_C;
 
     return z;
 }
@@ -78,20 +68,20 @@ Point2D<double> Plane::getPMax() const
 
 double Plane::getA() const
 {
-    return this->A;
+    return this->_A;
 }
 
 double Plane::getB() const
 {
-    return this->B;
+    return this->_B;
 }
 
 double Plane::getC() const
 {
-    return this->C;
+    return this->_C;
 }
 
 double Plane::getD() const
 {
-    return this->D;
+    return this->_D;
 }

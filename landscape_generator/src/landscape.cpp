@@ -8,11 +8,12 @@ Landscape::Landscape() :
 
 Landscape::Landscape(const int width, const int lenght, const int waterlevel) :
     _width(width), _lenght(lenght), _waterlevel(waterlevel),
+    _rows(width + 1), _cols(lenght + 1),
     _map(width + 1, vector<Point3D<double>>(lenght + 1)),
     _normalMap(width + 1, vector<pair<Vector3D<double>, Vector3D<double>>>(lenght + 1)),
     _normalVertexMap(width + 1, vector<Vector3D<double>>(lenght + 1)),
     _intensityVertexMap(width + 1, vector<double>(lenght + 1)),
-    _light(Point3D<int>(500, 500, 600), 1, 0.5)
+    _light(Point3D<int>(300, 300, 600), 1, 0.5)
 {
 }
 
@@ -20,13 +21,10 @@ Landscape::~Landscape() {}
 
 void Landscape::generateHeightMap()
 {
-    const int rows = this->_map.size();
-    const int cols = this->_map[0].size();
-
     PerlinNoise alg(22, 8, 1, 4, 1, 0.25);
 
-    for (int i = 0; i < rows; ++i)
-        for (int j = 0; j < cols; ++j)
+    for (int i = 0; i < this->_rows; ++i)
+        for (int j = 0; j < this->_cols; ++j)
         {
             double nx = i / (double)this->_width - 0.5;
             double ny = j / (double)this->_lenght - 0.5;
@@ -36,9 +34,9 @@ void Landscape::generateHeightMap()
             height *= 1000;
 
             if (height < _waterlevel)
-                this->_map[i][j].set((i + 1) * this->poly_size, (j + 1) * this->poly_size, _waterlevel);
+                this->_map[i][j].set(i * this->poly_size, j * this->poly_size, _waterlevel);
             else
-                this->_map[i][j].set((i + 1) * this->poly_size, (j + 1) * this->poly_size, height);
+                this->_map[i][j].set(i * this->poly_size, j * this->poly_size, height);
         }
 }
 
@@ -58,15 +56,12 @@ void Landscape::draw(QGraphicsScene *scene)
 
 Matrix<Point3D<double>> Landscape::_mapToScreen()
 {
-    const int rows = this->_map.size();
-    const int cols = this->_map[0].size();
-
     this->_calcCenterPoint();
 
     Matrix<Point3D<double>> tmp(this->_map);
 
-    for (int i = 0; i < rows; ++i)
-        for (int j = 0; j < cols; ++j)
+    for (int i = 0; i < this->_rows; ++i)
+        for (int j = 0; j < this->_cols; ++j)
         {
             this->_shiftPointToOrigin(tmp[i][j]);
 
@@ -107,12 +102,9 @@ void Landscape::_calcZBuffer(const Matrix<Point3D<double>> &screenMap)
 
     this->_zBuffer.clean();
 
-    const int rows = this->_map.size();
-    const int cols = this->_map[0].size();
-
     // идем по всем квадратам ландшафной сетки
-    for (int i = 0; i < rows - 1; ++i)
-        for (int j = 0; j < cols - 1; ++j)
+    for (int i = 0; i < this->_rows - 1; ++i)
+        for (int j = 0; j < this->_cols - 1; ++j)
         {
             // в каждом квадрате сетки 2 треугольника - 2 плоскости
             Plane plane1(screenMap[i][j], screenMap[i + 1][j], screenMap[i + 1][j + 1]);
@@ -126,21 +118,16 @@ void Landscape::_calcZBuffer(const Matrix<Point3D<double>> &screenMap)
 
 void Landscape::_calcCenterPoint()
 {
-    //    std::cout << "call _calcCenterPoint" << std::endl;
-
-    const int rows = this->_map.size();
-    const int cols = this->_map[0].size();
-
     Point3D<double> p1(this->_map[0][0]);
-    Point3D<double> p2(this->_map[rows - 1][cols - 1]);
+    Point3D<double> p2(this->_map[this->_rows - 1][this->_cols - 1]);
 
     this->_centerPoint.setX((p1.getX() + p2.getX()) / 2);
     this->_centerPoint.setY((p1.getY() + p2.getY()) / 2);
 
     double zMin = p1.getZ(), zMax = p1.getZ();
 
-    for (int i = 0; i < rows; ++i)
-        for (int j = 0; j < cols; ++j)
+    for (int i = 0; i < this->_rows; ++i)
+        for (int j = 0; j < this->_cols; ++j)
         {
             if (this->_map[i][j].getZ() < zMin)
                 zMin = this->_map[i][j].getZ();
@@ -182,35 +169,20 @@ void Landscape::_calcNormalForEachPlane()
 {
     std::cout << "[B] _calcNormalForEachPlane" << std::endl;
 
-    const int rows = this->_map.size();
-    const int cols = this->_map[0].size();
-
     // идем по всем квадратам ландшафной сетки
-    for (int i = 0; i < rows - 1; ++i)
-        for (int j = 0; j < cols - 1; ++j)
+    for (int i = 0; i < this->_rows - 1; ++i)
+        for (int j = 0; j < this->_cols - 1; ++j)
         {
-            // this->_map[i][j].setZ(500);
-            // this->_map[i][j + 1].setZ(375);
-            // this->_map[i + 1][j + 1].setZ(625);
-            // this->_map[i][j].print();
-            // this->_map[i][j + 1].print();
-            // this->_map[i + 1][j + 1].print();
-
-            Plane plane2(this->_map[i][j], this->_map[i][j + 1], this->_map[i + 1][j + 1]);
-
             // в каждом квадрате сетки 2 треугольника - 2 плоскости
             Plane plane1(this->_map[i][j], this->_map[i + 1][j], this->_map[i + 1][j + 1]);
+            Plane plane2(this->_map[i][j], this->_map[i + 1][j + 1], this->_map[i][j + 1]);
 
             // получаем вектора внешних нормалей к граням
             Vector3D<double> normalPlane1(plane1.getA(), plane1.getB(), plane1.getC());
             Vector3D<double> normalPlane2(plane2.getA(), plane2.getB(), plane2.getC());
 
-            // нормализуем вектора, чтобы были единичной длины
-            // normalPlane1.print();
-            // normalPlane2.print();
-
-            // normalPlane1.normalize();
-            // normalPlane2.normalize();
+            normalPlane1.normalize();
+            normalPlane2.normalize();
 
             pair<Vector3D<double>, Vector3D<double>> normals(normalPlane1, normalPlane2);
 
@@ -222,12 +194,9 @@ void Landscape::_calcNormalForEachPlane()
 
 void Landscape::_printPlaneNormals()
 {
-    const int rows = this->_map.size();
-    const int cols = this->_map[0].size();
-
     // идем по всем квадратам ландшафной сетки
-    for (int i = 0; i < rows - 1; ++i)
-        for (int j = 0; j < cols - 1; ++j)
+    for (int i = 0; i < this->_rows - 1; ++i)
+        for (int j = 0; j < this->_cols - 1; ++j)
         {
             std::cout << "[=] Первый:" << std::endl;
             this->_normalMap[i][j].first.print();
@@ -240,16 +209,13 @@ void Landscape::_calcNormalForEachVertex()
 {
     std::cout << "[B] _calcNormalForEachVertex" << std::endl;
 
-    const int rows = this->_map.size();
-    const int cols = this->_map[0].size();
-
     // идем по всем вершинам ландшафтной сетки
-    for (int i = 0; i < rows; ++i)
-        for (int j = 0; j < cols; ++j)
+    for (int i = 0; i < this->_rows; ++i)
+        for (int j = 0; j < this->_cols; ++j)
         {
             Vector3D<double> avgNormal;
             // левая верхняя и правая нижняя вершины
-            if ((i == 0 && j == 0) || (i == rows - 1 && j == cols - 1))
+            if ((i == 0 && j == 0) || (i == this->_rows - 1 && j == this->_cols - 1))
             {
                 if (i == 0 && j == 0) // левая верхняя
                 {
@@ -263,15 +229,14 @@ void Landscape::_calcNormalForEachVertex()
                     Vector3D<double> normal2(this->_normalMap[i - 1][j - 1].second);
                     avgNormal = (normal1 + normal2) / 2;
                 }
-                this->_normalVertexMap[i][j] = avgNormal;
             }
             // правая верхняя и левая нижняя вершина
-            else if ((i == 0 && j == cols - 1) || (i == rows - 1 && j == 0))
+            else if ((i == 0 && j == this->_cols - 1) || (i == this->_rows - 1 && j == 0))
             {
-                if (i == 0 && j == cols - 1) // правая верхняя
-                    this->_normalVertexMap[i][j] = this->_normalMap[i][j - 1].first;
+                if (i == 0 && j == this->_cols - 1) // правая верхняя
+                    avgNormal = this->_normalMap[i][j - 1].first;
                 else // левая верхняя
-                    this->_normalVertexMap[i][j] = this->_normalMap[i - 1][j].second;
+                    avgNormal = this->_normalMap[i - 1][j].second;
             }
             // вершины по краям карты (с 3-мя примыкающими гранями)
             else if (i == 0 || j == 0)
@@ -290,7 +255,6 @@ void Landscape::_calcNormalForEachVertex()
                     Vector3D<double> normal3(this->_normalMap[i - 1][j].second);
                     avgNormal = (normal1 + normal2 + normal3) / 3;
                 }
-                this->_normalVertexMap[i][j] = avgNormal;
             }
             else // внутренние точки
             {
@@ -301,20 +265,17 @@ void Landscape::_calcNormalForEachVertex()
                 Vector3D<double> normal5(this->_normalMap[i][j - 1].first);
                 Vector3D<double> normal6(this->_normalMap[i - 1][j].second);
                 avgNormal = (normal1 + normal2 + normal3 + normal4 + normal5 + normal6) / 6;
-                this->_normalVertexMap[i][j] = avgNormal;
             }
+            this->_normalVertexMap[i][j] = avgNormal;
         }
     // this->_printVertexNormals();
 }
 
 void Landscape::_printVertexNormals()
 {
-    const int rows = this->_map.size();
-    const int cols = this->_map[0].size();
-
     // идем по всем квадратам ландшафной сетки
-    for (int i = 0; i < rows; ++i)
-        for (int j = 0; j < cols; ++j)
+    for (int i = 0; i < this->_rows; ++i)
+        for (int j = 0; j < this->_cols; ++j)
         {
             this->_normalVertexMap[i][j].print();
         }
@@ -324,56 +285,46 @@ void Landscape::_calcIntensityForEachVertex()
 {
     std::cout << "[B] _caclIntensityForEachVertex" << std::endl;
 
-    const int rows = this->_map.size();
-    const int cols = this->_map[0].size();
-
     // цикл по всем вершинам ландшафтной сетки
-    for (int i = 0; i < rows; ++i)
-        for (int j = 0; j < cols; ++j)
+    for (int i = 0; i < this->_rows; ++i)
+        for (int j = 0; j < this->_cols; ++j)
         {
             // получили вектор направления света
             Vector3D<double> direction = this->_light.caclDirectionVector(this->_map[i][j]);
             // // нормализуем вектора, чтобы были единичной длины
-            // direction.print();
-
             direction.normalize();
-            // this->_normalVertexMap[i][j].print();
             this->_normalVertexMap[i][j].normalize();
 
-            // // direction.print();
-            // this->_normalVertexMap[i][j].print();
             // вот она, интенсивность в вершине
             this->_intensityVertexMap[i][j] = this->_light.caclIntensityAtVertex(direction, this->_normalVertexMap[i][j]);
-
-            // this->_map[i][j].print();
         }
 
-    this->_printVertexIntensity();
+    // this->_printVertexIntensity();
 }
 
 void Landscape::_printVertexIntensity()
 {
-    const int rows = this->_map.size();
-    const int cols = this->_map[0].size();
-
     // идем по всем квадратам ландшафной сетки
-    for (int i = 0; i < rows; ++i)
-        for (int j = 0; j < cols; ++j)
+    for (int i = 0; i < this->_rows; ++i)
+    {
+        for (int j = 0; j < this->_cols; ++j)
         {
-            std::cout << "[=] intensity = " << this->_intensityVertexMap[i][j] << std::endl;
+            if (this->_intensityVertexMap[i][j] != 0)
+                std::cout << " ";
+            else
+                std::cout << this->_intensityVertexMap[i][j] << " ";
         }
+        std::cout << std::endl;
+    }
 }
 
 void Landscape::_calcFramebuffer(const Matrix<Point3D<double>> &screenMap)
 {
     std::cout << "[B] _calcFramebuffer" << std::endl;
 
-    const int rows = this->_map.size();
-    const int cols = this->_map[0].size();
-
     // идем по всем квадратам ландшафной сетки
-    for (int i = 0; i < rows - 1; ++i)
-        for (int j = 0; j < cols - 1; ++j)
+    for (int i = 0; i < this->_rows - 1; ++i)
+        for (int j = 0; j < this->_cols - 1; ++j)
         {
             // в каждом квадрате сетки 2 треугольника - 2 плоскости
             Plane plane1(screenMap[i][j], screenMap[i + 1][j], screenMap[i + 1][j + 1]);

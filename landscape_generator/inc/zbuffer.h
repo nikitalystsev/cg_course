@@ -30,6 +30,7 @@ private:
     int _width, _height;         // ширина и высота экрана вывода изображения
 
     vector<Point2D<int>> _getLineByBresenham(Point3D<double> &p1, Point3D<double> &p2);
+    void _calcIntensityForLine(vector<Point2D<int>> &line, double IPStart, double IPEnd);
 
 public:
     ZBuffer();

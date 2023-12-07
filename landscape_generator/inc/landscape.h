@@ -25,6 +25,7 @@ class Landscape
 {
 private:
     Matrix<Point3D<double>> _map; // карта высот
+    int _rows, _cols;             // размеры основных ландшафтных матриц
     int _width, _lenght;          // длина и ширина карты высот (в количестве полигонов)
     int _waterlevel;              // уровень воды
 
