@@ -13,7 +13,7 @@ Landscape::Landscape(const int width, const int lenght, const int waterlevel) :
     _normalMap(width + 1, vector<pair<Vector3D<double>, Vector3D<double>>>(lenght + 1)),
     _normalVertexMap(width + 1, vector<Vector3D<double>>(lenght + 1)),
     _intensityVertexMap(width + 1, vector<double>(lenght + 1)),
-    _light(Point3D<int>(300, 300, 600), 1, 0.5)
+    _light(Point3D<int>(0, 0, 600), 1, 0.5)
 {
 }
 
@@ -46,7 +46,7 @@ void Landscape::draw(QGraphicsScene *scene)
 
     Matrix<Point3D<double>> screenMap = this->_mapToScreen();
 
-    this->_calcZBuffer(screenMap);
+    //    this->_calcZBuffer(screenMap);
     this->_calcNormalForEachPlane();
     this->_calcNormalForEachVertex();
     this->_calcIntensityForEachVertex();
@@ -99,8 +99,6 @@ void Landscape::_drawMap(QGraphicsScene *scene) const
 void Landscape::_calcZBuffer(const Matrix<Point3D<double>> &screenMap)
 {
     std::cout << "[B] _calcZBuffer" << std::endl;
-
-    this->_zBuffer.clean();
 
     // идем по всем квадратам ландшафной сетки
     for (int i = 0; i < this->_rows - 1; ++i)
@@ -321,6 +319,8 @@ void Landscape::_printVertexIntensity()
 void Landscape::_calcFramebuffer(const Matrix<Point3D<double>> &screenMap)
 {
     std::cout << "[B] _calcFramebuffer" << std::endl;
+
+    this->_zBuffer.clean();
 
     // идем по всем квадратам ландшафной сетки
     for (int i = 0; i < this->_rows - 1; ++i)

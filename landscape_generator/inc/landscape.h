@@ -72,7 +72,6 @@ public:
 public:
     static const int default_width = 100, default_lenght = 100;
     static const int default_waterlevel = 100;
-
     static const int poly_size = 5;
 };
 

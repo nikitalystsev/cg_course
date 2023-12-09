@@ -24,11 +24,7 @@ public:
 private slots:
     void on_printLandscape_clicked();
 
-    void on_verticalSlider_actionTriggered(int action);
-
-    void on_verticalSlider_rangeChanged(int min, int max);
-
-    void on_verticalSlider_valueChanged(int value);
+    void on_changeWaterlevel_valueChanged(int value);
 
 private:
     Ui::MainWindow *ui;

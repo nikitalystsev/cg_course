@@ -31,24 +31,8 @@ void MainWindow::on_printLandscape_clicked()
     this->_landscape.draw(ui->view->scene());
 }
 
-void MainWindow::on_verticalSlider_actionTriggered(int action)
+void MainWindow::on_changeWaterlevel_valueChanged(int value)
 {
-    //    std::cout << "call verticalSlider actionTriggered" << std::endl;
-    //    std::cout << "action = " << action << std::endl;
-}
-
-void MainWindow::on_verticalSlider_rangeChanged(int min, int max)
-{
-    //    std::cout << "call verticalSlider rangeChanged" << std::endl;
-    //    std::cout << "min = " << min << std::endl;
-    //    std::cout << "max = " << max << std::endl;
-}
-
-void MainWindow::on_verticalSlider_valueChanged(int value)
-{
-    //    std::cout << "call verticalSlider valueChanged" << std::endl;
-    //    std::cout << "value = " << value << std::endl;
-
     this->_landscape.setWaterlevel(value);
 
     this->_landscape.generateHeightMap();
