@@ -2,18 +2,18 @@
 #include "../inc/perlinNoise.h"
 
 Landscape::Landscape() :
-    Landscape(default_width, default_lenght, default_waterlevel, PerlinNoise(22, 8, 1, 4, 1, 0.25))
+    Landscape(default_width, default_lenght, default_waterlevel, PerlinNoise(22, 8, 1, 4, 1, 0.25), Light(Point3D<int>(0, 0, 600), 1, 0.5))
 {
 }
 
-Landscape::Landscape(const int width, const int lenght, const int waterlevel, const PerlinNoise &paramNoise) :
-    _width(width), _lenght(lenght), _waterlevel(waterlevel), _paramNoise(paramNoise),
+Landscape::Landscape(const int width, const int lenght, const int waterlevel, const PerlinNoise &paramNoise, const Light &light) :
+    _width(width), _lenght(lenght), _waterlevel(waterlevel), _paramNoise(paramNoise), _light(light),
     _rows(width + 1), _cols(lenght + 1),
     _map(width + 1, vector<Point3D<double>>(lenght + 1)),
+    _withoutWaterlevelMap(width + 1, vector<double>(lenght + 1)),
     _normalMap(width + 1, vector<pair<Vector3D<double>, Vector3D<double>>>(lenght + 1)),
     _normalVertexMap(width + 1, vector<Vector3D<double>>(lenght + 1)),
-    _intensityVertexMap(width + 1, vector<double>(lenght + 1)),
-    _light(Point3D<int>(0, 0, 600), 1, 0.5)
+    _intensityVertexMap(width + 1, vector<double>(lenght + 1))
 {
 }
 
@@ -31,10 +31,15 @@ void Landscape::generateHeightMap()
 
             height *= 1000;
 
+            if (height > this->_maxHeight)
+                this->_maxHeight = height;
+
             if (height < _waterlevel)
                 this->_map[i][j].set(i * this->poly_size, j * this->poly_size, _waterlevel);
             else
                 this->_map[i][j].set(i * this->poly_size, j * this->poly_size, height);
+
+            this->_withoutWaterlevelMap[i][j] = height;
         }
 }
 
@@ -350,6 +355,28 @@ void Landscape::setWaterlevel(const int waterlevel)
     this->_waterlevel = waterlevel;
 }
 
+void Landscape::updateWaterlevel(const int waterlevel)
+{
+    for (int i = 0; i < this->_rows; ++i)
+        for (int j = 0; j < this->_cols; ++j)
+            if (this->_withoutWaterlevelMap[i][j] < waterlevel)
+                this->_map[i][j].set(i * this->poly_size, j * this->poly_size, waterlevel);
+            else
+                this->_map[i][j].set(i * this->poly_size, j * this->poly_size, this->_withoutWaterlevelMap[i][j]);
+
+    this->_waterlevel = waterlevel;
+}
+
+int Landscape::getMaxHeight() const
+{
+    return this->_maxHeight;
+}
+
+void Landscape::setMaxHeight(const double maxHeight)
+{
+    this->_maxHeight = maxHeight;
+}
+
 Point3D<double> Landscape::getCenterPoint() const
 {
     return Point3D<double>(this->_centerPoint);
@@ -368,4 +395,14 @@ PerlinNoise Landscape::getParamNoise() const
 void Landscape::setParamNoise(const PerlinNoise &paramNoise)
 {
     this->_paramNoise = paramNoise;
+}
+
+Light Landscape::getLight() const
+{
+    return Light(this->_light);
+}
+
+void Landscape::setLight(const Light &light)
+{
+    this->_light = light;
 }

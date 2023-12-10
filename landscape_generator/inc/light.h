@@ -13,13 +13,18 @@ private:
     Point3D<int> _position;
     // интенсивность точечного источника
     double _I_0;
-    // коэффициент диффузного отражения
+    // коэффициент диффузного отражения (0 <= K_d <= 1)
     double _K_d;
     // мощность рассеянного освещения пока что не берем
 
 public:
     Light();
     Light(const Point3D<int> &position, double I_0, double K_d);
+    explicit Light(const Light &other);
+    Light(Light &&other) noexcept;
+
+    Light &operator=(const Light &other);
+    Light &operator=(Light &&other) noexcept;
 
     Vector3D<double> caclDirectionVector(const Point3D<double> &vertex);
 

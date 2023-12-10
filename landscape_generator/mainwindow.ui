@@ -214,12 +214,16 @@
        </widget>
       </item>
       <item>
-       <layout class="QGridLayout" name="gridLayout_2">
+       <layout class="QGridLayout" name="positionLightLayout">
         <item row="1" column="1">
-         <widget class="QSpinBox" name="spinBox_2"/>
+         <widget class="QSpinBox" name="lightYSpinBox">
+          <property name="maximum">
+           <number>10000</number>
+          </property>
+         </widget>
         </item>
         <item row="0" column="0">
-         <widget class="QLabel" name="label">
+         <widget class="QLabel" name="lightXLabel">
           <property name="text">
            <string>X</string>
           </property>
@@ -229,10 +233,14 @@
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="QSpinBox" name="spinBox"/>
+         <widget class="QSpinBox" name="lightXSpinBox">
+          <property name="maximum">
+           <number>10000</number>
+          </property>
+         </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QLabel" name="label_7">
+         <widget class="QLabel" name="lightYLabel">
           <property name="text">
            <string>Y</string>
           </property>
@@ -242,7 +250,7 @@
          </widget>
         </item>
         <item row="2" column="0">
-         <widget class="QLabel" name="label_8">
+         <widget class="QLabel" name="lightZLabel">
           <property name="text">
            <string>Z</string>
           </property>
@@ -252,16 +260,56 @@
          </widget>
         </item>
         <item row="2" column="1">
-         <widget class="QSpinBox" name="spinBox_3"/>
+         <widget class="QSpinBox" name="lightZSpinBox">
+          <property name="maximum">
+           <number>10000</number>
+          </property>
+          <property name="value">
+           <number>600</number>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
       <item>
        <layout class="QGridLayout" name="gridLayout_3">
         <item row="4" column="0">
-         <widget class="QDoubleSpinBox" name="doubleSpinBox_7"/>
+         <widget class="QDoubleSpinBox" name="I_0SpinBox">
+          <property name="maximum">
+           <double>10.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.500000000000000</double>
+          </property>
+          <property name="value">
+           <double>1.000000000000000</double>
+          </property>
+         </widget>
         </item>
-        <item row="12" column="0">
+        <item row="5" column="0">
+         <widget class="QLabel" name="paramPerlin_4">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+            <italic>true</italic>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Афинные преобразования&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="textFormat">
+           <enum>Qt::AutoText</enum>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <property name="wordWrap">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="10" column="0">
          <widget class="QPushButton" name="printLandscape">
           <property name="text">
            <string>Отобразить ландшафт</string>
@@ -269,41 +317,34 @@
          </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QLabel" name="label_9">
+         <widget class="QLabel" name="K_dLabel">
           <property name="text">
-           <string>Коэфф-т диффузного  освещения</string>
+           <string>Коэфф-т диффузного отражения</string>
           </property>
          </widget>
         </item>
         <item row="3" column="0">
-         <widget class="QLabel" name="label_10">
+         <widget class="QLabel" name="I_0Label">
           <property name="text">
            <string>Интенсивность источника</string>
           </property>
          </widget>
         </item>
-        <item row="5" column="0">
-         <widget class="QLabel" name="label_11">
-          <property name="text">
-           <string>Мощность рассеянного освещения</string>
-          </property>
-         </widget>
-        </item>
-        <item row="8" column="0">
+        <item row="6" column="0">
          <widget class="QRadioButton" name="radioButton">
           <property name="text">
            <string>Поворот</string>
           </property>
          </widget>
         </item>
-        <item row="9" column="0">
+        <item row="7" column="0">
          <widget class="QRadioButton" name="radioButton_2">
           <property name="text">
            <string>Перемещение</string>
           </property>
          </widget>
         </item>
-        <item row="10" column="0">
+        <item row="8" column="0">
          <widget class="QRadioButton" name="radioButton_3">
           <property name="text">
            <string>Масштабирование</string>
@@ -311,9 +352,19 @@
          </widget>
         </item>
         <item row="2" column="0">
-         <widget class="QDoubleSpinBox" name="doubleSpinBox_6"/>
+         <widget class="QDoubleSpinBox" name="K_dSpinBox">
+          <property name="maximum">
+           <double>1.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.010000000000000</double>
+          </property>
+          <property name="value">
+           <double>0.500000000000000</double>
+          </property>
+         </widget>
         </item>
-        <item row="11" column="0">
+        <item row="9" column="0">
          <layout class="QGridLayout" name="gridLayout_4">
           <item row="1" column="1">
            <widget class="QSpinBox" name="spinBox_4"/>
@@ -356,38 +407,12 @@
           </item>
          </layout>
         </item>
-        <item row="6" column="0">
-         <widget class="QDoubleSpinBox" name="doubleSpinBox_8"/>
-        </item>
-        <item row="7" column="0">
-         <widget class="QLabel" name="paramPerlin_4">
-          <property name="font">
-           <font>
-            <pointsize>12</pointsize>
-            <italic>true</italic>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Афинные преобразования&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-          </property>
-          <property name="textFormat">
-           <enum>Qt::AutoText</enum>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-          <property name="wordWrap">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
        </layout>
       </item>
      </layout>
     </item>
     <item>
-     <widget class="QSlider" name="changeWaterlevel">
+     <widget class="QSlider" name="waterlevelSlider">
       <property name="minimum">
        <number>100</number>
       </property>
@@ -400,7 +425,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QGraphicsView" name="view">
+     <widget class="QGraphicsView" name="landscapeGraphicsView">
       <property name="sceneRect">
        <rectf>
         <x>0.000000000000000</x>

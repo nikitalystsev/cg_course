@@ -11,6 +11,38 @@ Light::Light(const Point3D<int> &position, double I_0, double K_d) :
 {
 }
 
+Light::Light(const Light &other)
+{
+    this->_position = other._position;
+    this->_I_0 = other._I_0;
+    this->_K_d = other._K_d;
+}
+
+Light::Light(Light &&other) noexcept
+{
+    this->_position = other._position;
+    this->_I_0 = other._I_0;
+    this->_K_d = other._K_d;
+}
+
+Light &Light::operator=(const Light &other)
+{
+    this->_position = other._position;
+    this->_I_0 = other._I_0;
+    this->_K_d = other._K_d;
+
+    return *this;
+}
+
+Light &Light::operator=(Light &&other) noexcept
+{
+    this->_position = other._position;
+    this->_I_0 = other._I_0;
+    this->_K_d = other._K_d;
+
+    return *this;
+}
+
 Vector3D<double> Light::caclDirectionVector(const Point3D<double> &vertex)
 {
     // вектор от точки до источника
@@ -24,10 +56,9 @@ Vector3D<double> Light::caclDirectionVector(const Point3D<double> &vertex)
 double Light::caclIntensityAtVertex(const Vector3D<double> &direction,
                                     const Vector3D<double> &normal)
 {
-    // согласно с формулой для модели освещения Ламберта
     double _scalar_product = Vector3D<double>::scalar_product(direction, normal);
-
-    double I = std::max(0.0, _scalar_product);
+    // согласно с формулой для модели освещения Ламберта
+    double I = this->_I_0 * this->_K_d * std::max(0.0, _scalar_product);
 
     return I;
 }

@@ -19,12 +19,16 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private:
+    void __changeParamNoise();
+    void __changeParamLight();
+
 private slots:
-    void create_landscape();
+    void _changeParamNoise();
 
-    void on_printLandscape_clicked();
+    void _changeParamLight();
 
-    void on_changeWaterlevel_valueChanged(int value);
+    void on_waterlevelSlider_valueChanged(int value);
 
 private:
     Ui::MainWindow *ui;

@@ -5,24 +5,38 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->view->setScene(new QGraphicsScene);
-    ui->view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    ui->view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->landscapeGraphicsView->setScene(new QGraphicsScene);
+    ui->landscapeGraphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->landscapeGraphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     connect(ui->seedSpinBox, SIGNAL(valueChanged(int)), this,
-            SLOT(create_landscape()));
+            SLOT(_changeParamNoise()));
     connect(ui->octavesSpinBox, SIGNAL(valueChanged(int)), this,
-            SLOT(create_landscape()));
+            SLOT(_changeParamNoise()));
     connect(ui->frequencySpinBox, SIGNAL(valueChanged(double)), this,
-            SLOT(create_landscape()));
+            SLOT(_changeParamNoise()));
     connect(ui->lacunaritySpinBox, SIGNAL(valueChanged(double)), this,
-            SLOT(create_landscape()));
+            SLOT(_changeParamNoise()));
     connect(ui->amplitudeSpinBox, SIGNAL(valueChanged(double)), this,
-            SLOT(create_landscape()));
+            SLOT(_changeParamNoise()));
     connect(ui->persistenceSpinBox, SIGNAL(valueChanged(double)), this,
-            SLOT(create_landscape()));
+            SLOT(_changeParamNoise()));
 
-    this->create_landscape();
+    connect(ui->lightXSpinBox, SIGNAL(valueChanged(int)), this,
+            SLOT(_changeParamLight()));
+    connect(ui->lightYSpinBox, SIGNAL(valueChanged(int)), this,
+            SLOT(_changeParamLight()));
+    connect(ui->lightZSpinBox, SIGNAL(valueChanged(int)), this,
+            SLOT(_changeParamLight()));
+
+    connect(ui->K_dSpinBox, SIGNAL(valueChanged(double)), this,
+            SLOT(_changeParamLight()));
+    connect(ui->I_0SpinBox, SIGNAL(valueChanged(double)), this,
+            SLOT(_changeParamLight()));
+
+    this->__changeParamNoise();
+    this->__changeParamLight();
+    this->_landscape.draw(ui->landscapeGraphicsView->scene());
 }
 
 MainWindow::~MainWindow()
@@ -30,10 +44,8 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::create_landscape()
+void MainWindow::__changeParamNoise()
 {
-    std::cout << "[B] create_landscape" << std::endl;
-
     int seed = ui->seedSpinBox->value();
     int octaves = ui->octavesSpinBox->value();
     double frequency = ui->frequencySpinBox->value();
@@ -44,22 +56,36 @@ void MainWindow::create_landscape()
     PerlinNoise paramNoise(seed, octaves, frequency, lacunarity, amplitude, persistence);
 
     this->_landscape.setParamNoise(paramNoise);
-
     this->_landscape.generateHeightMap();
-    this->_landscape.draw(ui->view->scene());
 }
 
-void MainWindow::on_printLandscape_clicked()
+void MainWindow::_changeParamNoise()
 {
-    //    std::cout << "call print_landscape" << std::endl;
-
-    this->_landscape.draw(ui->view->scene());
+    this->__changeParamNoise();
+    this->_landscape.draw(ui->landscapeGraphicsView->scene());
 }
 
-void MainWindow::on_changeWaterlevel_valueChanged(int value)
+void MainWindow::__changeParamLight()
 {
-    this->_landscape.setWaterlevel(value);
+    Point3D<int> lightPosition(ui->lightXSpinBox->value(),
+                               ui->lightYSpinBox->value(),
+                               ui->lightZSpinBox->value());
 
-    this->_landscape.generateHeightMap();
-    this->_landscape.draw(ui->view->scene());
+    double K_d = ui->K_dSpinBox->value();
+    double I_0 = ui->I_0SpinBox->value();
+
+    Light light(lightPosition, K_d, I_0);
+    this->_landscape.setLight(light);
+}
+
+void MainWindow::_changeParamLight()
+{
+    this->__changeParamLight();
+    this->_landscape.draw(ui->landscapeGraphicsView->scene());
+}
+
+void MainWindow::on_waterlevelSlider_valueChanged(int value)
+{
+    this->_landscape.updateWaterlevel(value);
+    this->_landscape.draw(ui->landscapeGraphicsView->scene());
 }
