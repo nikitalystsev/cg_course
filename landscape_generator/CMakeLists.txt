@@ -24,8 +24,6 @@ set(PROJECT_SOURCES
         src/light.cpp
         inc/light.h
         inc/transform.h
-#        inc/vector3d.h
-#        inc/vector2d.h
         inc/landscape.h
         src/landscape.cpp
         inc/perlinNoise.h
@@ -34,6 +32,8 @@ set(PROJECT_SOURCES
         src/zbuffer.cpp
         inc/plane.h
         src/plane.cpp
+        inc/camera.h
+        src/camera.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

@@ -33,9 +33,9 @@ public:
     template <typename T2>
     decltype(auto) operator-(const Vector3D<T2> &other) const;
     template <typename T2>
-    decltype(auto) operator*(const T2 & elem) const;
+    decltype(auto) operator*(const T2 &elem) const;
     template <typename T2>
-    decltype(auto) operator/(const T2 & elem) const;
+    decltype(auto) operator/(const T2 &elem) const;
 
     template <typename T2>
     Vector3D<T> &operator+=(const Vector3D<T2> &other);
@@ -45,6 +45,9 @@ public:
     Vector3D<T> &operator*=(const T2 &num);
     template <typename T2>
     Vector3D<T> &operator/=(const T2 &num);
+
+    T &operator[](int index);
+    const T &operator[](int index) const;
 
     void set(const T x, const T y, const T z);
 
@@ -64,6 +67,8 @@ public:
 public:
     template <typename T1, typename T2>
     static double scalar_product(const Vector3D<T1> &v1, const Vector3D<T2> &v2);
+    template <typename T1, typename T2>
+    static decltype(auto) vector_product(const Vector3D<T1> &v1, const Vector3D<T2> &v2);
 };
 
 template <typename T>
@@ -236,6 +241,28 @@ Vector3D<T> &Vector3D<T>::operator/=(const T2 &num)
 }
 
 template <typename T>
+T &Vector3D<T>::operator[](int index)
+{
+    if (index == 0)
+        return this->_x;
+    if (index == 1)
+        return this->_y;
+    if (index == 2)
+        return this->_z;
+}
+
+template <typename T>
+const T &Vector3D<T>::operator[](int index) const
+{
+    if (index == 0)
+        return this->_x;
+    if (index == 1)
+        return this->_y;
+    if (index == 2)
+        return this->_z;
+}
+
+template <typename T>
 void Vector3D<T>::set(const T x, const T y, const T z)
 {
     this->_x = x;
@@ -310,6 +337,23 @@ template <typename T1, typename T2>
 double Vector3D<T>::scalar_product(const Vector3D<T1> &v1, const Vector3D<T2> &v2)
 {
     double res = v1.getX() * v2.getX() + v1.getY() * v2.getY() + v1.getZ() * v2.getZ();
+
+    return res;
+}
+
+template <typename T>
+template <typename T1, typename T2>
+decltype(auto) Vector3D<T>::vector_product(const Vector3D<T1> &v1, const Vector3D<T2> &v2)
+{
+    Vector3D<decltype(v1.getX() * v2.getX())> res;
+
+    //    result.x_ = y_ * other.z() - z_ * other.y();
+    //    result.y_ = z_ * other.x() - x_ * other.z();
+    //    result.z_ = x_ * other.y() - y_ * other.x();
+
+    res.setX(v1.getY() * v2.getZ() - v1.getZ() * v2.getY());
+    res.setY(v1.getZ() * v2.getX() - v1.getX() * v2.getZ());
+    res.setZ(v1.getX() * v2.getY() - v1.getY() * v2.getX());
 
     return res;
 }
