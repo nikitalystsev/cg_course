@@ -53,34 +53,24 @@ void Landscape::draw(QGraphicsScene *scene)
     this->_calcNormalForEachPlane();
     this->_calcNormalForEachVertex();
     this->_calcIntensityForEachVertex();
-    this->_calcFramebuffer(screenMap);
+    //    this->_calcFramebuffer(screenMap);
+    this->_calcZBuffer(screenMap);
     this->_drawMap(scene);
 }
 
 Matrix<Point3D<double>> Landscape::_mapToScreen()
 {
-    this->_calcCenterPoint();
-
     Matrix<Point3D<double>> tmp(this->_map);
 
     for (int i = 0; i < this->_rows; ++i)
         for (int j = 0; j < this->_cols; ++j)
-        {
-            this->_shiftPointToOrigin(tmp[i][j]);
-
             Transform::pointToIsometric(tmp[i][j]);
 
-            this->_shiftPointBackToOrigin(tmp[i][j]);
-            this->_movePointToCenter(tmp[i][j]);
-        }
-
-    this->_landscapeToCenterScene(tmp);
+    this->_calcCenterPoint(tmp);
 
     for (int i = 0; i < this->_rows; ++i)
         for (int j = 0; j < this->_cols; ++j)
-        {
             this->_movePointToCenter(tmp[i][j]);
-        }
 
     return tmp;
 }
@@ -111,41 +101,52 @@ void Landscape::_calcZBuffer(const Matrix<Point3D<double>> &screenMap)
 {
     std::cout << "[B] _calcZBuffer" << std::endl;
 
+    this->_zBuffer.clean();
+
     // идем по всем квадратам ландшафной сетки
     for (int i = 0; i < this->_rows - 1; ++i)
         for (int j = 0; j < this->_cols - 1; ++j)
         {
             // в каждом квадрате сетки 2 треугольника - 2 плоскости
             Plane plane1(screenMap[i][j], screenMap[i + 1][j], screenMap[i + 1][j + 1]);
-            Plane plane2(screenMap[i + 1][j + 1], screenMap[i][j + 1], screenMap[i][j]);
+            Plane plane2(screenMap[i][j], screenMap[i][j + 1], screenMap[i + 1][j + 1]);
 
-            // определяем текущее состояние z-буффера
-            _zBuffer.calcZBufferByPlane(plane1);
-            _zBuffer.calcZBufferByPlane(plane2);
+            // определяем интенсивности вершин квадрата
+            double I1 = this->_intensityVertexMap[i][j];
+            double I2 = this->_intensityVertexMap[i + 1][j];
+            double I3 = this->_intensityVertexMap[i + 1][j + 1];
+            double I4 = this->_intensityVertexMap[i][j + 1];
+
+            //            // определяем текущее состояние z-буффера
+            _zBuffer.calcZBufferByPlane(plane1, I1, I2, I3);
+            _zBuffer.calcZBufferByPlane(plane2, I1, I4, I3);
+            // определяем текущее состояние буфера кадра
+            //            _zBuffer.calсFramebufferByPlane(plane1, I1, I2, I3);
+            //            _zBuffer.calсFramebufferByPlane(plane2, I1, I4, I3);
         }
 }
 
-void Landscape::_calcCenterPoint()
-{
-    Point3D<double> p1(this->_map[0][0]);
-    Point3D<double> p2(this->_map[this->_rows - 1][this->_cols - 1]);
+// void Landscape::_calcCenterPoint()
+//{
+//     Point3D<double> p1(this->_map[0][0]);
+//     Point3D<double> p2(this->_map[this->_rows - 1][this->_cols - 1]);
 
-    this->_centerPoint.setX((p1.getX() + p2.getX()) / 2);
-    this->_centerPoint.setY((p1.getY() + p2.getY()) / 2);
+//    this->_centerPoint.setX((p1.getX() + p2.getX()) / 2);
+//    this->_centerPoint.setY((p1.getY() + p2.getY()) / 2);
 
-    double zMin = p1.getZ(), zMax = p1.getZ();
+//    double zMin = p1.getZ(), zMax = p1.getZ();
 
-    for (int i = 0; i < this->_rows; ++i)
-        for (int j = 0; j < this->_cols; ++j)
-        {
-            if (this->_map[i][j].getZ() < zMin)
-                zMin = this->_map[i][j].getZ();
-            if (this->_map[i][j].getZ() > zMax)
-                zMax = this->_map[i][j].getZ();
-        }
+//    for (int i = 0; i < this->_rows; ++i)
+//        for (int j = 0; j < this->_cols; ++j)
+//        {
+//            if (this->_map[i][j].getZ() < zMin)
+//                zMin = this->_map[i][j].getZ();
+//            if (this->_map[i][j].getZ() > zMax)
+//                zMax = this->_map[i][j].getZ();
+//        }
 
-    this->_centerPoint.setZ((zMin + zMax) / 2);
-}
+//    this->_centerPoint.setZ((zMin + zMax) / 2);
+//}
 
 void Landscape::_shiftPointToOrigin(Point3D<double> &point)
 {
@@ -167,29 +168,35 @@ void Landscape::_shiftPointBackToOrigin(Point3D<double> &point)
 
 void Landscape::_movePointToCenter(Point3D<double> &point)
 {
-    double x = point.getX() + this->_zBuffer.getWidth() / 2 - this->_centerPoint.getX();
+    double x = point.getX() + this->_centerPoint.getX();
     double y = point.getY() + this->_zBuffer.getHeight() / 2 - this->_centerPoint.getY();
     double z = point.getZ();
 
     point.set(x, y, z);
 }
 
-void Landscape::_landscapeToCenterScene(Matrix<Point3D<double>> &screenMap)
+void Landscape::_calcCenterPoint(Matrix<Point3D<double>> &screenMap)
 {
-    Point2D<int> pMin(screenMap[0][0].getX(), screenMap[0][0].getY());
-    Point2D<int> pMax(screenMap[0][0].getX(), screenMap[0][0].getY());
+    int xMin = screenMap[0][0].getX(), yMin = screenMap[0][0].getY();
+    int xMax = screenMap[0][0].getX(), yMax = screenMap[0][0].getY();
 
     for (int i = 0; i < this->_rows; ++i)
         for (int j = 0; j < this->_cols; ++j)
         {
-            if (screenMap[i][j].getX() < pMin.getX() && screenMap[i][j].getY() < pMin.getY())
-                pMin.set(screenMap[i][j].getX(), screenMap[i][j].getY());
-            if (screenMap[i][j].getX() > pMax.getX() && screenMap[i][j].getY() > pMax.getY())
-                pMax.set(screenMap[i][j].getX(), screenMap[i][j].getY());
+            int currX = screenMap[i][j].getX(), currY = screenMap[i][j].getY();
+
+            if (currX < xMin)
+                xMin = currX;
+            if (currY < yMin)
+                yMin = currY;
+            if (currX > xMax)
+                xMax = currX;
+            if (currY > yMax)
+                yMax = currY;
         }
 
-    this->_centerPoint.setX((pMin.getX() + pMax.getX()) / 2);
-    this->_centerPoint.setY((pMin.getY() + pMax.getY()) / 2);
+    this->_centerPoint.setX((xMin + xMax) / 2);
+    this->_centerPoint.setY((yMin + yMax) / 2);
 }
 
 void Landscape::_calcNormalForEachPlane()
@@ -367,7 +374,7 @@ void Landscape::_calcFramebuffer(const Matrix<Point3D<double>> &screenMap)
 
             // определяем текущее состояние буфера кадра
             _zBuffer.calсFramebufferByPlane(plane1, I1, I2, I3);
-            _zBuffer.calсFramebufferByPlane(plane2, I3, I4, I1);
+            _zBuffer.calсFramebufferByPlane(plane2, I1, I4, I3);
         }
 }
 

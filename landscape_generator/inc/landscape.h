@@ -38,7 +38,8 @@ private:
     void _calcZBuffer(const Matrix<Point3D<double>> &screenMap);
 
     Point3D<double> _centerPoint; // центральная точка всего ландшафта
-    void _calcCenterPoint();
+    void _calcCenterPoint(Matrix<Point3D<double>> &screenMap);
+    //    void _calcCenterPoint();
 
     Light _light;                                                    // источник освещения
     Matrix<pair<Vector3D<double>, Vector3D<double>>> _normalMap;     // матрица векторов внешней нормали к каждой из граней
@@ -55,7 +56,7 @@ private:
     void _shiftPointToOrigin(Point3D<double> &point);
     void _shiftPointBackToOrigin(Point3D<double> &point);
     void _movePointToCenter(Point3D<double> &point);
-    void _landscapeToCenterScene(Matrix<Point3D<double>> &screenMap);
+    //    void _landscapeToCenterScene(Matrix<Point3D<double>> &screenMap);
 
     void _printPlaneNormals();
     void _printVertexNormals();

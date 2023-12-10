@@ -37,7 +37,7 @@ public:
     ZBuffer(const int width, const int height);
     ~ZBuffer();
 
-    void calcZBufferByPlane(Plane &plane);
+    void calcZBufferByPlane(Plane &plane, double IP1, double IP2, double IP3);
     void calсFramebufferByPlane(Plane &plane, double IP1, double IP2, double IP3);
     void clean();
 
@@ -47,7 +47,7 @@ public:
     QColor getFramebufElem(const int x, const int y) const;
 
 public:
-    static const int default_width = 1366, default_height = 768;
+    static const int default_width = 1311, default_height = 781;
 };
 
 #endif

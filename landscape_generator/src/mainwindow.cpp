@@ -9,6 +9,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->landscapeGraphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->landscapeGraphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
+    std::cout << "[=] ui->landscapeGraphicsView->width() = " << ui->landscapeGraphicsView->width()
+              << std::endl;
+
+    std::cout << "[=] ui->landscapeGraphicsView->height() = " << ui->landscapeGraphicsView->height()
+              << std::endl;
+
     connect(ui->seedSpinBox, SIGNAL(valueChanged(int)), this,
             SLOT(_changeParamNoise()));
     connect(ui->octavesSpinBox, SIGNAL(valueChanged(int)), this,

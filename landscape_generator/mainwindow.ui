@@ -82,7 +82,7 @@
            <double>1.000000000000000</double>
           </property>
           <property name="maximum">
-           <double>1.000000000000000</double>
+           <double>10.000000000000000</double>
           </property>
           <property name="singleStep">
            <double>0.500000000000000</double>
@@ -414,7 +414,7 @@
     <item>
      <widget class="QSlider" name="waterlevelSlider">
       <property name="minimum">
-       <number>100</number>
+       <number>0</number>
       </property>
       <property name="maximum">
        <number>400</number>
