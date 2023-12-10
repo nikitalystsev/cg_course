@@ -2,12 +2,12 @@
 #include "../inc/perlinNoise.h"
 
 Landscape::Landscape() :
-    Landscape(default_width, default_lenght, default_waterlevel)
+    Landscape(default_width, default_lenght, default_waterlevel, PerlinNoise(22, 8, 1, 4, 1, 0.25))
 {
 }
 
-Landscape::Landscape(const int width, const int lenght, const int waterlevel) :
-    _width(width), _lenght(lenght), _waterlevel(waterlevel),
+Landscape::Landscape(const int width, const int lenght, const int waterlevel, const PerlinNoise &paramNoise) :
+    _width(width), _lenght(lenght), _waterlevel(waterlevel), _paramNoise(paramNoise),
     _rows(width + 1), _cols(lenght + 1),
     _map(width + 1, vector<Point3D<double>>(lenght + 1)),
     _normalMap(width + 1, vector<pair<Vector3D<double>, Vector3D<double>>>(lenght + 1)),
@@ -21,15 +21,13 @@ Landscape::~Landscape() {}
 
 void Landscape::generateHeightMap()
 {
-    PerlinNoise alg(22, 8, 1, 4, 1, 0.25);
-
     for (int i = 0; i < this->_rows; ++i)
         for (int j = 0; j < this->_cols; ++j)
         {
             double nx = i / (double)this->_width - 0.5;
             double ny = j / (double)this->_lenght - 0.5;
 
-            double height = alg.generateNoise(nx, ny);
+            double height = this->_paramNoise.generateNoise(nx, ny);
 
             height *= 1000;
 
@@ -360,4 +358,14 @@ Point3D<double> Landscape::getCenterPoint() const
 void Landscape::setCenterPoint(const Point3D<double> &centerPoint)
 {
     this->_centerPoint = centerPoint;
+}
+
+PerlinNoise Landscape::getParamNoise() const
+{
+    return PerlinNoise(this->_paramNoise);
+}
+
+void Landscape::setParamNoise(const PerlinNoise &paramNoise)
+{
+    this->_paramNoise = paramNoise;
 }

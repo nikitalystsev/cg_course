@@ -28,8 +28,16 @@ public:
                 const double lacunarity,
                 const double amplitude,
                 const double persistence);
+    explicit PerlinNoise(const PerlinNoise &other);
+    PerlinNoise(PerlinNoise &&other) noexcept;
     ~PerlinNoise() = default;
+
+    PerlinNoise &operator=(const PerlinNoise &other);
+    PerlinNoise &operator=(PerlinNoise &&other) noexcept;
+
     double generateNoise(const double x, const double y);
+
+    void printParamNoise();
 
 public:
     static double smooth(const double t);

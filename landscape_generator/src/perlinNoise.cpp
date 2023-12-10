@@ -15,6 +15,58 @@ PerlinNoise::PerlinNoise(const int seed,
     this->_createPtable();
 }
 
+PerlinNoise::PerlinNoise(const PerlinNoise &other)
+{
+    this->_seed = other._seed;
+    this->_octaves = other._octaves;
+    this->_frequency = other._frequency;
+    this->_lacunarity = other._lacunarity;
+    this->_amplitude = other._amplitude;
+    this->_persistence = other._persistence;
+
+    this->_ptable = other._ptable;
+}
+
+PerlinNoise::PerlinNoise(PerlinNoise &&other) noexcept
+{
+    this->_seed = other._seed;
+    this->_octaves = other._octaves;
+    this->_frequency = other._frequency;
+    this->_lacunarity = other._lacunarity;
+    this->_amplitude = other._amplitude;
+    this->_persistence = other._persistence;
+
+    this->_ptable = other._ptable;
+}
+
+PerlinNoise &PerlinNoise::operator=(const PerlinNoise &other)
+{
+    this->_seed = other._seed;
+    this->_octaves = other._octaves;
+    this->_frequency = other._frequency;
+    this->_lacunarity = other._lacunarity;
+    this->_amplitude = other._amplitude;
+    this->_persistence = other._persistence;
+
+    this->_ptable = other._ptable;
+
+    return *this;
+}
+
+PerlinNoise &PerlinNoise::operator=(PerlinNoise &&other) noexcept
+{
+    this->_seed = other._seed;
+    this->_octaves = other._octaves;
+    this->_frequency = other._frequency;
+    this->_lacunarity = other._lacunarity;
+    this->_amplitude = other._amplitude;
+    this->_persistence = other._persistence;
+
+    this->_ptable = other._ptable;
+
+    return *this;
+}
+
 double PerlinNoise::generateNoise(const double x, const double y)
 {
     int octaves = this->_octaves;
@@ -90,4 +142,14 @@ double PerlinNoise::grad(int hash, double x, double y, double z)
     double v = h < 4 ? y : h == 12 || h == 14 ? x
                                               : z;
     return ((h & 1) == 0 ? u : -u) + ((h & 2) == 0 ? v : -v);
+}
+
+void PerlinNoise::printParamNoise()
+{
+    std::cout << "[=] seed        = " << this->_seed << std::endl;
+    std::cout << "[=] octaves     = " << this->_octaves << std::endl;
+    std::cout << "[=] frequency   = " << this->_frequency << std::endl;
+    std::cout << "[=] lacunarity  = " << this->_lacunarity << std::endl;
+    std::cout << "[=] amplitude   = " << this->_amplitude << std::endl;
+    std::cout << "[=] persistence = " << this->_persistence << std::endl;
 }

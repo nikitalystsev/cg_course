@@ -19,9 +19,9 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
     void create_landscape();
 
-private slots:
     void on_printLandscape_clicked();
 
     void on_changeWaterlevel_valueChanged(int value);

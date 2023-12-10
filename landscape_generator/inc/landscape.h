@@ -2,6 +2,7 @@
 #define LANDSCAPE_H
 
 #include "light.h"
+#include "perlinNoise.h"
 #include "point/point3D.h"
 #include "transform.h"
 #include "vector/vector3D.h"
@@ -29,20 +30,22 @@ private:
     int _width, _lenght;          // длина и ширина карты высот (в количестве полигонов)
     int _waterlevel;              // уровень воды
 
+    PerlinNoise _paramNoise; // параметры шума Перлина
+
     ZBuffer _zBuffer; //  удаление невидимых линий
     void _calcZBuffer(const Matrix<Point3D<double>> &screenMap);
 
     Point3D<double> _centerPoint; // центральная точка всего ландшафта
     void _calcCenterPoint();
 
-    Light _light;                                                // источник освещения
-    Matrix<pair<Vector3D<double>, Vector3D<double>>> _normalMap; // матрица векторов внешней нормали к каждой из граней
-    Matrix<Vector3D<double>> _normalVertexMap;                   // матрица векторов нормалей для каждой вершины
-    Matrix<double> _intensityVertexMap;                          // матрица интенсивностей света для каждой вершины
-    void _calcNormalForEachPlane();                              // расчет нормалей для каждой грани
-    void _calcNormalForEachVertex();                             // расчет нормалей для каждой вершины
-    void _calcIntensityForEachVertex();                          // расчет интенсивности в каждой вершине
-    void _calcFramebuffer(const Matrix<Point3D<double>> &screenMap);
+    Light _light;                                                    // источник освещения
+    Matrix<pair<Vector3D<double>, Vector3D<double>>> _normalMap;     // матрица векторов внешней нормали к каждой из граней
+    Matrix<Vector3D<double>> _normalVertexMap;                       // матрица векторов нормалей для каждой вершины
+    Matrix<double> _intensityVertexMap;                              // матрица интенсивностей света для каждой вершины
+    void _calcNormalForEachPlane();                                  // расчет нормалей для каждой грани
+    void _calcNormalForEachVertex();                                 // расчет нормалей для каждой вершины
+    void _calcIntensityForEachVertex();                              // расчет интенсивности в каждой вершине
+    void _calcFramebuffer(const Matrix<Point3D<double>> &screenMap); // расчет буфера кадра
 
     // методы для визуализации изображения
     Matrix<Point3D<double>> _mapToScreen();
@@ -57,7 +60,7 @@ private:
 
 public:
     Landscape();
-    Landscape(const int width, const int lenght, const int waterlevel);
+    Landscape(const int width, const int lenght, const int waterlevel, const PerlinNoise &paramNoise);
     ~Landscape();
 
     void generateHeightMap();
@@ -69,9 +72,12 @@ public:
     Point3D<double> getCenterPoint() const;
     void setCenterPoint(const Point3D<double> &centerPoint);
 
+    PerlinNoise getParamNoise() const;
+    void setParamNoise(const PerlinNoise &paramNoise);
+
 public:
     static const int default_width = 100, default_lenght = 100;
-    static const int default_waterlevel = 100;
+    static const int default_waterlevel = 0;
     static const int poly_size = 5;
 };
 
