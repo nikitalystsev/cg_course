@@ -74,6 +74,14 @@ Matrix<Point3D<double>> Landscape::_mapToScreen()
             this->_movePointToCenter(tmp[i][j]);
         }
 
+    this->_landscapeToCenterScene(tmp);
+
+    for (int i = 0; i < this->_rows; ++i)
+        for (int j = 0; j < this->_cols; ++j)
+        {
+            this->_movePointToCenter(tmp[i][j]);
+        }
+
     return tmp;
 }
 
@@ -164,6 +172,24 @@ void Landscape::_movePointToCenter(Point3D<double> &point)
     double z = point.getZ();
 
     point.set(x, y, z);
+}
+
+void Landscape::_landscapeToCenterScene(Matrix<Point3D<double>> &screenMap)
+{
+    Point2D<int> pMin(screenMap[0][0].getX(), screenMap[0][0].getY());
+    Point2D<int> pMax(screenMap[0][0].getX(), screenMap[0][0].getY());
+
+    for (int i = 0; i < this->_rows; ++i)
+        for (int j = 0; j < this->_cols; ++j)
+        {
+            if (screenMap[i][j].getX() < pMin.getX() && screenMap[i][j].getY() < pMin.getY())
+                pMin.set(screenMap[i][j].getX(), screenMap[i][j].getY());
+            if (screenMap[i][j].getX() > pMax.getX() && screenMap[i][j].getY() > pMax.getY())
+                pMax.set(screenMap[i][j].getX(), screenMap[i][j].getY());
+        }
+
+    this->_centerPoint.setX((pMin.getX() + pMax.getX()) / 2);
+    this->_centerPoint.setY((pMin.getY() + pMax.getY()) / 2);
 }
 
 void Landscape::_calcNormalForEachPlane()

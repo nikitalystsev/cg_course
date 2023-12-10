@@ -55,6 +55,7 @@ private:
     void _shiftPointToOrigin(Point3D<double> &point);
     void _shiftPointBackToOrigin(Point3D<double> &point);
     void _movePointToCenter(Point3D<double> &point);
+    void _landscapeToCenterScene(Matrix<Point3D<double>> &screenMap);
 
     void _printPlaneNormals();
     void _printVertexNormals();
