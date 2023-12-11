@@ -9,12 +9,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->landscapeGraphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->landscapeGraphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    std::cout << "[=] ui->landscapeGraphicsView->width() = " << ui->landscapeGraphicsView->width()
-              << std::endl;
-
-    std::cout << "[=] ui->landscapeGraphicsView->height() = " << ui->landscapeGraphicsView->height()
-              << std::endl;
-
     connect(ui->seedSpinBox, SIGNAL(valueChanged(int)), this,
             SLOT(_changeParamNoise()));
     connect(ui->octavesSpinBox, SIGNAL(valueChanged(int)), this,
@@ -39,6 +33,11 @@ MainWindow::MainWindow(QWidget *parent) :
             SLOT(_changeParamLight()));
     connect(ui->I_0SpinBox, SIGNAL(valueChanged(double)), this,
             SLOT(_changeParamLight()));
+
+    connect(ui->widthSpinBox, SIGNAL(valueChanged(int)), this,
+            SLOT(_changeLandscapeSize()));
+    connect(ui->lenghtSpinBox, SIGNAL(valueChanged(int)), this,
+            SLOT(_changeLandscapeSize()));
 
     this->__changeParamNoise();
     this->__changeParamLight();
@@ -87,6 +86,16 @@ void MainWindow::__changeParamLight()
 void MainWindow::_changeParamLight()
 {
     this->__changeParamLight();
+    this->_landscape.draw(ui->landscapeGraphicsView->scene());
+}
+
+void MainWindow::_changeLandscapeSize()
+{
+    int newWidth = ui->widthSpinBox->value();
+    int newLenght = ui->lenghtSpinBox->value();
+
+    this->_landscape.resize(newWidth, newLenght);
+
     this->_landscape.draw(ui->landscapeGraphicsView->scene());
 }
 

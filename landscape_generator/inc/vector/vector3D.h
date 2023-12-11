@@ -249,6 +249,7 @@ T &Vector3D<T>::operator[](int index)
         return this->_y;
     if (index == 2)
         return this->_z;
+    throw std::out_of_range("Index out of range");
 }
 
 template <typename T>
@@ -260,6 +261,7 @@ const T &Vector3D<T>::operator[](int index) const
         return this->_y;
     if (index == 2)
         return this->_z;
+    throw std::out_of_range("Index out of range");
 }
 
 template <typename T>

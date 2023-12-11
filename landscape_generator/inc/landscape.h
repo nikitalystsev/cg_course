@@ -22,6 +22,12 @@ using pair = std::pair<T1, T2>;
 template <typename T>
 using Matrix = std::vector<std::vector<T>>;
 
+struct Biomes
+{
+    QColor water = {16, 27, 130};
+    QColor other = {12, 71, 14};
+};
+
 class Landscape
 {
 private:
@@ -62,6 +68,8 @@ private:
     void _printVertexNormals();
     void _printVertexIntensity();
 
+    Matrix<double> _matrixMul(const Matrix<double> &mtr1, const Matrix<double> &mtr2);
+
 public:
     Landscape();
     Landscape(const int width, const int lenght, const int waterlevel, const PerlinNoise &paramNoise, const Light &light);
@@ -69,6 +77,8 @@ public:
 
     void generateHeightMap();
     void draw(QGraphicsScene *scene);
+
+    void resize(const int width, const int lenght);
 
     int getWaterlevel() const;
     void setWaterlevel(const int waterlevel);
@@ -85,6 +95,12 @@ public:
 
     Light getLight() const;
     void setLight(const Light &light);
+
+    int getWidth() const;
+    void setWidth(const int width);
+
+    int getLenght() const;
+    void setLenght(const int lenght);
 
 public:
     static const int default_width = 100, default_lenght = 100;

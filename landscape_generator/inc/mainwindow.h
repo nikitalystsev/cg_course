@@ -28,6 +28,8 @@ private slots:
 
     void _changeParamLight();
 
+    void _changeLandscapeSize();
+
     void on_waterlevelSlider_valueChanged(int value);
 
 private:

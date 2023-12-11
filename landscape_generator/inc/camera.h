@@ -2,6 +2,7 @@
 #define __CAMERA_H__
 
 #include "transform.h"
+#include "vector/vector2D.h"
 #include "vector/vector3D.h"
 #include <vector>
 
@@ -13,6 +14,8 @@
 #define CAMERA_FAR 1000.0f
 // Стандартный угол вертикального обзора
 #define CAMERA_FOVy 60.0f
+// Вектор, задающий верх для камеры
+#define CAMERA_UP_VECTOR Vector3D<double>(0.0f, 1.0f, 0.0f)
 
 template <typename T>
 using vector = std::vector<T>;
@@ -23,15 +26,23 @@ using Matrix = std::vector<std::vector<T>>;
 class Camera
 {
 private:
-    Vector3D<double> _position; // местоположение камеры
-    Vector3D<double> _target;   // направление камеры
-    Vector3D<double> _up;       // вектор, указывающий верх для камеры
+    Vector3D<double> _position;     // местоположение камеры
+    Vector3D<double> _target;       // направление камеры
+    Vector3D<double> _up;           // вектор, указывающий верх для камеры
+    Vector2D<double> _currRotation; // вектор текущего поворота камеры
+    Matrix<double> _view;           // матрица вида (местоположения) камеры
+    Matrix<double> _projection;     // матрица проекции камеры
 
-    Matrix<double> _view;       // матрица вида (местоположения) камеры
-    Matrix<double> _projection; // матрица проекции камеры
+public:
+    Camera(double aspect, Vector3D<double> position, Vector2D<double> rotation, double fovy = CAMERA_FOVy); // Конструктор камеры с проекцией перспективы
 
-    Matrix<double> lookAt();               // расчет матрицы вида
-    Matrix<double> calcProjectionMatrix(); // расчет матрицы перспективной проекции
+    void rotate(const Vector2D<double> &rotation);         // поворот камеры
+    void move(const Vector3D<double> &movement);           // перемещение камеры
+    void lookAt();                                         // расчет матрицы вида
+    void calcProjectionMatrix(double aspect, double fovy); // расчет матрицы перспективной проекции
+
+    Matrix<double> getView() const;
+    Matrix<double> getProjection() const;
 };
 
 #endif // __CAMERA_H__

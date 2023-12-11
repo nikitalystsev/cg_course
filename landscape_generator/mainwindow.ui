@@ -56,20 +56,79 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="lacunarityLabel">
+        <item row="5" column="0">
+         <widget class="QLabel" name="octavesLabel">
           <property name="text">
-           <string>Лакунарность</string>
+           <string>Число октав</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
-        <item row="5" column="0">
-         <widget class="QLabel" name="octavesLabel">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_2">
           <property name="text">
-           <string>Число октав</string>
+           <string>Cостояние</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QDoubleSpinBox" name="frequencySpinBox">
+          <property name="minimum">
+           <double>1.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>7.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.500000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <widget class="QSpinBox" name="octavesSpinBox">
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>10</number>
+          </property>
+          <property name="value">
+           <number>8</number>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="frequencyLabel">
+          <property name="text">
+           <string>Частота</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QDoubleSpinBox" name="persistenceSpinBox">
+          <property name="maximum">
+           <double>1.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.050000000000000</double>
+          </property>
+          <property name="value">
+           <double>0.250000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="lacunarityLabel">
+          <property name="text">
+           <string>Лакунарность</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -89,39 +148,13 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="frequencyLabel">
-          <property name="text">
-           <string>Частота</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="1">
-         <widget class="QSpinBox" name="octavesSpinBox">
-          <property name="minimum">
-           <number>1</number>
-          </property>
+        <item row="0" column="1">
+         <widget class="QSpinBox" name="seedSpinBox">
           <property name="maximum">
-           <number>10</number>
+           <number>100000</number>
           </property>
           <property name="value">
-           <number>8</number>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QDoubleSpinBox" name="frequencySpinBox">
-          <property name="minimum">
-           <double>1.000000000000000</double>
-          </property>
-          <property name="maximum">
-           <double>7.000000000000000</double>
-          </property>
-          <property name="singleStep">
-           <double>0.500000000000000</double>
+           <number>24</number>
           </property>
          </widget>
         </item>
@@ -138,36 +171,64 @@
           </property>
          </widget>
         </item>
-        <item row="4" column="1">
-         <widget class="QDoubleSpinBox" name="persistenceSpinBox">
+       </layout>
+      </item>
+      <item>
+       <widget class="QLabel" name="paramPerlin_5">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <italic>true</italic>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Размеры ландшафта</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QGridLayout" name="sizeLandscapeLayout">
+        <item row="0" column="1">
+         <widget class="QSpinBox" name="widthSpinBox">
           <property name="maximum">
-           <double>1.000000000000000</double>
-          </property>
-          <property name="singleStep">
-           <double>0.050000000000000</double>
+           <number>150</number>
           </property>
           <property name="value">
-           <double>0.250000000000000</double>
+           <number>100</number>
           </property>
          </widget>
         </item>
         <item row="0" column="0">
-         <widget class="QLabel" name="label_2">
+         <widget class="QLabel" name="widthLabel">
           <property name="text">
-           <string>Cостояние</string>
+           <string>Ширина</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
-         <widget class="QSpinBox" name="seedSpinBox">
+        <item row="1" column="0">
+         <widget class="QLabel" name="lenghtLabel">
+          <property name="text">
+           <string>Длина</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QSpinBox" name="lenghtSpinBox">
           <property name="maximum">
-           <number>100000</number>
+           <number>150</number>
           </property>
           <property name="value">
-           <number>22</number>
+           <number>100</number>
           </property>
          </widget>
         </item>
@@ -282,7 +343,7 @@
            <double>0.500000000000000</double>
           </property>
           <property name="value">
-           <double>1.000000000000000</double>
+           <double>3.000000000000000</double>
           </property>
          </widget>
         </item>

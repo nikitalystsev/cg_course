@@ -32,8 +32,8 @@ set(PROJECT_SOURCES
         src/zbuffer.cpp
         inc/plane.h
         src/plane.cpp
-        inc/camera.h
-        src/camera.cpp
+#        inc/camera.h
+#        src/camera.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

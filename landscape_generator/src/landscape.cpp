@@ -49,13 +49,42 @@ void Landscape::draw(QGraphicsScene *scene)
 
     Matrix<Point3D<double>> screenMap = this->_mapToScreen();
 
-    //    this->_calcZBuffer(screenMap);
     this->_calcNormalForEachPlane();
     this->_calcNormalForEachVertex();
     this->_calcIntensityForEachVertex();
-    //    this->_calcFramebuffer(screenMap);
     this->_calcZBuffer(screenMap);
     this->_drawMap(scene);
+}
+
+template <typename T>
+void resizeMatrix(Matrix<T> &matrix, int newWidth, int newLenght)
+{
+    matrix.resize(newWidth);
+
+    for (int i = 0; i < newWidth; ++i)
+        matrix[i].resize(newLenght);
+}
+
+void Landscape::resize(const int width, const int lenght)
+{
+    this->_width = width;
+    this->_lenght = lenght;
+    this->_rows = width + 1;
+    this->_cols = lenght + 1;
+
+    this->_map.clear();
+    this->_withoutWaterlevelMap.clear();
+    this->_normalMap.clear();
+    this->_normalVertexMap.clear();
+    this->_intensityVertexMap.clear();
+
+    resizeMatrix<Point3D<double>>(this->_map, this->_rows, this->_cols);
+    resizeMatrix<double>(this->_withoutWaterlevelMap, this->_rows, this->_cols);
+    resizeMatrix<pair<Vector3D<double>, Vector3D<double>>>(this->_normalMap, this->_rows, this->_cols);
+    resizeMatrix<Vector3D<double>>(this->_normalVertexMap, this->_rows, this->_cols);
+    resizeMatrix<double>(this->_intensityVertexMap, this->_rows, this->_cols);
+
+    this->generateHeightMap();
 }
 
 Matrix<Point3D<double>> Landscape::_mapToScreen()
@@ -64,13 +93,17 @@ Matrix<Point3D<double>> Landscape::_mapToScreen()
 
     for (int i = 0; i < this->_rows; ++i)
         for (int j = 0; j < this->_cols; ++j)
+        {
             Transform::pointToIsometric(tmp[i][j]);
+        }
 
     this->_calcCenterPoint(tmp);
 
     for (int i = 0; i < this->_rows; ++i)
         for (int j = 0; j < this->_cols; ++j)
+        {
             this->_movePointToCenter(tmp[i][j]);
+        }
 
     return tmp;
 }
@@ -117,36 +150,11 @@ void Landscape::_calcZBuffer(const Matrix<Point3D<double>> &screenMap)
             double I3 = this->_intensityVertexMap[i + 1][j + 1];
             double I4 = this->_intensityVertexMap[i][j + 1];
 
-            //            // определяем текущее состояние z-буффера
+            //  определяем текущее состояние z-буффера
             _zBuffer.calcZBufferByPlane(plane1, I1, I2, I3);
             _zBuffer.calcZBufferByPlane(plane2, I1, I4, I3);
-            // определяем текущее состояние буфера кадра
-            //            _zBuffer.calсFramebufferByPlane(plane1, I1, I2, I3);
-            //            _zBuffer.calсFramebufferByPlane(plane2, I1, I4, I3);
         }
 }
-
-// void Landscape::_calcCenterPoint()
-//{
-//     Point3D<double> p1(this->_map[0][0]);
-//     Point3D<double> p2(this->_map[this->_rows - 1][this->_cols - 1]);
-
-//    this->_centerPoint.setX((p1.getX() + p2.getX()) / 2);
-//    this->_centerPoint.setY((p1.getY() + p2.getY()) / 2);
-
-//    double zMin = p1.getZ(), zMax = p1.getZ();
-
-//    for (int i = 0; i < this->_rows; ++i)
-//        for (int j = 0; j < this->_cols; ++j)
-//        {
-//            if (this->_map[i][j].getZ() < zMin)
-//                zMin = this->_map[i][j].getZ();
-//            if (this->_map[i][j].getZ() > zMax)
-//                zMax = this->_map[i][j].getZ();
-//        }
-
-//    this->_centerPoint.setZ((zMin + zMax) / 2);
-//}
 
 void Landscape::_shiftPointToOrigin(Point3D<double> &point)
 {
@@ -168,7 +176,7 @@ void Landscape::_shiftPointBackToOrigin(Point3D<double> &point)
 
 void Landscape::_movePointToCenter(Point3D<double> &point)
 {
-    double x = point.getX() + this->_centerPoint.getX();
+    double x = point.getX() + this->_zBuffer.getWidth() / 2 - this->_centerPoint.getX();
     double y = point.getY() + this->_zBuffer.getHeight() / 2 - this->_centerPoint.getY();
     double z = point.getZ();
 
@@ -378,6 +386,21 @@ void Landscape::_calcFramebuffer(const Matrix<Point3D<double>> &screenMap)
         }
 }
 
+Matrix<double> Landscape::_matrixMul(
+    const Matrix<double> &mtr1,
+    const Matrix<double> &mtr2)
+{
+
+    Matrix<double> mtrRes(mtr1.size(), vector<double>(mtr2[0].size(), 0));
+
+    for (int i = 0; i < mtr1.size(); ++i)
+        for (int j = 0; j < mtr2[0].size(); ++j)
+            for (int k = 0; k < mtr1[0].size(); ++k)
+                mtrRes[i][j] += mtr1[i][k] * mtr2[k][j];
+
+    return mtrRes;
+}
+
 int Landscape::getWaterlevel() const
 {
     return this->_waterlevel;
@@ -438,4 +461,24 @@ Light Landscape::getLight() const
 void Landscape::setLight(const Light &light)
 {
     this->_light = light;
+}
+
+int Landscape::getWidth() const
+{
+    return this->_width;
+}
+
+void Landscape::setWidth(const int width)
+{
+    this->_width = width;
+}
+
+int Landscape::getLenght() const
+{
+    return this->_lenght;
+}
+
+void Landscape::setLenght(const int lenght)
+{
+    this->_width = lenght;
 }
