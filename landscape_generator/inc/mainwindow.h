@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include "landscape.h"
+#include "landscapeManager.h"
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
@@ -34,6 +35,9 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+
+    PerlinNoise _paramNoise;
+    Light _light;
     Landscape _landscape;
 };
 #endif // MAINWINDOW_H

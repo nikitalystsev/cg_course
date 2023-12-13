@@ -15,7 +15,7 @@
 // Стандартный угол вертикального обзора
 #define CAMERA_FOVy 60.0f
 // Вектор, задающий верх для камеры
-#define CAMERA_UP_VECTOR Vector3D<double>(0.0f, 1.0f, 0.0f)
+#define CAMERA_UP_VECTOR Vector3D<double>(0, 1, 0)
 
 template <typename T>
 using vector = std::vector<T>;
@@ -27,11 +27,13 @@ class Camera
 {
 private:
     Vector3D<double> _position;     // местоположение камеры
-    Vector3D<double> _target;       // направление камеры
-    Vector3D<double> _up;           // вектор, указывающий верх для камеры
     Vector2D<double> _currRotation; // вектор текущего поворота камеры
+    Vector3D<double> _target;       // направление камеры (точка, куда смотрит камера)
+    Vector3D<double> _up;           // вектор, указывающий верх для камеры
     Matrix<double> _view;           // матрица вида (местоположения) камеры
     Matrix<double> _projection;     // матрица проекции камеры
+
+    void _calcTarget();
 
 public:
     Camera(double aspect, Vector3D<double> position, Vector2D<double> rotation, double fovy = CAMERA_FOVy); // Конструктор камеры с проекцией перспективы

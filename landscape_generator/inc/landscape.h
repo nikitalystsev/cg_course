@@ -1,12 +1,12 @@
 #ifndef LANDSCAPE_H
 #define LANDSCAPE_H
 
+#include "camera.h"
 #include "light.h"
 #include "perlinNoise.h"
 #include "point/point3D.h"
 #include "transform.h"
 #include "vector/vector3D.h"
-#include "zbuffer.h"
 #include <QGraphicsScene>
 #include <QPainter>
 #include <cstdarg>
@@ -22,12 +22,6 @@ using pair = std::pair<T1, T2>;
 template <typename T>
 using Matrix = std::vector<std::vector<T>>;
 
-struct Biomes
-{
-    QColor water = {16, 27, 130};
-    QColor other = {12, 71, 14};
-};
-
 class Landscape
 {
 private:
@@ -38,22 +32,16 @@ private:
     int _waterlevel;                           // уровень воды
     double _maxHeight = 0;                     // максимаьная сгенерированная высота
 
-    PerlinNoise _paramNoise; // параметры шума Перлина
-
-    ZBuffer _zBuffer; //  удаление невидимых линий
     void _calcZBuffer(const Matrix<Point3D<double>> &screenMap);
 
     Point3D<double> _centerPoint; // центральная точка всего ландшафта
     void _calcCenterPoint(Matrix<Point3D<double>> &screenMap);
     //    void _calcCenterPoint();
 
-    Light _light;                                                    // источник освещения
+    Camera _camera;                                                  // камера
     Matrix<pair<Vector3D<double>, Vector3D<double>>> _normalMap;     // матрица векторов внешней нормали к каждой из граней
     Matrix<Vector3D<double>> _normalVertexMap;                       // матрица векторов нормалей для каждой вершины
-    Matrix<double> _intensityVertexMap;                              // матрица интенсивностей света для каждой вершины
-    void _calcNormalForEachPlane();                                  // расчет нормалей для каждой грани
-    void _calcNormalForEachVertex();                                 // расчет нормалей для каждой вершины
-    void _calcIntensityForEachVertex();                              // расчет интенсивности в каждой вершине
+    Matrix<double> _intensityVertexMap;                              // расчет интенсивности в каждой вершине
     void _calcFramebuffer(const Matrix<Point3D<double>> &screenMap); // расчет буфера кадра
 
     // методы для визуализации изображения
@@ -62,20 +50,12 @@ private:
     void _shiftPointToOrigin(Point3D<double> &point);
     void _shiftPointBackToOrigin(Point3D<double> &point);
     void _movePointToCenter(Point3D<double> &point);
-    //    void _landscapeToCenterScene(Matrix<Point3D<double>> &screenMap);
-
-    void _printPlaneNormals();
-    void _printVertexNormals();
-    void _printVertexIntensity();
-
-    Matrix<double> _matrixMul(const Matrix<double> &mtr1, const Matrix<double> &mtr2);
 
 public:
     Landscape();
-    Landscape(const int width, const int lenght, const int waterlevel, const PerlinNoise &paramNoise, const Light &light);
+    Landscape(const int width, const int lenght, const int waterlevel);
     ~Landscape();
 
-    void generateHeightMap();
     void draw(QGraphicsScene *scene);
 
     void resize(const int width, const int lenght);
@@ -90,17 +70,23 @@ public:
     Point3D<double> getCenterPoint() const;
     void setCenterPoint(const Point3D<double> &centerPoint);
 
-    PerlinNoise getParamNoise() const;
-    void setParamNoise(const PerlinNoise &paramNoise);
-
-    Light getLight() const;
-    void setLight(const Light &light);
-
     int getWidth() const;
     void setWidth(const int width);
 
     int getLenght() const;
     void setLenght(const int lenght);
+
+    void setMap(const Matrix<Point3D<double>> &map);
+    Matrix<Point3D<double>> &getMap();
+
+    void setNormalMap(const Matrix<pair<Vector3D<double>, Vector3D<double>>> &map);
+    Matrix<pair<Vector3D<double>, Vector3D<double>>> &getNormalMap();
+
+    void setNormalVertexMap(const Matrix<Vector3D<double>> &map);
+    Matrix<Vector3D<double>> &getNormalVertexMap();
+
+    void setIntensityVertexMap(const Matrix<double> &map);
+    Matrix<double> &getIntensityVertexMap();
 
 public:
     static const int default_width = 100, default_lenght = 100;

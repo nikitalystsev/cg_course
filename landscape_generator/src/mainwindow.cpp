@@ -60,8 +60,7 @@ void MainWindow::__changeParamNoise()
 
     PerlinNoise paramNoise(seed, octaves, frequency, lacunarity, amplitude, persistence);
 
-    this->_landscape.setParamNoise(paramNoise);
-    this->_landscape.generateHeightMap();
+    LandscapeManager::updateLandscape(this->_landscape, paramNoise, this->_light);
 }
 
 void MainWindow::_changeParamNoise()
@@ -80,7 +79,8 @@ void MainWindow::__changeParamLight()
     double I_0 = ui->I_0SpinBox->value();
 
     Light light(lightPosition, K_d, I_0);
-    this->_landscape.setLight(light);
+
+    LandscapeManager::calcIntensityForEachVertex(this->_landscape, light);
 }
 
 void MainWindow::_changeParamLight()
@@ -95,6 +95,8 @@ void MainWindow::_changeLandscapeSize()
     int newLenght = ui->lenghtSpinBox->value();
 
     this->_landscape.resize(newWidth, newLenght);
+
+    LandscapeManager::updateLandscape(this->_landscape, this->_paramNoise, this->_light);
 
     this->_landscape.draw(ui->landscapeGraphicsView->scene());
 }

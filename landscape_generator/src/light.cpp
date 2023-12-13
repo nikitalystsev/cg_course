@@ -43,26 +43,6 @@ Light &Light::operator=(Light &&other) noexcept
     return *this;
 }
 
-Vector3D<double> Light::caclDirectionVector(const Point3D<double> &vertex)
-{
-    // вектор от точки до источника
-    double xDirection = this->_position.getX() - vertex.getX();
-    double yDirection = this->_position.getY() - vertex.getY();
-    double zDirection = this->_position.getZ() - vertex.getZ();
-
-    return Vector3D<double>(xDirection, yDirection, zDirection);
-}
-
-double Light::caclIntensityAtVertex(const Vector3D<double> &direction,
-                                    const Vector3D<double> &normal)
-{
-    double _scalar_product = Vector3D<double>::scalar_product(direction, normal);
-    // согласно с формулой для модели освещения Ламберта
-    double I = this->_I_0 * this->_K_d * std::max(0.0, _scalar_product);
-
-    return I;
-}
-
 Point3D<int> Light::getPosition() const
 {
     return Point3D<int>(this->_position);

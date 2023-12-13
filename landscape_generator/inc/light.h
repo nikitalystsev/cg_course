@@ -26,13 +26,13 @@ public:
     Light &operator=(const Light &other);
     Light &operator=(Light &&other) noexcept;
 
-    Vector3D<double> caclDirectionVector(const Point3D<double> &vertex);
-
-    double caclIntensityAtVertex(const Vector3D<double> &direction,
-                                 const Vector3D<double> &normal);
-
     Point3D<int> getPosition() const;
     void setPosition(const Point3D<int> &position);
+
+    double getI_0() const { return this->_I_0; }
+    double getK_d() const { return this->_K_d; }
+    void setI_0(const double &I_0) { this->_I_0 = I_0; }
+    void setK_d(const double &K_d) { this->_K_d = K_d; }
 };
 
 #endif // LIGHT_H

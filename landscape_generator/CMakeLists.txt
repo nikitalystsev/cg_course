@@ -28,10 +28,14 @@ set(PROJECT_SOURCES
         src/landscape.cpp
         inc/perlinNoise.h
         src/perlinNoise.cpp
-        inc/zbuffer.h
-        src/zbuffer.cpp
         inc/plane.h
         src/plane.cpp
+        inc/renderer.h
+        src/renderer.cpp
+        inc/lightManager.h
+        src/lightManager.cpp
+        inc/landscapeManager.h
+        src/landscapeManager.cpp
 #        inc/camera.h
 #        src/camera.cpp
 )

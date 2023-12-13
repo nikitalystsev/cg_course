@@ -2,46 +2,23 @@
 #include "../inc/perlinNoise.h"
 
 Landscape::Landscape() :
-    Landscape(default_width, default_lenght, default_waterlevel, PerlinNoise(22, 8, 1, 4, 1, 0.25), Light(Point3D<int>(0, 0, 600), 1, 0.5))
+    Landscape(default_width, default_lenght, default_waterlevel)
 {
 }
 
-Landscape::Landscape(const int width, const int lenght, const int waterlevel, const PerlinNoise &paramNoise, const Light &light) :
-    _width(width), _lenght(lenght), _waterlevel(waterlevel), _paramNoise(paramNoise), _light(light),
+Landscape::Landscape(const int width, const int lenght, const int waterlevel) :
+    _width(width), _lenght(lenght), _waterlevel(waterlevel),
     _rows(width + 1), _cols(lenght + 1),
     _map(width + 1, vector<Point3D<double>>(lenght + 1)),
     _withoutWaterlevelMap(width + 1, vector<double>(lenght + 1)),
     _normalMap(width + 1, vector<pair<Vector3D<double>, Vector3D<double>>>(lenght + 1)),
     _normalVertexMap(width + 1, vector<Vector3D<double>>(lenght + 1)),
-    _intensityVertexMap(width + 1, vector<double>(lenght + 1))
+    _intensityVertexMap(width + 1, vector<double>(lenght + 1)),
+    _camera((double)1311 / 781, Vector3D<double>(300, -2000, 300), Vector2D<double>(0, 15), 30)
 {
 }
 
 Landscape::~Landscape() {}
-
-void Landscape::generateHeightMap()
-{
-    for (int i = 0; i < this->_rows; ++i)
-        for (int j = 0; j < this->_cols; ++j)
-        {
-            double nx = i / (double)this->_width - 0.5;
-            double ny = j / (double)this->_lenght - 0.5;
-
-            double height = this->_paramNoise.generateNoise(nx, ny);
-
-            height *= 1000;
-
-            if (height > this->_maxHeight)
-                this->_maxHeight = height;
-
-            if (height < _waterlevel)
-                this->_map[i][j].set(i * this->poly_size, j * this->poly_size, _waterlevel);
-            else
-                this->_map[i][j].set(i * this->poly_size, j * this->poly_size, height);
-
-            this->_withoutWaterlevelMap[i][j] = height;
-        }
-}
 
 void Landscape::draw(QGraphicsScene *scene)
 {
@@ -49,9 +26,6 @@ void Landscape::draw(QGraphicsScene *scene)
 
     Matrix<Point3D<double>> screenMap = this->_mapToScreen();
 
-    this->_calcNormalForEachPlane();
-    this->_calcNormalForEachVertex();
-    this->_calcIntensityForEachVertex();
     this->_calcZBuffer(screenMap);
     this->_drawMap(scene);
 }
@@ -83,8 +57,6 @@ void Landscape::resize(const int width, const int lenght)
     resizeMatrix<pair<Vector3D<double>, Vector3D<double>>>(this->_normalMap, this->_rows, this->_cols);
     resizeMatrix<Vector3D<double>>(this->_normalVertexMap, this->_rows, this->_cols);
     resizeMatrix<double>(this->_intensityVertexMap, this->_rows, this->_cols);
-
-    this->generateHeightMap();
 }
 
 Matrix<Point3D<double>> Landscape::_mapToScreen()
@@ -107,6 +79,41 @@ Matrix<Point3D<double>> Landscape::_mapToScreen()
 
     return tmp;
 }
+
+// Matrix<Point3D<double>> Landscape::_mapToScreen()
+//{
+//     Matrix<Point3D<double>> tmp(this->_map);
+
+//    Matrix<double> view = this->_camera.getView();
+//    Matrix<double> projection = this->_camera.getProjection();
+
+//    Matrix<double> vp = this->_matrixMul(view, projection);
+
+//    for (int i = 0; i < this->_rows; ++i)
+//        for (int j = 0; j < this->_cols; ++j)
+//        {
+//            Matrix<double> vertex(1, vector<double>(4, 0));
+//            vertex[0][0] = tmp[i][j].getX();
+//            vertex[0][1] = tmp[i][j].getY();
+//            vertex[0][2] = tmp[i][j].getZ();
+
+//            Matrix<double> res = this->_matrixMul(vertex, vp);
+
+//            tmp[i][j].setX(res[0][0]);
+//            tmp[i][j].setY(res[0][1]);
+//            tmp[i][j].setZ(res[0][2]);
+
+//            //            Transform::pointToIsometric(tmp[i][j]);
+//        }
+
+//    this->_calcCenterPoint(tmp);
+
+//    for (int i = 0; i < this->_rows; ++i)
+//        for (int j = 0; j < this->_cols; ++j)
+//            this->_movePointToCenter(tmp[i][j]);
+
+//    return tmp;
+//}
 
 void Landscape::_drawMap(QGraphicsScene *scene) const
 {
@@ -207,159 +214,6 @@ void Landscape::_calcCenterPoint(Matrix<Point3D<double>> &screenMap)
     this->_centerPoint.setY((yMin + yMax) / 2);
 }
 
-void Landscape::_calcNormalForEachPlane()
-{
-    std::cout << "[B] _calcNormalForEachPlane" << std::endl;
-
-    // идем по всем квадратам ландшафной сетки
-    for (int i = 0; i < this->_rows - 1; ++i)
-        for (int j = 0; j < this->_cols - 1; ++j)
-        {
-            // в каждом квадрате сетки 2 треугольника - 2 плоскости
-            Plane plane1(this->_map[i][j], this->_map[i + 1][j], this->_map[i + 1][j + 1]);
-            Plane plane2(this->_map[i][j], this->_map[i + 1][j + 1], this->_map[i][j + 1]);
-
-            // получаем вектора внешних нормалей к граням
-            Vector3D<double> normalPlane1(plane1.getA(), plane1.getB(), plane1.getC());
-            Vector3D<double> normalPlane2(plane2.getA(), plane2.getB(), plane2.getC());
-
-            normalPlane1.normalize();
-            normalPlane2.normalize();
-
-            pair<Vector3D<double>, Vector3D<double>> normals(normalPlane1, normalPlane2);
-
-            this->_normalMap[i][j] = normals;
-        }
-
-    // this->_printPlaneNormals();
-}
-
-void Landscape::_printPlaneNormals()
-{
-    // идем по всем квадратам ландшафной сетки
-    for (int i = 0; i < this->_rows - 1; ++i)
-        for (int j = 0; j < this->_cols - 1; ++j)
-        {
-            std::cout << "[=] Первый:" << std::endl;
-            this->_normalMap[i][j].first.print();
-            std::cout << "[=] Второй:" << std::endl;
-            this->_normalMap[i][j].second.print();
-        }
-}
-
-void Landscape::_calcNormalForEachVertex()
-{
-    std::cout << "[B] _calcNormalForEachVertex" << std::endl;
-
-    // идем по всем вершинам ландшафтной сетки
-    for (int i = 0; i < this->_rows; ++i)
-        for (int j = 0; j < this->_cols; ++j)
-        {
-            Vector3D<double> avgNormal;
-            // левая верхняя и правая нижняя вершины
-            if ((i == 0 && j == 0) || (i == this->_rows - 1 && j == this->_cols - 1))
-            {
-                if (i == 0 && j == 0) // левая верхняя
-                {
-                    Vector3D<double> normal1(this->_normalMap[i][j].first);
-                    Vector3D<double> normal2(this->_normalMap[i][j].second);
-                    avgNormal = (normal1 + normal2) / 2;
-                }
-                else // правая нижняя
-                {
-                    Vector3D<double> normal1(this->_normalMap[i - 1][j - 1].first);
-                    Vector3D<double> normal2(this->_normalMap[i - 1][j - 1].second);
-                    avgNormal = (normal1 + normal2) / 2;
-                }
-            }
-            // правая верхняя и левая нижняя вершина
-            else if ((i == 0 && j == this->_cols - 1) || (i == this->_rows - 1 && j == 0))
-            {
-                if (i == 0 && j == this->_cols - 1) // правая верхняя
-                    avgNormal = this->_normalMap[i][j - 1].first;
-                else // левая верхняя
-                    avgNormal = this->_normalMap[i - 1][j].second;
-            }
-            // вершины по краям карты (с 3-мя примыкающими гранями)
-            else if (i == 0 || j == 0)
-            {
-                if (i == 0) // первая строка
-                {
-                    Vector3D<double> normal1(this->_normalMap[i][j].first);
-                    Vector3D<double> normal2(this->_normalMap[i][j].second);
-                    Vector3D<double> normal3(this->_normalMap[i][j - 1].first);
-                    avgNormal = (normal1 + normal2 + normal3) / 3;
-                }
-                else // первый столбец
-                {
-                    Vector3D<double> normal1(this->_normalMap[i][j].first);
-                    Vector3D<double> normal2(this->_normalMap[i][j].second);
-                    Vector3D<double> normal3(this->_normalMap[i - 1][j].second);
-                    avgNormal = (normal1 + normal2 + normal3) / 3;
-                }
-            }
-            else // внутренние точки
-            {
-                Vector3D<double> normal1(this->_normalMap[i - 1][j - 1].first);
-                Vector3D<double> normal2(this->_normalMap[i - 1][j - 1].second);
-                Vector3D<double> normal3(this->_normalMap[i][j].first);
-                Vector3D<double> normal4(this->_normalMap[i][j].second);
-                Vector3D<double> normal5(this->_normalMap[i][j - 1].first);
-                Vector3D<double> normal6(this->_normalMap[i - 1][j].second);
-                avgNormal = (normal1 + normal2 + normal3 + normal4 + normal5 + normal6) / 6;
-            }
-            this->_normalVertexMap[i][j] = avgNormal;
-        }
-    // this->_printVertexNormals();
-}
-
-void Landscape::_printVertexNormals()
-{
-    // идем по всем квадратам ландшафной сетки
-    for (int i = 0; i < this->_rows; ++i)
-        for (int j = 0; j < this->_cols; ++j)
-        {
-            this->_normalVertexMap[i][j].print();
-        }
-}
-
-void Landscape::_calcIntensityForEachVertex()
-{
-    std::cout << "[B] _caclIntensityForEachVertex" << std::endl;
-
-    // цикл по всем вершинам ландшафтной сетки
-    for (int i = 0; i < this->_rows; ++i)
-        for (int j = 0; j < this->_cols; ++j)
-        {
-            // получили вектор направления света
-            Vector3D<double> direction = this->_light.caclDirectionVector(this->_map[i][j]);
-            // // нормализуем вектора, чтобы были единичной длины
-            direction.normalize();
-            this->_normalVertexMap[i][j].normalize();
-
-            // вот она, интенсивность в вершине
-            this->_intensityVertexMap[i][j] = this->_light.caclIntensityAtVertex(direction, this->_normalVertexMap[i][j]);
-        }
-
-    // this->_printVertexIntensity();
-}
-
-void Landscape::_printVertexIntensity()
-{
-    // идем по всем квадратам ландшафной сетки
-    for (int i = 0; i < this->_rows; ++i)
-    {
-        for (int j = 0; j < this->_cols; ++j)
-        {
-            if (this->_intensityVertexMap[i][j] != 0)
-                std::cout << " ";
-            else
-                std::cout << this->_intensityVertexMap[i][j] << " ";
-        }
-        std::cout << std::endl;
-    }
-}
-
 void Landscape::_calcFramebuffer(const Matrix<Point3D<double>> &screenMap)
 {
     std::cout << "[B] _calcFramebuffer" << std::endl;
@@ -384,21 +238,6 @@ void Landscape::_calcFramebuffer(const Matrix<Point3D<double>> &screenMap)
             _zBuffer.calсFramebufferByPlane(plane1, I1, I2, I3);
             _zBuffer.calсFramebufferByPlane(plane2, I1, I4, I3);
         }
-}
-
-Matrix<double> Landscape::_matrixMul(
-    const Matrix<double> &mtr1,
-    const Matrix<double> &mtr2)
-{
-
-    Matrix<double> mtrRes(mtr1.size(), vector<double>(mtr2[0].size(), 0));
-
-    for (int i = 0; i < mtr1.size(); ++i)
-        for (int j = 0; j < mtr2[0].size(); ++j)
-            for (int k = 0; k < mtr1[0].size(); ++k)
-                mtrRes[i][j] += mtr1[i][k] * mtr2[k][j];
-
-    return mtrRes;
 }
 
 int Landscape::getWaterlevel() const
@@ -443,26 +282,6 @@ void Landscape::setCenterPoint(const Point3D<double> &centerPoint)
     this->_centerPoint = centerPoint;
 }
 
-PerlinNoise Landscape::getParamNoise() const
-{
-    return PerlinNoise(this->_paramNoise);
-}
-
-void Landscape::setParamNoise(const PerlinNoise &paramNoise)
-{
-    this->_paramNoise = paramNoise;
-}
-
-Light Landscape::getLight() const
-{
-    return Light(this->_light);
-}
-
-void Landscape::setLight(const Light &light)
-{
-    this->_light = light;
-}
-
 int Landscape::getWidth() const
 {
     return this->_width;
@@ -481,4 +300,44 @@ int Landscape::getLenght() const
 void Landscape::setLenght(const int lenght)
 {
     this->_width = lenght;
+}
+
+void Landscape::setMap(const Matrix<Point3D<double>> &map)
+{
+    this->_map = map;
+}
+
+Matrix<Point3D<double>> &Landscape::getMap()
+{
+    return this->_map;
+}
+
+void Landscape::setNormalMap(const Matrix<pair<Vector3D<double>, Vector3D<double>>> &map)
+{
+    this->_normalMap = map;
+}
+
+Matrix<pair<Vector3D<double>, Vector3D<double>>> &Landscape::getNormalMap()
+{
+    return this->_normalMap;
+}
+
+void Landscape::setNormalVertexMap(const Matrix<Vector3D<double>> &map)
+{
+    this->_normalVertexMap = map;
+}
+
+Matrix<Vector3D<double>> &Landscape::getNormalVertexMap()
+{
+    return this->_normalVertexMap;
+}
+
+void Landscape::setIntensityVertexMap(const Matrix<double> &map)
+{
+    this->_intensityVertexMap = map;
+}
+
+Matrix<double> &Landscape::getIntensityVertexMap()
+{
+    return this->_intensityVertexMap;
 }
