@@ -5,6 +5,7 @@
 #include "light.h"
 #include "lightManager.h"
 #include "perlinNoise.h"
+#include "plane.h"
 #include "vector/vector3D.h"
 
 class LandscapeManager
@@ -14,7 +15,6 @@ public:
     static void calcNormalForEachPlane(Landscape &landscape);
     static void calcNormalForEachVertex(Landscape &landscape);
     static void calcIntensityForEachVertex(Landscape &landscape, Light &light);
-
     static void updateLandscape(Landscape &landscape, PerlinNoise &paramNoise, Light &light);
 };
 

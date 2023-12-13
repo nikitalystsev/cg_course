@@ -2,6 +2,9 @@
 #include <iostream>
 #include <random>
 
+PerlinNoise::PerlinNoise() :
+    PerlinNoise(24, 8, 1, 4, 1, 0.25) {}
+
 PerlinNoise::PerlinNoise(const int seed,
                          const int octaves,
                          const double frequency,

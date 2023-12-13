@@ -153,7 +153,7 @@ void LandscapeManager::calcIntensityForEachVertex(Landscape &landscape, Light &l
         }
 }
 
-void updateLandscape(Landscape &landscape, PerlinNoise &paramNoise, Light &light)
+void LandscapeManager::updateLandscape(Landscape &landscape, PerlinNoise &paramNoise, Light &light)
 {
     LandscapeManager::generateHeightMap(landscape, paramNoise);
     LandscapeManager::calcNormalForEachPlane(landscape);

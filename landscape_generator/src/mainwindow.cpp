@@ -41,7 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->__changeParamNoise();
     this->__changeParamLight();
-    this->_landscape.draw(ui->landscapeGraphicsView->scene());
+    this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
 }
 
 MainWindow::~MainWindow()
@@ -58,15 +58,15 @@ void MainWindow::__changeParamNoise()
     double amplitude = ui->amplitudeSpinBox->value();
     double persistence = ui->persistenceSpinBox->value();
 
-    PerlinNoise paramNoise(seed, octaves, frequency, lacunarity, amplitude, persistence);
+    this->_paramNoise = PerlinNoise(seed, octaves, frequency, lacunarity, amplitude, persistence);
 
-    LandscapeManager::updateLandscape(this->_landscape, paramNoise, this->_light);
+    LandscapeManager::updateLandscape(this->_landscape, this->_paramNoise, this->_light);
 }
 
 void MainWindow::_changeParamNoise()
 {
     this->__changeParamNoise();
-    this->_landscape.draw(ui->landscapeGraphicsView->scene());
+    this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
 }
 
 void MainWindow::__changeParamLight()
@@ -78,15 +78,15 @@ void MainWindow::__changeParamLight()
     double K_d = ui->K_dSpinBox->value();
     double I_0 = ui->I_0SpinBox->value();
 
-    Light light(lightPosition, K_d, I_0);
+    this->_light = Light(lightPosition, K_d, I_0);
 
-    LandscapeManager::calcIntensityForEachVertex(this->_landscape, light);
+    LandscapeManager::calcIntensityForEachVertex(this->_landscape, this->_light);
 }
 
 void MainWindow::_changeParamLight()
 {
     this->__changeParamLight();
-    this->_landscape.draw(ui->landscapeGraphicsView->scene());
+    this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
 }
 
 void MainWindow::_changeLandscapeSize()
@@ -98,11 +98,11 @@ void MainWindow::_changeLandscapeSize()
 
     LandscapeManager::updateLandscape(this->_landscape, this->_paramNoise, this->_light);
 
-    this->_landscape.draw(ui->landscapeGraphicsView->scene());
+    this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
 }
 
 void MainWindow::on_waterlevelSlider_valueChanged(int value)
 {
-    this->_landscape.updateWaterlevel(value);
-    this->_landscape.draw(ui->landscapeGraphicsView->scene());
+    //    this->_landscape.updateWaterlevel(value);
+    //    this->_landscape.draw(ui->landscapeGraphicsView->scene());
 }

@@ -3,6 +3,7 @@
 
 #include "landscape.h"
 #include "landscapeManager.h"
+#include "renderer.h"
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
@@ -39,5 +40,6 @@ private:
     PerlinNoise _paramNoise;
     Light _light;
     Landscape _landscape;
+    Renderer _renderer;
 };
 #endif // MAINWINDOW_H

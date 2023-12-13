@@ -1,5 +1,11 @@
 #include "../inc/renderer.h"
 
+Renderer::Renderer() :
+    _screenWidth(1311), _screenHeight(781),
+    _zbuffer(1311, vector<double>(781, INT_MIN)), _framebuffer(1311, vector<QColor>(781, QColor(255, 255, 255)))
+{
+}
+
 Renderer::Renderer(const int &width, const int &height) :
     _screenWidth(width), _screenHeight(height), _zbuffer(width, vector<double>(height, INT_MIN)), _framebuffer(width, vector<QColor>(height, QColor(255, 255, 255)))
 {
@@ -150,11 +156,11 @@ void Renderer::calcCenterPoint(Matrix<Point3D<double>> &screenMap)
     int xMin = screenMap[0][0].getX(), yMin = screenMap[0][0].getY();
     int xMax = screenMap[0][0].getX(), yMax = screenMap[0][0].getY();
 
-    int rows = map.size();
-    int cols = map[0].size();
+    int rows = screenMap.size();
+    int cols = screenMap[0].size();
 
-    for (int i = 0; i < this->_rows; ++i)
-        for (int j = 0; j < this->_cols; ++j)
+    for (int i = 0; i < rows; ++i)
+        for (int j = 0; j < cols; ++j)
         {
             int currX = screenMap[i][j].getX(), currY = screenMap[i][j].getY();
 
@@ -172,6 +178,15 @@ void Renderer::calcCenterPoint(Matrix<Point3D<double>> &screenMap)
     this->_centerPoint.setY((yMin + yMax) / 2);
 }
 
+void Renderer::movePointToCenter(Point3D<double> &point)
+{
+    double x = point.getX() + this->_screenWidth / 2 - this->_centerPoint.getX();
+    double y = point.getY() + this->_screenHeight / 2 - this->_centerPoint.getY();
+    double z = point.getZ();
+
+    point.set(x, y, z);
+}
+
 Matrix<Point3D<double>> Renderer::mapToScreen(Matrix<Point3D<double>> &map)
 {
     Matrix<Point3D<double>> tmp(map);
@@ -185,23 +200,29 @@ Matrix<Point3D<double>> Renderer::mapToScreen(Matrix<Point3D<double>> &map)
             Transform::pointToIsometric(tmp[i][j]);
         }
 
-    this->_calcCenterPoint(tmp);
+    this->calcCenterPoint(tmp);
 
-    for (int i = 0; i < this->_rows; ++i)
-        for (int j = 0; j < this->_cols; ++j)
+    for (int i = 0; i < rows; ++i)
+        for (int j = 0; j < cols; ++j)
         {
-            this->_movePointToCenter(tmp[i][j]);
+            this->movePointToCenter(tmp[i][j]);
         }
 
     return tmp;
 }
 
-void Renderer::renderLandscape(Landscape &landscape)
+void Renderer::renderLandscape(Landscape &landscape, QGraphicsScene *scene)
 {
     this->clean();
 
+    Matrix<Point3D<double>> screenMap = this->mapToScreen(landscape.getMap());
+    Matrix<double> &intensityVertexMap = landscape.getIntensityVertexMap();
+
     int width = landscape.getWidth();
     int height = landscape.getLenght();
+
+    vector<double> heights1, heights2;
+    vector<double> intensities1, intensities2;
 
     // идем по всем квадратам ландшафной сетки
     for (int i = 0; i < width; ++i)
@@ -211,16 +232,42 @@ void Renderer::renderLandscape(Landscape &landscape)
             Plane plane1(screenMap[i][j], screenMap[i + 1][j], screenMap[i + 1][j + 1]);
             Plane plane2(screenMap[i][j], screenMap[i][j + 1], screenMap[i + 1][j + 1]);
 
+            heights1 = {screenMap[i][j].getZ(),
+                        screenMap[i + 1][j].getZ(),
+                        screenMap[i + 1][j + 1].getZ()};
+            heights2 = {screenMap[i][j].getZ(),
+                        screenMap[i][j + 1].getZ(),
+                        screenMap[i + 1][j + 1].getZ()};
+
             // определяем интенсивности вершин квадрата
-            double I1 = this->_intensityVertexMap[i][j];
-            double I2 = this->_intensityVertexMap[i + 1][j];
-            double I3 = this->_intensityVertexMap[i + 1][j + 1];
-            double I4 = this->_intensityVertexMap[i][j + 1];
+            double I1 = intensityVertexMap[i][j];
+            double I2 = intensityVertexMap[i + 1][j];
+            double I3 = intensityVertexMap[i + 1][j + 1];
+            double I4 = intensityVertexMap[i][j + 1];
+
+            intensities1 = {I1, I2, I3};
+            intensities2 = {I1, I4, I3};
 
             //  определяем текущее состояние z-буффера
-            _zBuffer.calcZBufferByPlane(plane1, I1, I2, I3);
-            _zBuffer.calcZBufferByPlane(plane2, I1, I4, I3);
+            this->renderPlane(plane1, heights1, intensities1);
+            this->renderPlane(plane2, heights2, intensities2);
         }
+
+    QPixmap pixmap(this->_screenWidth, this->_screenHeight);
+    pixmap.fill(Qt::white);
+
+    QImage image(this->_screenWidth, this->_screenHeight, QImage::Format_RGB32);
+    int r, g, b;
+    for (int i = 0; i < width; i++)
+        for (int j = 0; j < height; j++)
+        {
+            this->_framebuffer[i][j].getRgb(&r, &g, &b);
+            image.setPixelColor(i, j, QColor(r, g, b));
+        }
+
+    pixmap = QPixmap::fromImage(image);
+    scene->clear();
+    scene->addPixmap(pixmap);
 }
 int Renderer::getScreenWidth() const
 {

@@ -3,6 +3,7 @@
 
 #include "landscape.h"
 #include "plane.h"
+#include "transform.h"
 #include <QColor>
 #include <vector>
 
@@ -20,7 +21,10 @@ private:
     Matrix<double> _zbuffer;
     Matrix<QColor> _framebuffer; // буфер кадра
 
+    Point2D<int> _centerPoint;
+
 public:
+    Renderer();
     Renderer(const int &width, const int &height);
     ~Renderer();
 
@@ -28,7 +32,11 @@ public:
     vector<Point2D<int>> getLineByBresenham(Point3D<double> &p1, Point3D<double> &p2);
     void calcIntensityForLine(vector<Point2D<int>> &line, double IPStart, double IPEnd);
 
-    void renderLandscape(Landscape &landscape);
+    void calcCenterPoint(Matrix<Point3D<double>> &screenMap);
+    void movePointToCenter(Point3D<double> &point);
+    Matrix<Point3D<double>> mapToScreen(Matrix<Point3D<double>> &map);
+
+    void renderLandscape(Landscape &landscape, QGraphicsScene *scene);
     int getScreenWidth() const;
     int getScreenHeight() const;
 

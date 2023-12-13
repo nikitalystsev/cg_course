@@ -1,11 +1,7 @@
 #ifndef LANDSCAPE_H
 #define LANDSCAPE_H
 
-#include "camera.h"
-#include "light.h"
-#include "perlinNoise.h"
 #include "point/point3D.h"
-#include "transform.h"
 #include "vector/vector3D.h"
 #include <QGraphicsScene>
 #include <QPainter>
@@ -30,33 +26,24 @@ private:
     int _rows, _cols;                          // размеры основных ландшафтных матриц
     int _width, _lenght;                       // длина и ширина карты высот (в количестве полигонов)
     int _waterlevel;                           // уровень воды
-    double _maxHeight = 0;                     // максимаьная сгенерированная высота
+    double _maxHeight = 0;                     // максимаьная сгенерирова
 
-    void _calcZBuffer(const Matrix<Point3D<double>> &screenMap);
+    Matrix<pair<Vector3D<double>, Vector3D<double>>> _normalMap; // матрица векторов внешней нормали к каждой из граней
+    Matrix<Vector3D<double>> _normalVertexMap;                   // матрица векторов нормалей для каждой вершины
+    Matrix<double> _intensityVertexMap;                          // расчет интенсивности в каждой вершине
 
-    Point3D<double> _centerPoint; // центральная точка всего ландшафта
-    void _calcCenterPoint(Matrix<Point3D<double>> &screenMap);
-    //    void _calcCenterPoint();
-
-    Camera _camera;                                                  // камера
-    Matrix<pair<Vector3D<double>, Vector3D<double>>> _normalMap;     // матрица векторов внешней нормали к каждой из граней
-    Matrix<Vector3D<double>> _normalVertexMap;                       // матрица векторов нормалей для каждой вершины
-    Matrix<double> _intensityVertexMap;                              // расчет интенсивности в каждой вершине
-    void _calcFramebuffer(const Matrix<Point3D<double>> &screenMap); // расчет буфера кадра
-
-    // методы для визуализации изображения
-    Matrix<Point3D<double>> _mapToScreen();
-    void _drawMap(QGraphicsScene *scene) const;
-    void _shiftPointToOrigin(Point3D<double> &point);
-    void _shiftPointBackToOrigin(Point3D<double> &point);
-    void _movePointToCenter(Point3D<double> &point);
+    //    void _shiftPointToOrigin(Point3D<double> &point);
+    //    void _shiftPointBackToOrigin(Point3D<double> &point);
 
 public:
     Landscape();
     Landscape(const int width, const int lenght, const int waterlevel);
+    explicit Landscape(const Landscape &other);
+    Landscape(Landscape &&other) noexcept;
     ~Landscape();
 
-    void draw(QGraphicsScene *scene);
+    Landscape &operator=(const Landscape &other);
+    Landscape &operator=(Landscape &&other) noexcept;
 
     void resize(const int width, const int lenght);
 
@@ -66,9 +53,6 @@ public:
 
     int getMaxHeight() const;
     void setMaxHeight(const double maxHeight);
-
-    Point3D<double> getCenterPoint() const;
-    void setCenterPoint(const Point3D<double> &centerPoint);
 
     int getWidth() const;
     void setWidth(const int width);
@@ -87,11 +71,6 @@ public:
 
     void setIntensityVertexMap(const Matrix<double> &map);
     Matrix<double> &getIntensityVertexMap();
-
-public:
-    static const int default_width = 100, default_lenght = 100;
-    static const int default_waterlevel = 0;
-    static const int poly_size = 5;
 };
 
 #endif

@@ -22,6 +22,7 @@ private:
     double _noise(double x, double y);
 
 public:
+    PerlinNoise();
     PerlinNoise(const int seed,
                 const int octaves,
                 const double frequency,
