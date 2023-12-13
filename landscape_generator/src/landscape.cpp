@@ -2,7 +2,7 @@
 #include "../inc/perlinNoise.h"
 
 Landscape::Landscape() :
-    Landscape(100, 100, 0)
+    Landscape(166, 166, 0)
 {
 }
 

@@ -67,7 +67,7 @@
          </widget>
         </item>
         <item row="0" column="0">
-         <widget class="QLabel" name="label_2">
+         <widget class="QLabel" name="seedLabel">
           <property name="text">
            <string>Cостояние</string>
           </property>
@@ -174,7 +174,7 @@
        </layout>
       </item>
       <item>
-       <widget class="QLabel" name="paramPerlin_5">
+       <widget class="QLabel" name="landscapeSizeLabel">
         <property name="font">
          <font>
           <pointsize>12</pointsize>
@@ -235,7 +235,7 @@
        </layout>
       </item>
       <item>
-       <widget class="QLabel" name="paramPerlin_2">
+       <widget class="QLabel" name="waterlevelLabel">
         <property name="font">
          <font>
           <pointsize>12</pointsize>
@@ -252,7 +252,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="paramPerlin_3">
+       <widget class="QLabel" name="paramLightLabel">
         <property name="font">
          <font>
           <pointsize>12</pointsize>
@@ -275,144 +275,77 @@
        </widget>
       </item>
       <item>
-       <layout class="QGridLayout" name="positionLightLayout">
-        <item row="1" column="1">
-         <widget class="QSpinBox" name="lightYSpinBox">
-          <property name="maximum">
-           <number>10000</number>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="lightXLabel">
+       <layout class="QHBoxLayout" name="positionLightLayout">
+        <item>
+         <widget class="QLabel" name="positionLightLabel">
           <property name="text">
-           <string>X</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Позиция &lt;/p&gt;&lt;p align=&quot;center&quot;&gt;источника освещения&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
-         <widget class="QSpinBox" name="lightXSpinBox">
-          <property name="maximum">
-           <number>10000</number>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="lightYLabel">
-          <property name="text">
-           <string>Y</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="lightZLabel">
-          <property name="text">
-           <string>Z</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QSpinBox" name="lightZSpinBox">
-          <property name="maximum">
-           <number>10000</number>
-          </property>
-          <property name="value">
-           <number>600</number>
-          </property>
-         </widget>
+        <item>
+         <layout class="QGridLayout" name="_positionLightLayout">
+          <item row="1" column="1">
+           <widget class="QSpinBox" name="lightYSpinBox">
+            <property name="maximum">
+             <number>10000</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="lightYLabel">
+            <property name="text">
+             <string>Y</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="lightXLabel">
+            <property name="text">
+             <string>X</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QSpinBox" name="lightXSpinBox">
+            <property name="maximum">
+             <number>10000</number>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="lightZLabel">
+            <property name="text">
+             <string>Z</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QSpinBox" name="lightZSpinBox">
+            <property name="maximum">
+             <number>10000</number>
+            </property>
+            <property name="value">
+             <number>600</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </item>
       <item>
-       <layout class="QGridLayout" name="gridLayout_3">
-        <item row="4" column="0">
-         <widget class="QDoubleSpinBox" name="I_0SpinBox">
-          <property name="maximum">
-           <double>10.000000000000000</double>
-          </property>
-          <property name="singleStep">
-           <double>0.500000000000000</double>
-          </property>
-          <property name="value">
-           <double>3.000000000000000</double>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="0">
-         <widget class="QLabel" name="paramPerlin_4">
-          <property name="font">
-           <font>
-            <pointsize>12</pointsize>
-            <italic>true</italic>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Афинные преобразования&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-          </property>
-          <property name="textFormat">
-           <enum>Qt::AutoText</enum>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-          <property name="wordWrap">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="10" column="0">
-         <widget class="QPushButton" name="printLandscape">
-          <property name="text">
-           <string>Отобразить ландшафт</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="K_dLabel">
-          <property name="text">
-           <string>Коэфф-т диффузного отражения</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="I_0Label">
-          <property name="text">
-           <string>Интенсивность источника</string>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="0">
-         <widget class="QRadioButton" name="radioButton">
-          <property name="text">
-           <string>Поворот</string>
-          </property>
-         </widget>
-        </item>
-        <item row="7" column="0">
-         <widget class="QRadioButton" name="radioButton_2">
-          <property name="text">
-           <string>Перемещение</string>
-          </property>
-         </widget>
-        </item>
-        <item row="8" column="0">
-         <widget class="QRadioButton" name="radioButton_3">
-          <property name="text">
-           <string>Масштабирование</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
+       <layout class="QGridLayout" name="paramLightLayout">
+        <item row="0" column="1">
          <widget class="QDoubleSpinBox" name="K_dSpinBox">
           <property name="maximum">
            <double>1.000000000000000</double>
@@ -425,7 +358,38 @@
           </property>
          </widget>
         </item>
-        <item row="9" column="0">
+        <item row="0" column="0">
+         <widget class="QLabel" name="K_dLabel">
+          <property name="text">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Коэфф-т &lt;/p&gt;&lt;p align=&quot;center&quot;&gt;диффузного отражения&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="I_0Label">
+          <property name="text">
+           <string>Интенсивность источника</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QDoubleSpinBox" name="I_0SpinBox">
+          <property name="maximum">
+           <double>10.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.500000000000000</double>
+          </property>
+          <property name="value">
+           <double>3.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="5" column="0">
          <layout class="QGridLayout" name="gridLayout_4">
           <item row="1" column="1">
            <widget class="QSpinBox" name="spinBox_4"/>
@@ -467,6 +431,50 @@
            <widget class="QSpinBox" name="spinBox_6"/>
           </item>
          </layout>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="paramPerlin_4">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+            <italic>true</italic>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Афинные преобразования&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="textFormat">
+           <enum>Qt::AutoText</enum>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <property name="wordWrap">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QRadioButton" name="radioButton">
+          <property name="text">
+           <string>Поворот</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QRadioButton" name="radioButton_2">
+          <property name="text">
+           <string>Перемещение</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QRadioButton" name="radioButton_3">
+          <property name="text">
+           <string>Масштабирование</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>

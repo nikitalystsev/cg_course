@@ -41,6 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->__changeParamNoise();
     this->__changeParamLight();
+
     this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
 }
 
