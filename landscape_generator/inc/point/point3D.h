@@ -9,6 +9,8 @@ class Point3D
 private:
     T _x, _y, _z;
 
+    double _I; // интенсивность
+
 public:
     Point3D();
     Point3D(const T x, const T y, const T z);
@@ -35,12 +37,17 @@ public:
     void setX(const T x);
     void setY(const T y);
     void setZ(const T z);
+    void setI(const double I);
 
     T getX() const;
     T getY() const;
     T getZ() const;
+    double getI() const;
 
     void print() const;
+
+public:
+    static inline int cmpPointsByX(const Point3D<T> &a, const Point3D<T> &b);
 };
 
 template <typename T>
@@ -52,7 +59,7 @@ Point3D<T>::Point3D() :
 
 template <typename T>
 Point3D<T>::Point3D(const T x, const T y, const T z) :
-    _x(x), _y(y), _z(z)
+    _x(x), _y(y), _z(z), _I(0)
 {
 }
 
@@ -62,6 +69,7 @@ Point3D<T>::Point3D(const Point3D<T> &other)
     this->_x = other._x;
     this->_y = other._y;
     this->_z = other._z;
+    this->_I = other._I;
 }
 
 template <typename T>
@@ -70,6 +78,7 @@ Point3D<T>::Point3D(Point3D<T> &&other) noexcept
     this->_x = other._x;
     this->_y = other._y;
     this->_z = other._z;
+    this->_I = other._I;
 }
 
 template <typename T>
@@ -84,6 +93,7 @@ Point3D<T>::Point3D(const Point3D<T2> &other)
     this->_x = other.getX();
     this->_y = other.getY();
     this->_z = other.getZ();
+    this->_I = other.getI();
 }
 
 template <typename T>
@@ -92,6 +102,7 @@ Point3D<T> &Point3D<T>::operator=(const Point3D<T> &other)
     this->_x = other._x;
     this->_y = other._y;
     this->_z = other._z;
+    this->_I = other._I;
 
     return *this;
 }
@@ -103,6 +114,7 @@ Point3D<T> &Point3D<T>::operator=(const Point3D<T2> &other)
     this->_x = other.getX();
     this->_y = other.getY();
     this->_z = other.getZ();
+    this->_I = other.getI();
 
     return *this;
 }
@@ -116,6 +128,7 @@ decltype(auto) Point3D<T>::operator+(const Point3D<T2> &other) const
     tmp.setX(this->_x + other.getX());
     tmp.setY(this->_y + other.getY());
     tmp.setZ(this->_z + other.getZ());
+    tmp.setI(this->_I + other.getI());
 
     return tmp;
 }
@@ -129,6 +142,7 @@ decltype(auto) Point3D<T>::operator-(const Point3D<T2> &other) const
     tmp.setX(this->_x - other.getX());
     tmp.setY(this->_y - other.getY());
     tmp.setZ(this->_z - other.getZ());
+    tmp.setI(this->_I - other.getI());
 
     return tmp;
 }
@@ -142,6 +156,7 @@ decltype(auto) Point3D<T>::operator*(const T2 elem) const
     tmp.setX(this->_x * elem);
     tmp.setY(this->_y * elem);
     tmp.setZ(this->_z * elem);
+    tmp.setI(this->_I * elem);
 
     return tmp;
 }
@@ -173,6 +188,12 @@ void Point3D<T>::setZ(const T z)
 }
 
 template <typename T>
+void Point3D<T>::setI(const double I)
+{
+    this->_I = I;
+}
+
+template <typename T>
 T Point3D<T>::getX() const
 {
     return this->_x;
@@ -191,9 +212,21 @@ T Point3D<T>::getZ() const
 }
 
 template <typename T>
+double Point3D<T>::getI() const
+{
+    return this->_I;
+}
+
+template <typename T>
 void Point3D<T>::print() const
 {
     std::cout << "Point3D(" << this->_x << "," << this->_y << "," << this->_z << ")" << std::endl;
+}
+
+template <typename T>
+inline int Point3D<T>::cmpPointsByX(const Point3D<T> &a, const Point3D<T> &b)
+{
+    return a.getX() < b.getX();
 }
 
 #endif // __POINT3D_H__

@@ -25,7 +25,7 @@ private:
     Matrix<double> _withoutWaterMap = {}; // карта высот без учета уровня воды
     int _rows, _cols;                     // размеры основных ландшафтных матриц
     int _width, _lenght;                  // длина и ширина карты высот (в количестве полигонов)
-    int _waterlevel;                      // уровень воды
+    double _waterlevel;                   // уровень воды
     double _maxHeight = 0;                // максимаьная сгенерирова
 
     Matrix<pair<Vector3D<double>, Vector3D<double>>> _normalMap; // матрица векторов внешней нормали к каждой из граней
@@ -47,9 +47,9 @@ public:
 
     void resize(const int width, const int lenght);
 
-    int getWaterlevel() const;
-    void setWaterlevel(const int waterlevel);
-    void updateWaterlevel(const int waterlevel);
+    double getWaterlevel() const;
+    void setWaterlevel(const double waterlevel);
+    void updateWaterlevel(const double waterlevel);
 
     int getMaxHeight() const;
     void setMaxHeight(const double maxHeight);
@@ -74,6 +74,9 @@ public:
 
     void setIntensityVertexMap(const Matrix<double> &map);
     Matrix<double> &getIntensityVertexMap();
+
+public:
+    static const int square = 3;
 };
 
 #endif

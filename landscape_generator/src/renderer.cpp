@@ -13,7 +13,7 @@ Renderer::Renderer(const int &width, const int &height) :
 
 Renderer::~Renderer() {}
 
-void Renderer::_renderPlane(const Plane &screenPlane, const vector<double> &heights, const vector<double> &intensity)
+void Renderer::_renderPlane(const Plane &screenPlane, const vector<double> &heights, const vector<double> &intensity, const double waterlevel, const double maxHeight)
 {
     // получаем координаты описывающего прямоугольника
     Point2D<double> pMin = screenPlane.getPMin();
@@ -32,20 +32,27 @@ void Renderer::_renderPlane(const Plane &screenPlane, const vector<double> &heig
     double deltaY31 = p3Y - p1Y, deltaX13 = p1X - p3X, var3 = p3X * p1Y - p1X * p3Y;
 
     // растеризуем линии по алгоритму Брезенхема, взятому с Вики
-    vector<Point2D<int>> line1 = this->_getLineByBresenham(p1, p2);
-    vector<Point2D<int>> line2 = this->_getLineByBresenham(p2, p3);
-    vector<Point2D<int>> line3 = this->_getLineByBresenham(p3, p1);
+    vector<Point3D<int>> line1 = this->_getLineByBresenham(p1, p2);
+    vector<Point3D<int>> line2 = this->_getLineByBresenham(p2, p3);
+    vector<Point3D<int>> line3 = this->_getLineByBresenham(p3, p1);
 
     // расчет интенсивности на ребрах
     this->_calcIntensityForLine(line1, intensity[0], intensity[1]);
     this->_calcIntensityForLine(line2, intensity[1], intensity[2]);
     this->_calcIntensityForLine(line3, intensity[2], intensity[0]);
 
+    // расчет высот на ребрах
+    this->_calcHeightForLine(line1, heights[0], heights[1]);
+    this->_calcHeightForLine(line2, heights[1], heights[2]);
+    this->_calcHeightForLine(line3, heights[2], heights[0]);
+
     // Объединение трех векторов
-    vector<Point2D<int>> allLines;
+    vector<Point3D<int>> allLines;
     allLines.insert(allLines.end(), line1.begin(), line1.end());
     allLines.insert(allLines.end(), line2.begin(), line2.end());
     allLines.insert(allLines.end(), line3.begin(), line3.end());
+
+#pragma omp parallel for
 
     // обходим только ту часть матрицы z-буфера, что является
     // описывающим прямоугольником
@@ -53,17 +60,19 @@ void Renderer::_renderPlane(const Plane &screenPlane, const vector<double> &heig
     {
         // вектор точек ребер на сканирующей строке
         // Выборка точек с заданным y с использованием std::copy_if
-        vector<Point2D<int>> yn;
-        std::copy_if(allLines.begin(), allLines.end(), std::back_inserter(yn), [y](const Point2D<int> &point)
+        vector<Point3D<int>> yn;
+        std::copy_if(allLines.begin(), allLines.end(), std::back_inserter(yn), [y](const Point3D<int> &point)
                      { return point.getY() == y; });
 
         // Сортировка вектора объектов Point по x
-        std::sort(yn.begin(), yn.end(), Point2D<int>::cmpPointsByX);
+        std::sort(yn.begin(), yn.end(), Point3D<int>::cmpPointsByX);
 
         double deltaX = yn[yn.size() - 1].getX() - yn[0].getX();
         double invDeltaX = 1.0 / deltaX;
         double x0 = yn[0].getX(), I0 = yn[0].getI();
+        double Z0 = yn[0].getZ();
 
+        //#pragma omp parallel for
         for (int x = pMin.getX(); x <= pMax.getX(); ++x)
         {
             // уравнения сторон
@@ -78,6 +87,7 @@ void Renderer::_renderPlane(const Plane &screenPlane, const vector<double> &heig
             {
                 double u = (x - x0) * invDeltaX;
                 double I = (deltaX == 0) ? I0 : (u * I0 + (1 - u) * yn[yn.size() - 1].getI());
+                double Z = (deltaX == 0) ? Z0 : (u * Z0 + (1 - u) * yn[yn.size() - 1].getZ());
 
                 double z = screenPlane.caclZ(x, y);
 
@@ -85,9 +95,32 @@ void Renderer::_renderPlane(const Plane &screenPlane, const vector<double> &heig
                 {
                     this->_zbuffer[x][y] = z;
 
-                    int r = (12 * I < 0) ? 0 : 12 * I;
-                    int g = (71 * I < 0) ? 0 : 71 * I;
-                    int b = (14 * I < 0) ? 0 : 14 * I;
+                    int r, g, b;
+
+                    if (Z == waterlevel)
+                    {
+                        r = this->_getCorrectChannel(7, I);
+                        g = this->_getCorrectChannel(11, I);
+                        b = this->_getCorrectChannel(117, I);
+                    }
+                    else if (Z > waterlevel && Z < waterlevel + 5)
+                    {
+                        r = this->_getCorrectChannel(64, I);
+                        g = this->_getCorrectChannel(56, I);
+                        b = this->_getCorrectChannel(15, I);
+                    }
+                    else if (Z < maxHeight && Z > maxHeight - 100)
+                    {
+                        r = this->_getCorrectChannel(197, I);
+                        g = this->_getCorrectChannel(229, I);
+                        b = this->_getCorrectChannel(227, I);
+                    }
+                    else
+                    {
+                        r = this->_getCorrectChannel(12, I);
+                        g = this->_getCorrectChannel(71, I);
+                        b = this->_getCorrectChannel(14, I);
+                    }
 
                     this->_framebuffer.setPixelColor(x, y, QColor(r, g, b));
                 }
@@ -96,9 +129,25 @@ void Renderer::_renderPlane(const Plane &screenPlane, const vector<double> &heig
     }
 }
 
-vector<Point2D<int>> Renderer::_getLineByBresenham(const Point3D<double> &p1, const Point3D<double> &p2)
+int Renderer::_getCorrectChannel(int _R, double I)
 {
-    vector<Point2D<int>> result;
+    int _r = _R * I;
+
+    if (_r > 255)
+    {
+        _r = 255;
+    }
+    else if (_r < 0)
+    {
+        _r = 0;
+    }
+
+    return _r;
+}
+
+vector<Point3D<int>> Renderer::_getLineByBresenham(const Point3D<double> &p1, const Point3D<double> &p2)
+{
+    vector<Point3D<int>> result;
 
     int x1 = p1.getX(), x2 = p2.getX();
     int y1 = p1.getY(), y2 = p2.getY();
@@ -113,7 +162,7 @@ vector<Point2D<int>> Renderer::_getLineByBresenham(const Point3D<double> &p1, co
 
     while (x1 != x2 || y1 != y2)
     {
-        result.push_back(Point2D<int>(x1, y1));
+        result.push_back(Point3D<int>(x1, y1, 0));
 
         int error2 = error * 2;
         if (error2 > -dy)
@@ -128,12 +177,12 @@ vector<Point2D<int>> Renderer::_getLineByBresenham(const Point3D<double> &p1, co
         }
     }
 
-    result.push_back(Point2D<int>(x2, y2));
+    result.push_back(Point3D<int>(x2, y2, 0));
 
     return result;
 }
 
-void Renderer::_calcIntensityForLine(vector<Point2D<int>> &line, const double &IPStart, const double &IPEnd)
+void Renderer::_calcIntensityForLine(vector<Point3D<int>> &line, const double &IPStart, const double &IPEnd)
 {
     int lineSize = line.size();
 
@@ -143,6 +192,19 @@ void Renderer::_calcIntensityForLine(vector<Point2D<int>> &line, const double &I
         double u = (double)(i + 1) / lineSize;
         // устанавливаем значение интенсивности в текущей точке на ребре
         line[i].setI(u * IPStart + (1 - u) * IPEnd);
+    }
+}
+
+void Renderer::_calcHeightForLine(vector<Point3D<int>> &line, const double &ZPStart, const double &ZPEnd)
+{
+    int lineSize = line.size();
+
+    for (int i = 0; i < lineSize; ++i)
+    {
+        // буквально такая же интерполяция для высот
+        double u = (double)(i + 1) / lineSize;
+        // устанавливаем значение высоты в текущей точке на ребре
+        line[i].setZ(u * ZPStart + (1 - u) * ZPEnd);
     }
 }
 
@@ -207,6 +269,9 @@ void Renderer::renderLandscape(Landscape &landscape, QGraphicsScene *scene)
     Matrix<Point3D<double>> screenMap = this->mapToScreen(map);
     Matrix<double> &intensityVertexMap = landscape.getIntensityVertexMap();
 
+    int waterlevel = landscape.getWaterlevel();
+    int maxHeight = landscape.getMaxHeight();
+
     int width = landscape.getWidth();
     int height = landscape.getLenght();
 
@@ -240,8 +305,8 @@ void Renderer::renderLandscape(Landscape &landscape, QGraphicsScene *scene)
             intensities2 = {I1, I4, I3};
 
             //  определяем текущее состояние z-буффера
-            this->_renderPlane(plane1, heights1, intensities1);
-            this->_renderPlane(plane2, heights2, intensities2);
+            this->_renderPlane(plane1, heights1, intensities1, waterlevel, maxHeight);
+            this->_renderPlane(plane2, heights2, intensities2, waterlevel, maxHeight);
         }
 
     QPixmap pixmap = QPixmap::fromImage(this->_framebuffer);
@@ -265,6 +330,6 @@ void Renderer::clean()
         for (int j = 0; j < this->_screenHeight; ++j)
         {
             this->_zbuffer[i][j] = INT_MIN;
-            this->_framebuffer.setPixelColor(i, j, QColor(255, 255, 255));
+            this->_framebuffer.setPixelColor(i, j, QColor(0, 0, 0));
         }
 }

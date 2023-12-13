@@ -5,7 +5,7 @@ void LandscapeManager::generateHeightMap(Landscape &landscape, PerlinNoise &para
     int rows = landscape.getWidth() + 1;
     int cols = landscape.getLenght() + 1;
     int currWaterlevel = landscape.getWaterlevel();
-    int maxHeight = landscape.getMaxHeight();
+    int maxHeight = 0;
 
     Matrix<Point3D<double>> &map = landscape.getMap();
     Matrix<double> &withoutWaterMap = landscape.getWithoutWaterMap();
@@ -18,15 +18,15 @@ void LandscapeManager::generateHeightMap(Landscape &landscape, PerlinNoise &para
 
             double height = paramNoise.generateNoise(nx, ny);
 
+            height *= 1000;
+
             if (height > maxHeight)
                 maxHeight = height;
 
-            height *= 1000;
-
             if (height < currWaterlevel)
-                map[i][j].set(i * 5, j * 5, currWaterlevel);
+                map[i][j].set(i * landscape.square, j * landscape.square, currWaterlevel);
             else
-                map[i][j].set(i * 5, j * 5, height);
+                map[i][j].set(i * landscape.square, j * landscape.square, height);
 
             withoutWaterMap[i][j] = height;
         }

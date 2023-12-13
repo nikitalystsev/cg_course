@@ -8,6 +8,9 @@
 #include "plane.h"
 #include "vector/vector3D.h"
 
+template <typename T>
+using vector = std::vector<T>;
+
 class LandscapeManager
 {
 public:

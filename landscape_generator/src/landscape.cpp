@@ -112,24 +112,24 @@ void Landscape::resize(const int width, const int lenght)
     resizeMatrix<double>(this->_intensityVertexMap, this->_rows, this->_cols);
 }
 
-void Landscape::updateWaterlevel(const int waterlevel)
+void Landscape::updateWaterlevel(const double waterlevel)
 {
     for (int i = 0; i < this->_rows; ++i)
         for (int j = 0; j < this->_cols; ++j)
             if (this->_withoutWaterMap[i][j] < waterlevel)
-                this->_map[i][j].set(i * 5, j * 5, waterlevel);
+                this->_map[i][j].set(i * square, j * square, waterlevel);
             else
-                this->_map[i][j].set(i * 5, j * 5, this->_withoutWaterMap[i][j]);
+                this->_map[i][j].set(i * square, j * square, this->_withoutWaterMap[i][j]);
 
     this->_waterlevel = waterlevel;
 }
 
-int Landscape::getWaterlevel() const
+double Landscape::getWaterlevel() const
 {
     return this->_waterlevel;
 }
 
-void Landscape::setWaterlevel(const int waterlevel)
+void Landscape::setWaterlevel(const double waterlevel)
 {
     this->_waterlevel = waterlevel;
 }
