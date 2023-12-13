@@ -34,7 +34,7 @@ void Plane::_defCircumRect()
     this->_pMax.setY(std::max({this->_p1.getY(), this->_p2.getY(), this->_p3.getY()}));
 }
 
-double Plane::caclZ(const double x, const double y)
+double Plane::caclZ(const double x, const double y) const
 {
     double z = -(this->_A * x + this->_B * y + this->_D) / this->_C;
 

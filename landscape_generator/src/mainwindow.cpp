@@ -103,6 +103,11 @@ void MainWindow::_changeLandscapeSize()
 
 void MainWindow::on_waterlevelSlider_valueChanged(int value)
 {
-    //    this->_landscape.updateWaterlevel(value);
-    //    this->_landscape.draw(ui->landscapeGraphicsView->scene());
+    this->_landscape.updateWaterlevel(value);
+
+    LandscapeManager::calcNormalForEachPlane(this->_landscape);
+    LandscapeManager::calcNormalForEachVertex(this->_landscape);
+    LandscapeManager::calcIntensityForEachVertex(this->_landscape, this->_light);
+
+    this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
 }

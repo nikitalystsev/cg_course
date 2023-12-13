@@ -5,8 +5,10 @@ void LandscapeManager::generateHeightMap(Landscape &landscape, PerlinNoise &para
     int rows = landscape.getWidth() + 1;
     int cols = landscape.getLenght() + 1;
     int currWaterlevel = landscape.getWaterlevel();
+    int maxHeight = landscape.getMaxHeight();
 
     Matrix<Point3D<double>> &map = landscape.getMap();
+    Matrix<double> &withoutWaterMap = landscape.getWithoutWaterMap();
 
     for (int i = 0; i < rows; ++i)
         for (int j = 0; j < cols; ++j)
@@ -16,8 +18,9 @@ void LandscapeManager::generateHeightMap(Landscape &landscape, PerlinNoise &para
 
             double height = paramNoise.generateNoise(nx, ny);
 
-            //            if (height > this->_maxHeight)
-            //                this->_maxHeight = height;
+            if (height > maxHeight)
+                maxHeight = height;
+
             height *= 1000;
 
             if (height < currWaterlevel)
@@ -25,8 +28,10 @@ void LandscapeManager::generateHeightMap(Landscape &landscape, PerlinNoise &para
             else
                 map[i][j].set(i * 5, j * 5, height);
 
-            //            this->_withoutWaterlevelMap[i][j] = height;
+            withoutWaterMap[i][j] = height;
         }
+
+    landscape.setMaxHeight(maxHeight);
 }
 
 void LandscapeManager::calcNormalForEachPlane(Landscape &landscape)

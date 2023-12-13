@@ -22,7 +22,7 @@ private:
 public:
     Plane(const Point3D<double> &p1, const Point3D<double> &p2, const Point3D<double> &p3);
 
-    double caclZ(const double x, const double y);
+    double caclZ(const double x, const double y) const;
 
     Point3D<double> getP1() const;
     Point3D<double> getP2() const;

@@ -43,6 +43,10 @@ public:
     double getI() const;
 
     void print() const;
+
+public:
+    static inline int cmpPointsByX(const Point2D<T> &a, const Point2D<T> &b);
+    static bool isPointYEqualTo(const Point2D<T> &point, int y);
 };
 
 template <typename T>
@@ -194,6 +198,18 @@ template <typename T>
 void Point2D<T>::print() const
 {
     std::cout << "Point2D(" << this->_x << "," << this->_y << ")" << std::endl;
+}
+
+template <typename T>
+inline int Point2D<T>::cmpPointsByX(const Point2D<T> &a, const Point2D<T> &b)
+{
+    return a.getX() < b.getX();
+}
+
+template <typename T>
+bool Point2D<T>::isPointYEqualTo(const Point2D<T> &point, int y)
+{
+    return point.getY() == y;
 }
 
 #endif // __POINT2D_H__

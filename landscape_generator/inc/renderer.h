@@ -19,21 +19,21 @@ class Renderer
 private:
     int _screenWidth, _screenHeight;
     Matrix<double> _zbuffer;
-    Matrix<QColor> _framebuffer; // буфер кадра
+    QImage _framebuffer; // буфер кадра
 
     Point2D<int> _centerPoint;
+
+    void _calcCenterPoint(const Matrix<Point3D<double>> &screenMap);
+    void _movePointToCenter(Point3D<double> &point);
+    vector<Point2D<int>> _getLineByBresenham(const Point3D<double> &p1, const Point3D<double> &p2);
+    void _calcIntensityForLine(vector<Point2D<int>> &line, const double &IPStart, const double &IPEnd);
+    void _renderPlane(const Plane &screenPlane, const vector<double> &heights, const vector<double> &intensity);
 
 public:
     Renderer();
     Renderer(const int &width, const int &height);
     ~Renderer();
 
-    void renderPlane(Plane &screenPlane, vector<double> &heights, vector<double> &intensity);
-    vector<Point2D<int>> getLineByBresenham(Point3D<double> &p1, Point3D<double> &p2);
-    void calcIntensityForLine(vector<Point2D<int>> &line, double IPStart, double IPEnd);
-
-    void calcCenterPoint(Matrix<Point3D<double>> &screenMap);
-    void movePointToCenter(Point3D<double> &point);
     Matrix<Point3D<double>> mapToScreen(Matrix<Point3D<double>> &map);
 
     void renderLandscape(Landscape &landscape, QGraphicsScene *scene);
