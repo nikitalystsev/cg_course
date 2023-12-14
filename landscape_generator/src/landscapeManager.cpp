@@ -7,8 +7,8 @@ void LandscapeManager::generateHeightMap(Landscape &landscape, PerlinNoise &para
     int currWaterlevel = landscape.getWaterlevel();
     int maxHeight = 0;
 
-    Matrix<Point3D<double>> &map = landscape.getMap();
-    Matrix<double> &withoutWaterMap = landscape.getWithoutWaterMap();
+    Matrix<Point3D<double>> &map = landscape.getHeightMap();
+    Matrix<double> &withoutWaterMap = landscape.getWithoutWaterHeightMap();
 
     for (int i = 0; i < rows; ++i)
         for (int j = 0; j < cols; ++j)
@@ -39,7 +39,7 @@ void LandscapeManager::calcNormalForEachPlane(Landscape &landscape)
     int width = landscape.getWidth();
     int lenght = landscape.getLenght();
 
-    Matrix<Point3D<double>> &map = landscape.getMap();
+    Matrix<Point3D<double>> &map = landscape.getHeightMap();
     Matrix<pair<Vector3D<double>, Vector3D<double>>> &normalMap = landscape.getNormalMap();
 
     // идем по всем квадратам ландшафной сетки
@@ -139,7 +139,7 @@ void LandscapeManager::calcIntensityForEachVertex(Landscape &landscape, Light &l
 
     Matrix<double> &intensityVertexMap = landscape.getIntensityVertexMap();
     Matrix<Vector3D<double>> &normalVertexMap = landscape.getNormalVertexMap();
-    Matrix<Point3D<double>> &map = landscape.getMap();
+    Matrix<Point3D<double>> &map = landscape.getHeightMap();
 
     // цикл по всем вершинам ландшафтной сетки
     for (int i = 0; i < rows; ++i)

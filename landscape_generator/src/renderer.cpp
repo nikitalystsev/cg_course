@@ -265,7 +265,7 @@ void Renderer::renderLandscape(Landscape &landscape, QGraphicsScene *scene)
 {
     this->clean();
 
-    Matrix<Point3D<double>> &map = landscape.getMap();
+    Matrix<Point3D<double>> &map = landscape.getHeightMap();
     Matrix<Point3D<double>> screenMap = this->mapToScreen(map);
     Matrix<double> &intensityVertexMap = landscape.getIntensityVertexMap();
 
