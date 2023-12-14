@@ -2,11 +2,11 @@
 
 Light::Light() :
     // пока что случайные значения для последних двух аргументов
-    Light(Point3D<int>(0, 0, 0), 1, 0.5)
+    Light(QVector3D(0, 0, 0), 1, 0.5)
 {
 }
 
-Light::Light(const Point3D<int> &position, double I_0, double K_d) :
+Light::Light(const QVector3D &position, double I_0, double K_d) :
     _position(position), _I_0(I_0), _K_d(K_d)
 {
 }
@@ -43,12 +43,12 @@ Light &Light::operator=(Light &&other) noexcept
     return *this;
 }
 
-Point3D<int> Light::getPosition() const
+QVector3D Light::getPosition() const
 {
-    return Point3D<int>(this->_position);
+    return QVector3D(this->_position);
 }
 
-void Light::setPosition(const Point3D<int> &position)
+void Light::setPosition(const QVector3D &position)
 {
     this->_position = position;
 }

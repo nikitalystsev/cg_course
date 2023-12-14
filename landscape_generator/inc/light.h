@@ -1,8 +1,7 @@
 #ifndef LIGHT_H
 #define LIGHT_H
 
-#include "point/point3D.h"
-#include "vector/vector3D.h"
+#include <QVector3D>
 #include <algorithm>
 
 // класс точечного источника освещения
@@ -10,7 +9,7 @@ class Light
 {
 private:
     // положение точечного источника в пространстве
-    Point3D<int> _position;
+    QVector3D _position;
     // интенсивность точечного источника
     double _I_0;
     // коэффициент диффузного отражения (0 <= K_d <= 1)
@@ -19,15 +18,15 @@ private:
 
 public:
     Light();
-    Light(const Point3D<int> &position, double I_0, double K_d);
+    Light(const QVector3D &position, double I_0, double K_d);
     explicit Light(const Light &other);
     Light(Light &&other) noexcept;
 
     Light &operator=(const Light &other);
     Light &operator=(Light &&other) noexcept;
 
-    Point3D<int> getPosition() const;
-    void setPosition(const Point3D<int> &position);
+    QVector3D getPosition() const;
+    void setPosition(const QVector3D &position);
 
     double getI_0() const { return this->_I_0; }
     double getK_d() const { return this->_K_d; }

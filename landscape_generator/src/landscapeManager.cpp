@@ -7,7 +7,7 @@ void LandscapeManager::generateHeightMap(Landscape &landscape, PerlinNoise &para
     int currWaterlevel = landscape.getWaterlevel();
     int maxHeight = 0;
 
-    Matrix<Point3D<double>> &map = landscape.getHeightMap();
+    Matrix<QVector3D> &map = landscape.getHeightMap();
     Matrix<double> &withoutWaterMap = landscape.getWithoutWaterHeightMap();
 
     for (int i = 0; i < rows; ++i)
@@ -24,9 +24,9 @@ void LandscapeManager::generateHeightMap(Landscape &landscape, PerlinNoise &para
                 maxHeight = height;
 
             if (height < currWaterlevel)
-                map[i][j].set(i * landscape.square, j * landscape.square, currWaterlevel);
+                map[i][j] = QVector3D(i * landscape.square, j * landscape.square, currWaterlevel);
             else
-                map[i][j].set(i * landscape.square, j * landscape.square, height);
+                map[i][j] = QVector3D(i * landscape.square, j * landscape.square, height);
 
             withoutWaterMap[i][j] = height;
         }
@@ -39,8 +39,8 @@ void LandscapeManager::calcNormalForEachPlane(Landscape &landscape)
     int width = landscape.getWidth();
     int lenght = landscape.getLenght();
 
-    Matrix<Point3D<double>> &map = landscape.getHeightMap();
-    Matrix<pair<Vector3D<double>, Vector3D<double>>> &normalMap = landscape.getNormalMap();
+    Matrix<QVector3D> &map = landscape.getHeightMap();
+    Matrix<pair<QVector3D, QVector3D>> &normalMap = landscape.getNormalMap();
 
     // идем по всем квадратам ландшафной сетки
     for (int i = 0; i < width; ++i)
@@ -51,13 +51,13 @@ void LandscapeManager::calcNormalForEachPlane(Landscape &landscape)
             Plane plane2(map[i][j], map[i + 1][j + 1], map[i][j + 1]);
 
             // получаем вектора внешних нормалей к граням
-            Vector3D<double> normalPlane1(plane1.getA(), plane1.getB(), plane1.getC());
-            Vector3D<double> normalPlane2(plane2.getA(), plane2.getB(), plane2.getC());
+            QVector3D normalPlane1(plane1.getA(), plane1.getB(), plane1.getC());
+            QVector3D normalPlane2(plane2.getA(), plane2.getB(), plane2.getC());
 
             normalPlane1.normalize();
             normalPlane2.normalize();
 
-            pair<Vector3D<double>, Vector3D<double>> normals(normalPlane1, normalPlane2);
+            pair<QVector3D, QVector3D> normals(normalPlane1, normalPlane2);
 
             normalMap[i][j] = normals;
         }
@@ -68,27 +68,27 @@ void LandscapeManager::calcNormalForEachVertex(Landscape &landscape)
     int rows = landscape.getWidth() + 1;
     int cols = landscape.getLenght() + 1;
 
-    Matrix<pair<Vector3D<double>, Vector3D<double>>> &normalMap = landscape.getNormalMap();
-    Matrix<Vector3D<double>> &normalVertexMap = landscape.getNormalVertexMap();
+    Matrix<pair<QVector3D, QVector3D>> &normalMap = landscape.getNormalMap();
+    Matrix<QVector3D> &normalVertexMap = landscape.getNormalVertexMap();
 
     // идем по всем вершинам ландшафтной сетки
     for (int i = 0; i < rows; ++i)
         for (int j = 0; j < cols; ++j)
         {
-            Vector3D<double> avgNormal;
+            QVector3D avgNormal;
             // левая верхняя и правая нижняя вершины
             if ((i == 0 && j == 0) || (i == rows - 1 && j == cols - 1))
             {
                 if (i == 0 && j == 0) // левая верхняя
                 {
-                    Vector3D<double> normal1(normalMap[i][j].first);
-                    Vector3D<double> normal2(normalMap[i][j].second);
+                    QVector3D normal1(normalMap[i][j].first);
+                    QVector3D normal2(normalMap[i][j].second);
                     avgNormal = (normal1 + normal2) / 2;
                 }
                 else // правая нижняя
                 {
-                    Vector3D<double> normal1(normalMap[i - 1][j - 1].first);
-                    Vector3D<double> normal2(normalMap[i - 1][j - 1].second);
+                    QVector3D normal1(normalMap[i - 1][j - 1].first);
+                    QVector3D normal2(normalMap[i - 1][j - 1].second);
                     avgNormal = (normal1 + normal2) / 2;
                 }
             }
@@ -105,27 +105,27 @@ void LandscapeManager::calcNormalForEachVertex(Landscape &landscape)
             {
                 if (i == 0) // первая строка
                 {
-                    Vector3D<double> normal1(normalMap[i][j].first);
-                    Vector3D<double> normal2(normalMap[i][j].second);
-                    Vector3D<double> normal3(normalMap[i][j - 1].first);
+                    QVector3D normal1(normalMap[i][j].first);
+                    QVector3D normal2(normalMap[i][j].second);
+                    QVector3D normal3(normalMap[i][j - 1].first);
                     avgNormal = (normal1 + normal2 + normal3) / 3;
                 }
                 else // первый столбец
                 {
-                    Vector3D<double> normal1(normalMap[i][j].first);
-                    Vector3D<double> normal2(normalMap[i][j].second);
-                    Vector3D<double> normal3(normalMap[i - 1][j].second);
+                    QVector3D normal1(normalMap[i][j].first);
+                    QVector3D normal2(normalMap[i][j].second);
+                    QVector3D normal3(normalMap[i - 1][j].second);
                     avgNormal = (normal1 + normal2 + normal3) / 3;
                 }
             }
             else // внутренние точки
             {
-                Vector3D<double> normal1(normalMap[i - 1][j - 1].first);
-                Vector3D<double> normal2(normalMap[i - 1][j - 1].second);
-                Vector3D<double> normal3(normalMap[i][j].first);
-                Vector3D<double> normal4(normalMap[i][j].second);
-                Vector3D<double> normal5(normalMap[i][j - 1].first);
-                Vector3D<double> normal6(normalMap[i - 1][j].second);
+                QVector3D normal1(normalMap[i - 1][j - 1].first);
+                QVector3D normal2(normalMap[i - 1][j - 1].second);
+                QVector3D normal3(normalMap[i][j].first);
+                QVector3D normal4(normalMap[i][j].second);
+                QVector3D normal5(normalMap[i][j - 1].first);
+                QVector3D normal6(normalMap[i - 1][j].second);
                 avgNormal = (normal1 + normal2 + normal3 + normal4 + normal5 + normal6) / 6;
             }
             normalVertexMap[i][j] = avgNormal;
@@ -138,15 +138,15 @@ void LandscapeManager::calcIntensityForEachVertex(Landscape &landscape, Light &l
     int cols = landscape.getLenght() + 1;
 
     Matrix<double> &intensityVertexMap = landscape.getIntensityVertexMap();
-    Matrix<Vector3D<double>> &normalVertexMap = landscape.getNormalVertexMap();
-    Matrix<Point3D<double>> &map = landscape.getHeightMap();
+    Matrix<QVector3D> &normalVertexMap = landscape.getNormalVertexMap();
+    Matrix<QVector3D> &map = landscape.getHeightMap();
 
     // цикл по всем вершинам ландшафтной сетки
     for (int i = 0; i < rows; ++i)
         for (int j = 0; j < cols; ++j)
         {
             // получили вектор направления света
-            Vector3D<double> direction = LightManager::caclDirectionVector(light, map[i][j]);
+            QVector3D direction = LightManager::caclDirectionVector(light, map[i][j]);
             // // нормализуем вектора, чтобы были единичной длины
             direction.normalize();
             normalVertexMap[i][j].normalize();

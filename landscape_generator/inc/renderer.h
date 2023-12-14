@@ -6,7 +6,6 @@
 #include "plane.h"
 #include "transform.h"
 #include <QColor>
-#include <thread>
 #include <vector>
 
 template <typename T>
@@ -15,12 +14,10 @@ using vector = std::vector<T>;
 template <typename T>
 using Matrix = std::vector<std::vector<T>>;
 
-struct ThreadParams
+struct Pixel
 {
-    int startRow;
-    int endRow;
-    int startCol;
-    int endCol;
+    QVector3D vec;
+    double I;
 };
 
 // класс-отрисовщик
@@ -31,13 +28,13 @@ private:
     Matrix<double> _zbuffer;
     QImage _framebuffer; // буфер кадра
 
-    Point2D<int> _centerPoint;
+    QVector2D _centerPoint;
 
-    void _calcCenterPoint(const Matrix<Point3D<double>> &screenMap);
-    void _movePointToCenter(Point3D<double> &point);
-    vector<Point3D<int>> _getLineByBresenham(const Point3D<double> &p1, const Point3D<double> &p2);
-    void _calcIntensityForLine(vector<Point3D<int>> &line, const double &IPStart, const double &IPEnd);
-    void _calcHeightForLine(vector<Point3D<int>> &line, const double &ZPStart, const double &ZPEnd);
+    void _calcCenterPoint(const Matrix<QVector3D> &screenMap);
+    void _movePointToCenter(QVector3D &point);
+    vector<Pixel> _getLineByBresenham(const QVector3D &p1, const QVector3D &p2);
+    void _calcIntensityForLine(vector<Pixel> &line, const double &IPStart, const double &IPEnd);
+    void _calcHeightForLine(vector<Pixel> &line, const double &ZPStart, const double &ZPEnd);
     void _renderPlane(const Plane &screenPlane, const vector<double> &heights, const vector<double> &intensity, const double waterlevel, const double maxHeight);
     int _getCorrectChannel(int _R, double I);
 
@@ -46,7 +43,7 @@ public:
     Renderer(const int &width, const int &height);
     ~Renderer();
 
-    Matrix<Point3D<double>> mapToScreen(Matrix<Point3D<double>> &map);
+    Matrix<QVector3D> mapToScreen(Matrix<QVector3D> &map);
 
     void renderLandscape(Landscape &landscape, QGraphicsScene *scene);
     int getScreenWidth() const;

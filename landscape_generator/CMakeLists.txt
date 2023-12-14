@@ -17,10 +17,6 @@ set(PROJECT_SOURCES
         src/main.cpp
         src/mainwindow.cpp
         inc/mainwindow.h
-        inc/point/point3D.h
-        inc/point/point2D.h
-        inc/vector/vector3D.h
-        inc/vector/vector2D.h
         src/light.cpp
         inc/light.h
         inc/transform.h

@@ -9,10 +9,10 @@ Landscape::Landscape() :
 Landscape::Landscape(const int width, const int lenght, const int waterlevel) :
     _width(width), _lenght(lenght), _waterlevel(waterlevel),
     _rows(width + 1), _cols(lenght + 1),
-    _heightMap(width + 1, vector<Point3D<double>>(lenght + 1)),
+    _heightMap(width + 1, vector<QVector3D>(lenght + 1)),
     _withoutWaterHeightMap(width + 1, vector<double>(lenght + 1)),
-    _normalMap(width + 1, vector<pair<Vector3D<double>, Vector3D<double>>>(lenght + 1)),
-    _normalVertexMap(width + 1, vector<Vector3D<double>>(lenght + 1)),
+    _normalMap(width + 1, vector<pair<QVector3D, QVector3D>>(lenght + 1)),
+    _normalVertexMap(width + 1, vector<QVector3D>(lenght + 1)),
     _intensityVertexMap(width + 1, vector<double>(lenght + 1))
 {
 }
@@ -105,10 +105,10 @@ void Landscape::resize(const int width, const int lenght)
     this->_normalVertexMap.clear();
     this->_intensityVertexMap.clear();
 
-    resizeMatrix<Point3D<double>>(this->_heightMap, this->_rows, this->_cols);
+    resizeMatrix<QVector3D>(this->_heightMap, this->_rows, this->_cols);
     resizeMatrix<double>(this->_withoutWaterHeightMap, this->_rows, this->_cols);
-    resizeMatrix<pair<Vector3D<double>, Vector3D<double>>>(this->_normalMap, this->_rows, this->_cols);
-    resizeMatrix<Vector3D<double>>(this->_normalVertexMap, this->_rows, this->_cols);
+    resizeMatrix<pair<QVector3D, QVector3D>>(this->_normalMap, this->_rows, this->_cols);
+    resizeMatrix<QVector3D>(this->_normalVertexMap, this->_rows, this->_cols);
     resizeMatrix<double>(this->_intensityVertexMap, this->_rows, this->_cols);
 }
 
@@ -117,9 +117,9 @@ void Landscape::updateWaterlevel(const double waterlevel)
     for (int i = 0; i < this->_rows; ++i)
         for (int j = 0; j < this->_cols; ++j)
             if (this->_withoutWaterHeightMap[i][j] < waterlevel)
-                this->_heightMap[i][j].set(i * square, j * square, waterlevel);
+                this->_heightMap[i][j] = QVector3D(i * square, j * square, waterlevel);
             else
-                this->_heightMap[i][j].set(i * square, j * square, this->_withoutWaterHeightMap[i][j]);
+                this->_heightMap[i][j] = QVector3D(i * square, j * square, this->_withoutWaterHeightMap[i][j]);
 
     this->_waterlevel = waterlevel;
 }
@@ -159,7 +159,7 @@ void Landscape::setLenght(const int lenght)
     this->_width = lenght;
 }
 
-Matrix<Point3D<double>> &Landscape::getHeightMap()
+Matrix<QVector3D> &Landscape::getHeightMap()
 {
     return this->_heightMap;
 }
@@ -169,12 +169,12 @@ Matrix<double> &Landscape::getWithoutWaterHeightMap()
     return this->_withoutWaterHeightMap;
 }
 
-Matrix<pair<Vector3D<double>, Vector3D<double>>> &Landscape::getNormalMap()
+Matrix<pair<QVector3D, QVector3D>> &Landscape::getNormalMap()
 {
     return this->_normalMap;
 }
 
-Matrix<Vector3D<double>> &Landscape::getNormalVertexMap()
+Matrix<QVector3D> &Landscape::getNormalVertexMap()
 {
     return this->_normalVertexMap;
 }

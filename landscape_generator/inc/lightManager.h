@@ -2,13 +2,13 @@
 #define __LIGHT_MANAGER_H__
 
 #include "light.h"
-#include "vector/vector3D.h"
+#include <QVector3D>
 
 class LightManager
 {
 public:
-    static Vector3D<double> caclDirectionVector(const Light &light, const Point3D<double> &vertex);
-    static double caclIntensityAtVertex(const Light &light, const Vector3D<double> &direction, const Vector3D<double> &normal);
+    static QVector3D caclDirectionVector(const Light &light, const QVector3D &vertex);
+    static double caclIntensityAtVertex(const Light &light, const QVector3D &direction, const QVector3D &normal);
 };
 
 #endif // __LIGHT_MANAGER_H__

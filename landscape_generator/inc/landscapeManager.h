@@ -6,7 +6,6 @@
 #include "lightManager.h"
 #include "perlinNoise.h"
 #include "plane.h"
-#include "vector/vector3D.h"
 
 template <typename T>
 using vector = std::vector<T>;

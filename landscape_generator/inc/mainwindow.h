@@ -5,6 +5,7 @@
 #include "landscapeManager.h"
 #include "renderer.h"
 #include <QMainWindow>
+#include <QVector3D>
 
 QT_BEGIN_NAMESPACE
 namespace Ui

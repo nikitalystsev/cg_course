@@ -72,9 +72,9 @@ void MainWindow::_changeParamNoise()
 
 void MainWindow::__changeParamLight()
 {
-    Point3D<int> lightPosition(ui->lightXSpinBox->value(),
-                               ui->lightYSpinBox->value(),
-                               ui->lightZSpinBox->value());
+    QVector3D lightPosition(ui->lightXSpinBox->value(),
+                            ui->lightYSpinBox->value(),
+                            ui->lightZSpinBox->value());
 
     double K_d = ui->K_dSpinBox->value();
     double I_0 = ui->I_0SpinBox->value();

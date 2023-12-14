@@ -1,6 +1,6 @@
 #include "../inc/plane.h"
 
-Plane::Plane(const Point3D<double> &p1, const Point3D<double> &p2, const Point3D<double> &p3) :
+Plane::Plane(const QVector3D &p1, const QVector3D &p2, const QVector3D &p3) :
     _p1(p1), _p2(p2), _p3(p3)
 {
     this->_calcPlaneCoeff();
@@ -10,28 +10,28 @@ Plane::Plane(const Point3D<double> &p1, const Point3D<double> &p2, const Point3D
 void Plane::_calcPlaneCoeff()
 {
     // плоскость, заданная тремя точками _p1, _p2, _p3
-    double m = this->_p2.getX() - this->_p1.getX();
-    double n = this->_p2.getY() - this->_p1.getY();
-    double p = this->_p2.getZ() - this->_p1.getZ();
+    double m = this->_p2.x() - this->_p1.x();
+    double n = this->_p2.y() - this->_p1.y();
+    double p = this->_p2.z() - this->_p1.z();
 
-    double k = this->_p3.getX() - this->_p1.getX();
-    double s = this->_p3.getY() - this->_p1.getY();
-    double e = this->_p3.getZ() - this->_p1.getZ();
+    double k = this->_p3.x() - this->_p1.x();
+    double s = this->_p3.y() - this->_p1.y();
+    double e = this->_p3.z() - this->_p1.z();
 
     this->_A = n * e - s * p;
     this->_B = k * p - m * e;
     this->_C = m * s - k * n;
 
-    this->_D = -(this->_A * this->_p1.getX() + this->_B * this->_p1.getY() + this->_C * this->_p1.getZ());
+    this->_D = -(this->_A * this->_p1.x() + this->_B * this->_p1.y() + this->_C * this->_p1.z());
 }
 
 void Plane::_defCircumRect()
 {
-    this->_pMin.setX(std::min({this->_p1.getX(), this->_p2.getX(), this->_p3.getX()}));
-    this->_pMin.setY(std::min({this->_p1.getY(), this->_p2.getY(), this->_p3.getY()}));
+    this->_pMin.setX(std::min({this->_p1.x(), this->_p2.x(), this->_p3.x()}));
+    this->_pMin.setY(std::min({this->_p1.y(), this->_p2.y(), this->_p3.y()}));
 
-    this->_pMax.setX(std::max({this->_p1.getX(), this->_p2.getX(), this->_p3.getX()}));
-    this->_pMax.setY(std::max({this->_p1.getY(), this->_p2.getY(), this->_p3.getY()}));
+    this->_pMax.setX(std::max({this->_p1.x(), this->_p2.x(), this->_p3.x()}));
+    this->_pMax.setY(std::max({this->_p1.y(), this->_p2.y(), this->_p3.y()}));
 }
 
 double Plane::caclZ(const double x, const double y) const
@@ -41,29 +41,29 @@ double Plane::caclZ(const double x, const double y) const
     return z;
 }
 
-Point3D<double> Plane::getP1() const
+QVector3D Plane::getP1() const
 {
-    return Point3D<double>(this->_p1);
+    return QVector3D(this->_p1);
 }
 
-Point3D<double> Plane::getP2() const
+QVector3D Plane::getP2() const
 {
-    return Point3D<double>(this->_p2);
+    return QVector3D(this->_p2);
 }
 
-Point3D<double> Plane::getP3() const
+QVector3D Plane::getP3() const
 {
-    return Point3D<double>(this->_p3);
+    return QVector3D(this->_p3);
 }
 
-Point2D<double> Plane::getPMin() const
+QVector2D Plane::getPMin() const
 {
-    return Point2D<double>(this->_pMin);
+    return QVector2D(this->_pMin);
 }
 
-Point2D<double> Plane::getPMax() const
+QVector2D Plane::getPMax() const
 {
-    return Point2D<double>(this->_pMax);
+    return QVector2D(this->_pMax);
 }
 
 double Plane::getA() const
