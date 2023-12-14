@@ -1,8 +1,7 @@
 #include "../inc/renderer.h"
 
 Renderer::Renderer() :
-    _screenWidth(1089), _screenHeight(730),
-    _zbuffer(1089, vector<double>(730, INT_MIN)), _framebuffer(1089, 730, QImage::Format_RGB32)
+    Renderer(1089, 731)
 {
 }
 
@@ -92,9 +91,11 @@ void Renderer::_renderPlane(const Plane &screenPlane, const vector<double> &heig
 
                 double z = screenPlane.caclZ(x, y);
 
-                if (z > this->_zbuffer[x][y])
+                int _x = toSceneX(x), _y = toSceneY(y);
+
+                if (z > this->_zbuffer[_x][_y])
                 {
-                    this->_zbuffer[x][y] = z;
+                    this->_zbuffer[_x][_y] = z;
 
                     int r, g, b;
 
@@ -123,7 +124,7 @@ void Renderer::_renderPlane(const Plane &screenPlane, const vector<double> &heig
                         b = this->_getCorrectChannel(14, I);
                     }
 
-                    this->_framebuffer.setPixelColor(x, y, QColor(r, g, b));
+                    this->_framebuffer.setPixelColor(_x, _y, QColor(r, g, b));
                 }
             }
         }
@@ -217,49 +218,12 @@ void Renderer::_calcHeightForLine(vector<Pixel> &line, const double &ZPStart, co
     }
 }
 
-void Renderer::calcCenterPoint(const Matrix<QVector3D> &screenMap)
-{
-    int xMin = screenMap[0][0].x(), yMin = screenMap[0][0].y();
-    int xMax = xMin, yMax = yMin;
-
-    for (const auto &row : screenMap)
-        for (const auto &point : row)
-        {
-            int currX = point.x();
-            int currY = point.y();
-
-            xMin = std::min(xMin, currX);
-            yMin = std::min(yMin, currY);
-            xMax = std::max(xMax, currX);
-            yMax = std::max(yMax, currY);
-        }
-
-    this->_centerPoint.setX((xMin + xMax) / 2);
-    this->_centerPoint.setY((yMin + yMax) / 2);
-}
-
-void Renderer::_movePointToCenter(QVector3D &point)
-{
-    double x = point.x() + this->_screenWidth / 2 - this->_centerPoint.x();
-    double y = point.y() + this->_screenHeight / 2 - this->_centerPoint.y();
-
-    point.setX(x), point.setY(y);
-}
-
-void Renderer::moveLandscapeToCenter(Landscape &landscape)
-{
-    Matrix<QVector3D> &heightMap = landscape.getHeightMap();
-
-    for (int i = 0; i < heightMap.size(); ++i)
-        for (int j = 0; j < heightMap[0].size(); ++j)
-            this->_movePointToCenter(heightMap[i][j]);
-}
-
 void Renderer::renderLandscape(Landscape &landscape, QGraphicsScene *scene)
 {
     this->clean();
 
     Matrix<QVector3D> &map = landscape.getHeightMap();
+    Matrix<QVector3D> &screenHeightMap = landscape.getScreenHeightMap();
     Matrix<double> &intensityVertexMap = landscape.getIntensityVertexMap();
 
     int waterlevel = landscape.getWaterlevel();
@@ -276,8 +240,8 @@ void Renderer::renderLandscape(Landscape &landscape, QGraphicsScene *scene)
         for (int j = 0; j < height; ++j)
         {
             // в каждом квадрате сетки 2 треугольника - 2 плоскости
-            Plane plane1(map[i][j], map[i + 1][j], map[i + 1][j + 1]);
-            Plane plane2(map[i][j], map[i][j + 1], map[i + 1][j + 1]);
+            Plane plane1(screenHeightMap[i][j], screenHeightMap[i + 1][j], screenHeightMap[i + 1][j + 1]);
+            Plane plane2(screenHeightMap[i][j], screenHeightMap[i][j + 1], screenHeightMap[i + 1][j + 1]);
 
             // определяем высоты вершин квадрата
             double z1 = map[i][j].z();
@@ -325,4 +289,32 @@ void Renderer::clean()
             this->_zbuffer[i][j] = INT_MIN;
             this->_framebuffer.setPixelColor(i, j, QColor(0, 0, 0));
         }
+}
+
+int Renderer::toSceneX(double originX)
+{
+    double xMin = -545, xMax = 545;
+    double yMin = -365, yMax = 365;
+
+    double kx = (this->_screenWidth - 0) / (xMax - xMin);
+    double ky = (this->_screenHeight - 0) / (yMax - yMin);
+    double km = std::min(kx, ky);
+
+    int canvasX = 0 + (originX - xMin) * km;
+
+    return canvasX;
+}
+
+int Renderer::toSceneY(double originY)
+{
+    double xMin = -545, xMax = 545;
+    double yMin = -365, yMax = 365;
+
+    double kx = (this->_screenWidth - 0) / (xMax - xMin);
+    double ky = (this->_screenHeight - 0) / (yMax - yMin);
+    double km = std::min(kx, ky);
+
+    int canvasY = 0 + (originY - yMin) * km;
+
+    return canvasY;
 }

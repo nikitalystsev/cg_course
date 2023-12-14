@@ -21,11 +21,12 @@ class Landscape
 {
 private:
     Matrix<QVector3D> _heightMap;               // карта высот
+    Matrix<QVector3D> _screenHeightMap;         // карта высот для вывода на экран
     Matrix<double> _withoutWaterHeightMap = {}; // карта высот без учета уровня воды
     int _rows, _cols;                           // размеры ландшафтных матриц
     int _width, _lenght;                        // длина и ширина карты высот (в количестве полигонов)
     double _waterlevel;                         // уровень воды
-    double _maxHeight = 0;                      // максимаьная сгенерирова
+    double _maxHeight = 0;                      // максимальная сгенерированная высота
 
     Matrix<pair<QVector3D, QVector3D>> _normalMap; // матрица векторов внешней нормали к каждой из граней
     Matrix<QVector3D> _normalVertexMap;            // матрица векторов нормалей для каждой вершины
@@ -44,6 +45,8 @@ public:
     Landscape &operator=(const Landscape &other);
     Landscape &operator=(Landscape &&other) noexcept;
 
+    template <typename T>
+    void resizeMatrix(Matrix<T> &matrix, int newWidth, int newLenght);
     void resize(const int width, const int lenght);
 
     double getWaterlevel() const;
@@ -58,7 +61,12 @@ public:
     int getLenght() const;
     void setLenght(const int lenght);
 
+    int getCols() const;
+    int getRows() const;
+
     Matrix<QVector3D> &getHeightMap();
+
+    Matrix<QVector3D> &getScreenHeightMap();
 
     Matrix<double> &getWithoutWaterHeightMap();
 

@@ -28,9 +28,6 @@ private:
     Matrix<double> _zbuffer;
     QImage _framebuffer; // буфер кадра
 
-    QVector2D _centerPoint;
-
-    void _movePointToCenter(QVector3D &point);
     vector<Pixel> _getLineByBresenham(const QVector3D &p1, const QVector3D &p2);
     void _calcIntensityForLine(vector<Pixel> &line, const double &IPStart, const double &IPEnd);
     void _calcHeightForLine(vector<Pixel> &line, const double &ZPStart, const double &ZPEnd);
@@ -42,10 +39,11 @@ public:
     Renderer(const int &width, const int &height);
     ~Renderer();
 
-    //    Matrix<QVector3D> mapToScreen(Matrix<QVector3D> &map);
-    void calcCenterPoint(const Matrix<QVector3D> &screenMap);
-    void moveLandscapeToCenter(Landscape &landscape);
+    int toSceneX(double originX);
+    int toSceneY(double originY);
+
     void renderLandscape(Landscape &landscape, QGraphicsScene *scene);
+
     int getScreenWidth() const;
     int getScreenHeight() const;
 

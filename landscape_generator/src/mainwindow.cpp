@@ -57,6 +57,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->__changeParamLight();
     this->__changeMoveParams();
     this->__changeRotateParams();
+    this->__changeLandscapeSize();
 
     this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
 }
@@ -77,7 +78,9 @@ void MainWindow::__changeParamNoise()
 
     this->_paramNoise = PerlinNoise(seed, octaves, frequency, lacunarity, amplitude, persistence);
 
-    LandscapeManager::updateLandscape(this->_landscape, this->_paramNoise, this->_light);
+    LandscapeManager::generateHeightMap(this->_landscape, this->_paramNoise);
+    LandscapeManager::calcNormalForEachPlane(this->_landscape);
+    LandscapeManager::calcNormalForEachVertex(this->_landscape);
 }
 
 void MainWindow::_changeParamNoise()
@@ -86,80 +89,8 @@ void MainWindow::_changeParamNoise()
     this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
 }
 
-void MainWindow::__changeMoveParams()
-{
-    move_t move;
-    move.dx = ui->moveXSpinbox->value();
-    move.dy = ui->moveYSpinbox->value();
-    move.dz = ui->moveZSpinbox->value();
-
-    LandscapeManager::moveLandscape(this->_landscape, move);
-
-    //    LandscapeManager::calcNormalForEachPlane(this->_landscape);
-    //    LandscapeManager::calcNormalForEachVertex(this->_landscape);
-    LandscapeManager::calcIntensityForEachVertex(this->_landscape, this->_light);
-}
-
-void MainWindow::_changeMoveParams()
-{
-    move_t move;
-    move.dx = ui->moveXSpinbox->value();
-    move.dy = ui->moveYSpinbox->value();
-    move.dz = ui->moveZSpinbox->value();
-
-    LandscapeManager::moveLandscape(this->_landscape, move);
-
-    //    LandscapeManager::calcNormalForEachPlane(this->_landscape);
-    //    LandscapeManager::calcNormalForEachVertex(this->_landscape);
-    LandscapeManager::calcIntensityForEachVertex(this->_landscape, this->_light);
-
-    // изображение рендерится сразу, центральная точка пиксельного изображения остается такой же
-    this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
-}
-
-void MainWindow::__changeRotateParams()
-{
-    rotate_t rotate;
-    rotate.xAngle = ui->rotateXSpinbox->value();
-    rotate.yAngle = ui->rotateYSpinbox->value();
-    rotate.zAngle = ui->rotateZSpinbox->value();
-
-    LandscapeManager::rotateLandscape(this->_landscape, rotate);
-
-    //    LandscapeManager::calcNormalForEachPlane(this->_landscape);
-    //    LandscapeManager::calcNormalForEachVertex(this->_landscape);
-    LandscapeManager::calcIntensityForEachVertex(this->_landscape, this->_light);
-
-    // пересчитываем центральную точку
-    this->_renderer.calcCenterPoint(this->_landscape.getHeightMap());
-
-    this->_renderer.moveLandscapeToCenter(this->_landscape);
-}
-
-void MainWindow::_changeRotateParams()
-{
-    rotate_t rotate;
-    rotate.xAngle = ui->rotateXSpinbox->value();
-    rotate.yAngle = ui->rotateYSpinbox->value();
-    rotate.zAngle = ui->rotateZSpinbox->value();
-
-    LandscapeManager::rotateLandscape(this->_landscape, rotate);
-
-    //    LandscapeManager::calcNormalForEachPlane(this->_landscape);
-    //    LandscapeManager::calcNormalForEachVertex(this->_landscape);
-    LandscapeManager::calcIntensityForEachVertex(this->_landscape, this->_light);
-
-    // пересчитываем центральную точку
-    this->_renderer.calcCenterPoint(this->_landscape.getHeightMap());
-
-    this->_renderer.moveLandscapeToCenter(this->_landscape);
-
-    this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
-}
-
 void MainWindow::__changeParamLight()
 {
-
     std::cout << ui->landscapeGraphicsView->width() << std::endl;
     std::cout << ui->landscapeGraphicsView->height() << std::endl;
 
@@ -181,7 +112,43 @@ void MainWindow::_changeParamLight()
     this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
 }
 
-void MainWindow::_changeLandscapeSize()
+void MainWindow::__changeMoveParams()
+{
+    move_t move;
+    move.dx = ui->moveXSpinbox->value();
+    move.dy = ui->moveYSpinbox->value();
+    move.dz = ui->moveZSpinbox->value();
+
+    LandscapeManager::moveLandscape(this->_landscape, move);
+
+    LandscapeManager::calcIntensityForEachVertex(this->_landscape, this->_light);
+}
+
+void MainWindow::_changeMoveParams()
+{
+    this->__changeMoveParams();
+    this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
+}
+
+void MainWindow::__changeRotateParams()
+{
+    rotate_t rotate;
+    rotate.xAngle = ui->rotateXSpinbox->value();
+    rotate.yAngle = ui->rotateYSpinbox->value();
+    rotate.zAngle = ui->rotateZSpinbox->value();
+
+    LandscapeManager::rotateLandscape(this->_landscape, rotate);
+
+    LandscapeManager::calcIntensityForEachVertex(this->_landscape, this->_light);
+}
+
+void MainWindow::_changeRotateParams()
+{
+    this->__changeRotateParams();
+    this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
+}
+
+void MainWindow::__changeLandscapeSize()
 {
     int newWidth = ui->widthSpinBox->value();
     int newLenght = ui->lenghtSpinBox->value();
@@ -189,7 +156,11 @@ void MainWindow::_changeLandscapeSize()
     this->_landscape.resize(newWidth, newLenght);
 
     LandscapeManager::updateLandscape(this->_landscape, this->_paramNoise, this->_light);
+}
 
+void MainWindow::_changeLandscapeSize()
+{
+    this->__changeLandscapeSize();
     this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
 }
 

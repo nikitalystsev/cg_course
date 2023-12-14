@@ -27,7 +27,7 @@ private:
     void __changeParamLight();
     void __changeMoveParams();
     void __changeRotateParams();
-
+    void __changeLandscapeSize();
 private slots:
     void _changeParamNoise();
 

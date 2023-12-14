@@ -2,16 +2,25 @@
 
 void LandscapeManager::generateHeightMap(Landscape &landscape, PerlinNoise &paramNoise)
 {
-    int rows = landscape.getWidth() + 1;
-    int cols = landscape.getLenght() + 1;
+    std::cout << "[B] generateHeightMap" << std::endl;
+
+    int rows = landscape.getRows();
+    int cols = landscape.getCols();
+
+    int a = -((landscape.getWidth() * landscape.square) / 2);
+    int b = -((landscape.getLenght() * landscape.square) / 2);
+    int c = -a;
+    int d = -b;
+
     int currWaterlevel = landscape.getWaterlevel();
     int maxHeight = 0;
 
-    Matrix<QVector3D> &map = landscape.getHeightMap();
+    Matrix<QVector3D> &heightMap = landscape.getHeightMap();
+    Matrix<QVector3D> &screenHeightMap = landscape.getScreenHeightMap();
     Matrix<double> &withoutWaterMap = landscape.getWithoutWaterHeightMap();
 
-    for (int i = 0; i < rows; ++i)
-        for (int j = 0; j < cols; ++j)
+    for (int i = 0, m = a; i < rows && m <= c; ++i, m += landscape.square)
+        for (int j = 0, n = b; j < cols && n <= d; ++j, n += landscape.square)
         {
             double nx = i / (double)rows - 1 - 0.5;
             double ny = j / (double)cols - 1 - 0.5;
@@ -24,10 +33,15 @@ void LandscapeManager::generateHeightMap(Landscape &landscape, PerlinNoise &para
                 maxHeight = height;
 
             if (height < currWaterlevel)
-                map[i][j] = QVector3D(i * landscape.square, j * landscape.square, currWaterlevel);
+            {
+                heightMap[i][j] = QVector3D(m, n, currWaterlevel);
+            }
             else
-                map[i][j] = QVector3D(i * landscape.square, j * landscape.square, height);
+            {
+                heightMap[i][j] = QVector3D(m, n, height);
+            }
 
+            screenHeightMap[i][j] = heightMap[i][j];
             withoutWaterMap[i][j] = height;
         }
 
@@ -36,10 +50,13 @@ void LandscapeManager::generateHeightMap(Landscape &landscape, PerlinNoise &para
 
 void LandscapeManager::calcNormalForEachPlane(Landscape &landscape)
 {
+    std::cout << "[B] calcNormalForEachPlane" << std::endl;
+
     int width = landscape.getWidth();
     int lenght = landscape.getLenght();
 
-    Matrix<QVector3D> &map = landscape.getHeightMap();
+    //    Matrix<QVector3D> &map = landscape.getHeightMap();
+    Matrix<QVector3D> &screenHeightMap = landscape.getScreenHeightMap();
     Matrix<pair<QVector3D, QVector3D>> &normalMap = landscape.getNormalMap();
 
     // идем по всем квадратам ландшафной сетки
@@ -47,8 +64,8 @@ void LandscapeManager::calcNormalForEachPlane(Landscape &landscape)
         for (int j = 0; j < lenght; ++j)
         {
             // в каждом квадрате сетки 2 треугольника - 2 плоскости
-            Plane plane1(map[i][j], map[i + 1][j], map[i + 1][j + 1]);
-            Plane plane2(map[i][j], map[i + 1][j + 1], map[i][j + 1]);
+            Plane plane1(screenHeightMap[i][j], screenHeightMap[i + 1][j], screenHeightMap[i + 1][j + 1]);
+            Plane plane2(screenHeightMap[i][j], screenHeightMap[i + 1][j + 1], screenHeightMap[i][j + 1]);
 
             // получаем вектора внешних нормалей к граням
             QVector3D normalPlane1(plane1.getA(), plane1.getB(), plane1.getC());
@@ -65,8 +82,10 @@ void LandscapeManager::calcNormalForEachPlane(Landscape &landscape)
 
 void LandscapeManager::calcNormalForEachVertex(Landscape &landscape)
 {
-    int rows = landscape.getWidth() + 1;
-    int cols = landscape.getLenght() + 1;
+    std::cout << "[B] calcNormalForEachVertex" << std::endl;
+
+    int rows = landscape.getRows();
+    int cols = landscape.getCols();
 
     Matrix<pair<QVector3D, QVector3D>> &normalMap = landscape.getNormalMap();
     Matrix<QVector3D> &normalVertexMap = landscape.getNormalVertexMap();
@@ -134,19 +153,21 @@ void LandscapeManager::calcNormalForEachVertex(Landscape &landscape)
 
 void LandscapeManager::calcIntensityForEachVertex(Landscape &landscape, Light &light)
 {
-    int rows = landscape.getWidth() + 1;
-    int cols = landscape.getLenght() + 1;
+    std::cout << "[B] calcIntensityForEachVertex" << std::endl;
+
+    int rows = landscape.getRows();
+    int cols = landscape.getCols();
 
     Matrix<double> &intensityVertexMap = landscape.getIntensityVertexMap();
     Matrix<QVector3D> &normalVertexMap = landscape.getNormalVertexMap();
-    Matrix<QVector3D> &map = landscape.getHeightMap();
+    Matrix<QVector3D> &screenHeightMap = landscape.getScreenHeightMap();
 
     // цикл по всем вершинам ландшафтной сетки
     for (int i = 0; i < rows; ++i)
         for (int j = 0; j < cols; ++j)
         {
             // получили вектор направления света
-            QVector3D direction = LightManager::caclDirectionVector(light, map[i][j]);
+            QVector3D direction = LightManager::caclDirectionVector(light, screenHeightMap[i][j]);
             // // нормализуем вектора, чтобы были единичной длины
             direction.normalize();
             normalVertexMap[i][j].normalize();
@@ -168,32 +189,26 @@ void LandscapeManager::updateLandscape(Landscape &landscape, PerlinNoise &paramN
 
 void LandscapeManager::rotateLandscape(Landscape &landscape, rotate_t &angles)
 {
-    Matrix<QVector3D> &heightMap = landscape.getHeightMap();
+    Matrix<QVector3D> &screenHeightMap = landscape.getScreenHeightMap();
 
-    int rows = heightMap.size();
-    int cols = heightMap[0].size();
-
-    for (int i = 0; i < rows; ++i)
-        for (int j = 0; j < cols; ++j)
+    for (auto &row : screenHeightMap)
+        for (auto &point : row)
         {
-            Transform::rotateByX(heightMap[i][j], angles.xAngle);
-            Transform::rotateByY(heightMap[i][j], angles.xAngle);
-            Transform::rotateByZ(heightMap[i][j], angles.xAngle);
+            Transform::rotateByX(point, angles.xAngle);
+            Transform::rotateByY(point, angles.yAngle);
+            Transform::rotateByZ(point, angles.zAngle);
         }
 }
 
 void LandscapeManager::moveLandscape(Landscape &landscape, move_t &move)
 {
-    Matrix<QVector3D> &heightMap = landscape.getHeightMap();
+    Matrix<QVector3D> &screenHeightMap = landscape.getScreenHeightMap();
 
-    int rows = heightMap.size();
-    int cols = heightMap[0].size();
-
-    for (int i = 0; i < rows; ++i)
-        for (int j = 0; j < cols; ++j)
+    for (auto &row : screenHeightMap)
+        for (auto &point : row)
         {
-            heightMap[i][j].setX(heightMap[i][j].x() + move.dx);
-            heightMap[i][j].setY(heightMap[i][j].y() + move.dy);
-            heightMap[i][j].setZ(heightMap[i][j].z() + move.dz);
+            point.setX(point.x() + move.dx);
+            point.setY(point.y() + move.dy);
+            point.setZ(point.z() + move.dz);
         }
 }

@@ -2,7 +2,7 @@
 #include "../inc/perlinNoise.h"
 
 Landscape::Landscape() :
-    Landscape(166, 166, 0)
+    Landscape(100, 100, 0)
 {
 }
 
@@ -10,6 +10,7 @@ Landscape::Landscape(const int width, const int lenght, const int waterlevel) :
     _width(width), _lenght(lenght), _waterlevel(waterlevel),
     _rows(width + 1), _cols(lenght + 1),
     _heightMap(width + 1, vector<QVector3D>(lenght + 1)),
+    _screenHeightMap(width + 1, vector<QVector3D>(lenght + 1)),
     _withoutWaterHeightMap(width + 1, vector<double>(lenght + 1)),
     _normalMap(width + 1, vector<pair<QVector3D, QVector3D>>(lenght + 1)),
     _normalVertexMap(width + 1, vector<QVector3D>(lenght + 1)),
@@ -22,6 +23,7 @@ Landscape::~Landscape() {}
 Landscape::Landscape(const Landscape &other)
 {
     this->_heightMap = other._heightMap;
+    this->_screenHeightMap = other._screenHeightMap;
     this->_withoutWaterHeightMap = other._withoutWaterHeightMap;
     this->_rows = other._rows;
     this->_cols = other._cols;
@@ -37,6 +39,7 @@ Landscape::Landscape(const Landscape &other)
 Landscape::Landscape(Landscape &&other) noexcept
 {
     this->_heightMap = other._heightMap;
+    this->_screenHeightMap = other._screenHeightMap;
     this->_withoutWaterHeightMap = other._withoutWaterHeightMap;
     this->_rows = other._rows;
     this->_cols = other._cols;
@@ -52,6 +55,7 @@ Landscape::Landscape(Landscape &&other) noexcept
 Landscape &Landscape::operator=(const Landscape &other)
 {
     this->_heightMap = other._heightMap;
+    this->_screenHeightMap = other._screenHeightMap;
     this->_withoutWaterHeightMap = other._withoutWaterHeightMap;
     this->_rows = other._rows;
     this->_cols = other._cols;
@@ -69,6 +73,7 @@ Landscape &Landscape::operator=(const Landscape &other)
 Landscape &Landscape::operator=(Landscape &&other) noexcept
 {
     this->_heightMap = other._heightMap;
+    this->_screenHeightMap = other._screenHeightMap;
     this->_withoutWaterHeightMap = other._withoutWaterHeightMap;
     this->_rows = other._rows;
     this->_cols = other._cols;
@@ -84,7 +89,7 @@ Landscape &Landscape::operator=(Landscape &&other) noexcept
 }
 
 template <typename T>
-void resizeMatrix(Matrix<T> &matrix, int newWidth, int newLenght)
+void Landscape::resizeMatrix(Matrix<T> &matrix, int newWidth, int newLenght)
 {
     matrix.resize(newWidth);
 
@@ -100,26 +105,36 @@ void Landscape::resize(const int width, const int lenght)
     this->_cols = lenght + 1;
 
     this->_heightMap.clear();
+    this->_screenHeightMap.clear();
     this->_withoutWaterHeightMap.clear();
     this->_normalMap.clear();
     this->_normalVertexMap.clear();
     this->_intensityVertexMap.clear();
 
-    resizeMatrix<QVector3D>(this->_heightMap, this->_rows, this->_cols);
-    resizeMatrix<double>(this->_withoutWaterHeightMap, this->_rows, this->_cols);
-    resizeMatrix<pair<QVector3D, QVector3D>>(this->_normalMap, this->_rows, this->_cols);
-    resizeMatrix<QVector3D>(this->_normalVertexMap, this->_rows, this->_cols);
-    resizeMatrix<double>(this->_intensityVertexMap, this->_rows, this->_cols);
+    this->resizeMatrix<QVector3D>(this->_heightMap, this->_rows, this->_cols);
+    this->resizeMatrix<QVector3D>(this->_screenHeightMap, this->_rows, this->_cols);
+    this->resizeMatrix<double>(this->_withoutWaterHeightMap, this->_rows, this->_cols);
+    this->resizeMatrix<pair<QVector3D, QVector3D>>(this->_normalMap, this->_rows, this->_cols);
+    this->resizeMatrix<QVector3D>(this->_normalVertexMap, this->_rows, this->_cols);
+    this->resizeMatrix<double>(this->_intensityVertexMap, this->_rows, this->_cols);
 }
 
 void Landscape::updateWaterlevel(const double waterlevel)
 {
     for (int i = 0; i < this->_rows; ++i)
         for (int j = 0; j < this->_cols; ++j)
+        {
             if (this->_withoutWaterHeightMap[i][j] < waterlevel)
-                this->_heightMap[i][j] = QVector3D(i * square, j * square, waterlevel);
+            {
+                this->_heightMap[i][j].setZ(waterlevel);
+            }
             else
-                this->_heightMap[i][j] = QVector3D(i * square, j * square, this->_withoutWaterHeightMap[i][j]);
+            {
+                this->_heightMap[i][j].setZ(this->_withoutWaterHeightMap[i][j]);
+            }
+
+            this->_screenHeightMap[i][j] = this->_heightMap[i][j];
+        }
 
     this->_waterlevel = waterlevel;
 }
@@ -159,9 +174,24 @@ void Landscape::setLenght(const int lenght)
     this->_width = lenght;
 }
 
+int Landscape::getCols() const
+{
+    return this->_cols;
+}
+
+int Landscape::getRows() const
+{
+    return this->_rows;
+}
+
 Matrix<QVector3D> &Landscape::getHeightMap()
 {
     return this->_heightMap;
+}
+
+Matrix<QVector3D> &Landscape::getScreenHeightMap()
+{
+    return this->_screenHeightMap;
 }
 
 Matrix<double> &Landscape::getWithoutWaterHeightMap()
