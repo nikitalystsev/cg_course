@@ -33,8 +33,8 @@ public:
 
         double tmp_x = point.x();
 
-        point.setX(point.x() * cos_angle + point.z() * sin_angle);
-        point.setZ(-tmp_x * sin_angle + point.z() * cos_angle);
+        point.setX(point.x() * cos_angle - point.z() * sin_angle);
+        point.setZ(tmp_x * sin_angle + point.z() * cos_angle);
     }
 
     static void rotateByZ(QVector3D &point, const double angle)
@@ -46,12 +46,6 @@ public:
 
         point.setX(point.x() * cos_angle + point.y() * sin_angle);
         point.setY(-tmp_x * sin_angle + point.y() * cos_angle);
-    }
-
-    static void pointToIsometric(QVector3D &point)
-    {
-        Transform::rotateByZ(point, 45);
-        Transform::rotateByX(point, -60);
     }
 };
 

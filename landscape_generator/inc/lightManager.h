@@ -2,6 +2,7 @@
 #define __LIGHT_MANAGER_H__
 
 #include "light.h"
+
 #include <QVector3D>
 
 class LightManager

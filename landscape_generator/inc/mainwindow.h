@@ -25,6 +25,8 @@ public:
 private:
     void __changeParamNoise();
     void __changeParamLight();
+    void __changeMoveParams();
+    void __changeRotateParams();
 
 private slots:
     void _changeParamNoise();
@@ -32,6 +34,10 @@ private slots:
     void _changeParamLight();
 
     void _changeLandscapeSize();
+
+    void _changeMoveParams();
+
+    void _changeRotateParams();
 
     void on_waterlevelSlider_valueChanged(int value);
 

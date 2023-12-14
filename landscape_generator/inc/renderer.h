@@ -30,7 +30,6 @@ private:
 
     QVector2D _centerPoint;
 
-    void _calcCenterPoint(const Matrix<QVector3D> &screenMap);
     void _movePointToCenter(QVector3D &point);
     vector<Pixel> _getLineByBresenham(const QVector3D &p1, const QVector3D &p2);
     void _calcIntensityForLine(vector<Pixel> &line, const double &IPStart, const double &IPEnd);
@@ -43,8 +42,9 @@ public:
     Renderer(const int &width, const int &height);
     ~Renderer();
 
-    Matrix<QVector3D> mapToScreen(Matrix<QVector3D> &map);
-
+    //    Matrix<QVector3D> mapToScreen(Matrix<QVector3D> &map);
+    void calcCenterPoint(const Matrix<QVector3D> &screenMap);
+    void moveLandscapeToCenter(Landscape &landscape);
     void renderLandscape(Landscape &landscape, QGraphicsScene *scene);
     int getScreenWidth() const;
     int getScreenHeight() const;

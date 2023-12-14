@@ -1,8 +1,8 @@
 #include "../inc/renderer.h"
 
 Renderer::Renderer() :
-    _screenWidth(1311), _screenHeight(781),
-    _zbuffer(1311, vector<double>(781, INT_MIN)), _framebuffer(1311, 781, QImage::Format_RGB32)
+    _screenWidth(1089), _screenHeight(730),
+    _zbuffer(1089, vector<double>(730, INT_MIN)), _framebuffer(1089, 730, QImage::Format_RGB32)
 {
 }
 
@@ -217,7 +217,7 @@ void Renderer::_calcHeightForLine(vector<Pixel> &line, const double &ZPStart, co
     }
 }
 
-void Renderer::_calcCenterPoint(const Matrix<QVector3D> &screenMap)
+void Renderer::calcCenterPoint(const Matrix<QVector3D> &screenMap)
 {
     int xMin = screenMap[0][0].x(), yMin = screenMap[0][0].y();
     int xMax = xMin, yMax = yMin;
@@ -246,28 +246,13 @@ void Renderer::_movePointToCenter(QVector3D &point)
     point.setX(x), point.setY(y);
 }
 
-Matrix<QVector3D> Renderer::mapToScreen(Matrix<QVector3D> &map)
+void Renderer::moveLandscapeToCenter(Landscape &landscape)
 {
-    Matrix<QVector3D> tmp(map);
+    Matrix<QVector3D> &heightMap = landscape.getHeightMap();
 
-    int rows = map.size();
-    int cols = map[0].size();
-
-    for (int i = 0; i < rows; ++i)
-        for (int j = 0; j < cols; ++j)
-        {
-            Transform::pointToIsometric(tmp[i][j]);
-        }
-
-    this->_calcCenterPoint(tmp);
-
-    for (int i = 0; i < rows; ++i)
-        for (int j = 0; j < cols; ++j)
-        {
-            this->_movePointToCenter(tmp[i][j]);
-        }
-
-    return tmp;
+    for (int i = 0; i < heightMap.size(); ++i)
+        for (int j = 0; j < heightMap[0].size(); ++j)
+            this->_movePointToCenter(heightMap[i][j]);
 }
 
 void Renderer::renderLandscape(Landscape &landscape, QGraphicsScene *scene)
@@ -275,7 +260,6 @@ void Renderer::renderLandscape(Landscape &landscape, QGraphicsScene *scene)
     this->clean();
 
     Matrix<QVector3D> &map = landscape.getHeightMap();
-    Matrix<QVector3D> screenMap = this->mapToScreen(map);
     Matrix<double> &intensityVertexMap = landscape.getIntensityVertexMap();
 
     int waterlevel = landscape.getWaterlevel();
@@ -292,8 +276,8 @@ void Renderer::renderLandscape(Landscape &landscape, QGraphicsScene *scene)
         for (int j = 0; j < height; ++j)
         {
             // в каждом квадрате сетки 2 треугольника - 2 плоскости
-            Plane plane1(screenMap[i][j], screenMap[i + 1][j], screenMap[i + 1][j + 1]);
-            Plane plane2(screenMap[i][j], screenMap[i][j + 1], screenMap[i + 1][j + 1]);
+            Plane plane1(map[i][j], map[i + 1][j], map[i + 1][j + 1]);
+            Plane plane2(map[i][j], map[i][j + 1], map[i + 1][j + 1]);
 
             // определяем высоты вершин квадрата
             double z1 = map[i][j].z();

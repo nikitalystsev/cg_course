@@ -39,8 +39,24 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->lenghtSpinBox, SIGNAL(valueChanged(int)), this,
             SLOT(_changeLandscapeSize()));
 
+    connect(ui->moveXSpinbox, SIGNAL(valueChanged(int)), this,
+            SLOT(_changeMoveParams()));
+    connect(ui->moveYSpinbox, SIGNAL(valueChanged(int)), this,
+            SLOT(_changeMoveParams()));
+    connect(ui->moveZSpinbox, SIGNAL(valueChanged(int)), this,
+            SLOT(_changeMoveParams()));
+
+    connect(ui->rotateXSpinbox, SIGNAL(valueChanged(int)), this,
+            SLOT(_changeRotateParams()));
+    connect(ui->rotateYSpinbox, SIGNAL(valueChanged(int)), this,
+            SLOT(_changeRotateParams()));
+    connect(ui->rotateZSpinbox, SIGNAL(valueChanged(int)), this,
+            SLOT(_changeRotateParams()));
+
     this->__changeParamNoise();
     this->__changeParamLight();
+    this->__changeMoveParams();
+    this->__changeRotateParams();
 
     this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
 }
@@ -70,8 +86,83 @@ void MainWindow::_changeParamNoise()
     this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
 }
 
+void MainWindow::__changeMoveParams()
+{
+    move_t move;
+    move.dx = ui->moveXSpinbox->value();
+    move.dy = ui->moveYSpinbox->value();
+    move.dz = ui->moveZSpinbox->value();
+
+    LandscapeManager::moveLandscape(this->_landscape, move);
+
+    //    LandscapeManager::calcNormalForEachPlane(this->_landscape);
+    //    LandscapeManager::calcNormalForEachVertex(this->_landscape);
+    LandscapeManager::calcIntensityForEachVertex(this->_landscape, this->_light);
+}
+
+void MainWindow::_changeMoveParams()
+{
+    move_t move;
+    move.dx = ui->moveXSpinbox->value();
+    move.dy = ui->moveYSpinbox->value();
+    move.dz = ui->moveZSpinbox->value();
+
+    LandscapeManager::moveLandscape(this->_landscape, move);
+
+    //    LandscapeManager::calcNormalForEachPlane(this->_landscape);
+    //    LandscapeManager::calcNormalForEachVertex(this->_landscape);
+    LandscapeManager::calcIntensityForEachVertex(this->_landscape, this->_light);
+
+    // изображение рендерится сразу, центральная точка пиксельного изображения остается такой же
+    this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
+}
+
+void MainWindow::__changeRotateParams()
+{
+    rotate_t rotate;
+    rotate.xAngle = ui->rotateXSpinbox->value();
+    rotate.yAngle = ui->rotateYSpinbox->value();
+    rotate.zAngle = ui->rotateZSpinbox->value();
+
+    LandscapeManager::rotateLandscape(this->_landscape, rotate);
+
+    //    LandscapeManager::calcNormalForEachPlane(this->_landscape);
+    //    LandscapeManager::calcNormalForEachVertex(this->_landscape);
+    LandscapeManager::calcIntensityForEachVertex(this->_landscape, this->_light);
+
+    // пересчитываем центральную точку
+    this->_renderer.calcCenterPoint(this->_landscape.getHeightMap());
+
+    this->_renderer.moveLandscapeToCenter(this->_landscape);
+}
+
+void MainWindow::_changeRotateParams()
+{
+    rotate_t rotate;
+    rotate.xAngle = ui->rotateXSpinbox->value();
+    rotate.yAngle = ui->rotateYSpinbox->value();
+    rotate.zAngle = ui->rotateZSpinbox->value();
+
+    LandscapeManager::rotateLandscape(this->_landscape, rotate);
+
+    //    LandscapeManager::calcNormalForEachPlane(this->_landscape);
+    //    LandscapeManager::calcNormalForEachVertex(this->_landscape);
+    LandscapeManager::calcIntensityForEachVertex(this->_landscape, this->_light);
+
+    // пересчитываем центральную точку
+    this->_renderer.calcCenterPoint(this->_landscape.getHeightMap());
+
+    this->_renderer.moveLandscapeToCenter(this->_landscape);
+
+    this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
+}
+
 void MainWindow::__changeParamLight()
 {
+
+    std::cout << ui->landscapeGraphicsView->width() << std::endl;
+    std::cout << ui->landscapeGraphicsView->height() << std::endl;
+
     QVector3D lightPosition(ui->lightXSpinBox->value(),
                             ui->lightYSpinBox->value(),
                             ui->lightZSpinBox->value());

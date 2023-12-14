@@ -160,8 +160,40 @@ void LandscapeManager::calcIntensityForEachVertex(Landscape &landscape, Light &l
 
 void LandscapeManager::updateLandscape(Landscape &landscape, PerlinNoise &paramNoise, Light &light)
 {
-    LandscapeManager::generateHeightMap(landscape, paramNoise);
-    LandscapeManager::calcNormalForEachPlane(landscape);
-    LandscapeManager::calcNormalForEachVertex(landscape);
-    LandscapeManager::calcIntensityForEachVertex(landscape, light);
+    generateHeightMap(landscape, paramNoise);
+    calcNormalForEachPlane(landscape);
+    calcNormalForEachVertex(landscape);
+    calcIntensityForEachVertex(landscape, light);
+}
+
+void LandscapeManager::rotateLandscape(Landscape &landscape, rotate_t &angles)
+{
+    Matrix<QVector3D> &heightMap = landscape.getHeightMap();
+
+    int rows = heightMap.size();
+    int cols = heightMap[0].size();
+
+    for (int i = 0; i < rows; ++i)
+        for (int j = 0; j < cols; ++j)
+        {
+            Transform::rotateByX(heightMap[i][j], angles.xAngle);
+            Transform::rotateByY(heightMap[i][j], angles.xAngle);
+            Transform::rotateByZ(heightMap[i][j], angles.xAngle);
+        }
+}
+
+void LandscapeManager::moveLandscape(Landscape &landscape, move_t &move)
+{
+    Matrix<QVector3D> &heightMap = landscape.getHeightMap();
+
+    int rows = heightMap.size();
+    int cols = heightMap[0].size();
+
+    for (int i = 0; i < rows; ++i)
+        for (int j = 0; j < cols; ++j)
+        {
+            heightMap[i][j].setX(heightMap[i][j].x() + move.dx);
+            heightMap[i][j].setY(heightMap[i][j].y() + move.dy);
+            heightMap[i][j].setZ(heightMap[i][j].z() + move.dz);
+        }
 }
