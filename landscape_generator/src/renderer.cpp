@@ -1,7 +1,7 @@
 #include "../inc/renderer.h"
 
 Renderer::Renderer() :
-    Renderer(1089, 731)
+    Renderer(1089, 766)
 {
 }
 
@@ -271,16 +271,6 @@ void Renderer::renderLandscape(Landscape &landscape, QGraphicsScene *scene)
     scene->addPixmap(pixmap);
 }
 
-int Renderer::getScreenWidth() const
-{
-    return this->_screenWidth;
-}
-
-int Renderer::getScreenHeight() const
-{
-    return this->_screenHeight;
-}
-
 void Renderer::clean()
 {
     for (int i = 0; i < this->_screenWidth; ++i)
@@ -294,7 +284,7 @@ void Renderer::clean()
 int Renderer::toSceneX(double originX)
 {
     double xMin = -545, xMax = 545;
-    double yMin = -365, yMax = 365;
+    double yMin = -383, yMax = 383;
 
     double kx = (this->_screenWidth - 0) / (xMax - xMin);
     double ky = (this->_screenHeight - 0) / (yMax - yMin);
@@ -308,7 +298,7 @@ int Renderer::toSceneX(double originX)
 int Renderer::toSceneY(double originY)
 {
     double xMin = -545, xMax = 545;
-    double yMin = -365, yMax = 365;
+    double yMin = -383, yMax = 383;
 
     double kx = (this->_screenWidth - 0) / (xMax - xMin);
     double ky = (this->_screenHeight - 0) / (yMax - yMin);

@@ -30,6 +30,7 @@ Landscape::Landscape(const Landscape &other)
     this->_lenght = other._lenght;
     this->_waterlevel = other._waterlevel;
     this->_maxHeight = other._maxHeight;
+    this->_maxGenHeight = other._maxGenHeight;
     this->_normalMap = other._normalMap;
     this->_normalVertexMap = other._normalVertexMap;
     this->_intensityVertexMap = other._intensityVertexMap;
@@ -47,6 +48,7 @@ Landscape::Landscape(Landscape &&other) noexcept
     this->_lenght = other._lenght;
     this->_waterlevel = other._waterlevel;
     this->_maxHeight = other._maxHeight;
+    this->_maxGenHeight = other._maxGenHeight;
     this->_normalMap = other._normalMap;
     this->_normalVertexMap = other._normalVertexMap;
     this->_intensityVertexMap = other._intensityVertexMap;
@@ -64,6 +66,7 @@ Landscape &Landscape::operator=(const Landscape &other)
     this->_lenght = other._lenght;
     this->_waterlevel = other._waterlevel;
     this->_maxHeight = other._maxHeight;
+    this->_maxGenHeight = other._maxGenHeight;
     this->_normalMap = other._normalMap;
     this->_normalVertexMap = other._normalVertexMap;
     this->_intensityVertexMap = other._intensityVertexMap;
@@ -83,6 +86,7 @@ Landscape &Landscape::operator=(Landscape &&other) noexcept
     this->_lenght = other._lenght;
     this->_waterlevel = other._waterlevel;
     this->_maxHeight = other._maxHeight;
+    this->_maxGenHeight = other._maxGenHeight;
     this->_normalMap = other._normalMap;
     this->_normalVertexMap = other._normalVertexMap;
     this->_intensityVertexMap = other._intensityVertexMap;
@@ -120,89 +124,4 @@ void Landscape::resize(const int width, const int lenght)
     this->resizeMatrix<pair<QVector3D, QVector3D>>(this->_normalMap, this->_rows, this->_cols);
     this->resizeMatrix<QVector3D>(this->_normalVertexMap, this->_rows, this->_cols);
     this->resizeMatrix<double>(this->_intensityVertexMap, this->_rows, this->_cols);
-}
-
-void Landscape::setWaterlevel(const double waterlevel)
-{
-    this->_waterlevel = waterlevel;
-}
-
-double Landscape::getWaterlevel() const
-{
-    return this->_waterlevel;
-}
-
-int Landscape::getMaxHeight() const
-{
-    return this->_maxHeight;
-}
-
-void Landscape::setMaxHeight(const double maxHeight)
-{
-    this->_maxHeight = maxHeight;
-}
-
-int Landscape::getWidth() const
-{
-    return this->_width;
-}
-
-void Landscape::setWidth(const int width)
-{
-    this->_width = width;
-}
-
-int Landscape::getLenght() const
-{
-    return this->_lenght;
-}
-
-void Landscape::setLenght(const int lenght)
-{
-    this->_width = lenght;
-}
-
-int Landscape::getCols() const
-{
-    return this->_cols;
-}
-
-int Landscape::getRows() const
-{
-    return this->_rows;
-}
-
-vector<Operation> &Landscape::getOperations()
-{
-    return this->_operations;
-}
-
-Matrix<double> &Landscape::getHeightMap()
-{
-    return this->_heightMap;
-}
-
-Matrix<QVector3D> &Landscape::getScreenHeightMap()
-{
-    return this->_screenHeightMap;
-}
-
-Matrix<double> &Landscape::getWithoutWaterHeightMap()
-{
-    return this->_withoutWaterHeightMap;
-}
-
-Matrix<pair<QVector3D, QVector3D>> &Landscape::getNormalMap()
-{
-    return this->_normalMap;
-}
-
-Matrix<QVector3D> &Landscape::getNormalVertexMap()
-{
-    return this->_normalVertexMap;
-}
-
-Matrix<double> &Landscape::getIntensityVertexMap()
-{
-    return this->_intensityVertexMap;
 }

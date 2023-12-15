@@ -24,17 +24,17 @@ public:
 
     double caclZ(const double x, const double y) const;
 
-    QVector3D getP1() const;
-    QVector3D getP2() const;
-    QVector3D getP3() const;
+    QVector3D getP1() const { return this->_p1; };
+    QVector3D getP2() const { return this->_p2; };
+    QVector3D getP3() const { return this->_p3; };
 
-    QVector2D getPMin() const;
-    QVector2D getPMax() const;
+    QVector2D getPMin() const { return this->_pMin; };
+    QVector2D getPMax() const { return this->_pMax; };
 
-    double getA() const;
-    double getB() const;
-    double getC() const;
-    double getD() const;
+    double getA() const { return this->_A; };
+    double getB() const { return this->_B; };
+    double getC() const { return this->_C; };
+    double getD() const { return this->_D; };
 };
 
 #endif

@@ -38,6 +38,8 @@ MainWindow::MainWindow(QWidget *parent) :
             SLOT(_changeLandscapeSize()));
     connect(ui->lenghtSpinBox, SIGNAL(valueChanged(int)), this,
             SLOT(_changeLandscapeSize()));
+    connect(ui->maxHeightSpinBox, SIGNAL(valueChanged(int)), this,
+            SLOT(_changeLandscapeSize()));
 
     connect(ui->moveXSpinbox, SIGNAL(valueChanged(int)), this,
             SLOT(_changeMoveParams()));
@@ -103,6 +105,9 @@ void MainWindow::__changeParamLight()
 
 void MainWindow::_changeParamLight()
 {
+    std::cout << ui->landscapeGraphicsView->width() << std::endl;
+    std::cout << ui->landscapeGraphicsView->height() << std::endl;
+
     this->__changeParamLight();
     this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
 }
@@ -152,6 +157,7 @@ void MainWindow::__changeLandscapeSize()
     int newWidth = ui->widthSpinBox->value();
     int newLenght = ui->lenghtSpinBox->value();
 
+    this->_landscape.setMaxGenHeight(ui->maxHeightSpinBox->value());
     this->_landscape.resize(newWidth, newLenght);
 
     LandscapeManager::updateLandscape(this->_landscape, this->_paramNoise, this->_light);

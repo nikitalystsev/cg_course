@@ -42,13 +42,3 @@ Light &Light::operator=(Light &&other) noexcept
 
     return *this;
 }
-
-QVector3D Light::getPosition() const
-{
-    return this->_position;
-}
-
-void Light::setPosition(const QVector3D &position)
-{
-    this->_position = position;
-}

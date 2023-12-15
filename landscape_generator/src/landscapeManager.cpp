@@ -11,6 +11,7 @@ void LandscapeManager::generateHeightMap(Landscape &landscape, PerlinNoise &para
     int d = -b;
 
     int currWaterlevel = landscape.getWaterlevel();
+    int maxGenHeight = landscape.getMaxGenHeight();
     int maxHeight = 0;
 
     Matrix<double> &heightMap = landscape.getHeightMap();
@@ -27,7 +28,7 @@ void LandscapeManager::generateHeightMap(Landscape &landscape, PerlinNoise &para
 
             double height = paramNoise.generateNoise(nx, ny);
 
-            height *= 1000;
+            height *= maxGenHeight;
 
             if (height > maxHeight)
                 maxHeight = height;

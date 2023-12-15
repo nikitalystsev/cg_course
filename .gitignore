@@ -43,3 +43,5 @@ landscape_generator/cmake_install.cmake
 landscape_generator/build/
 landscape_generator/landscape_generator
 landscape_generator/landscape_generator_autogen/
+landscape_generator/CMakeLists.txt.user
+landscape_generator_old

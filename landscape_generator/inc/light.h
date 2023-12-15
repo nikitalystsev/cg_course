@@ -25,8 +25,8 @@ public:
     Light &operator=(const Light &other);
     Light &operator=(Light &&other) noexcept;
 
-    QVector3D getPosition() const;
-    void setPosition(const QVector3D &position);
+    QVector3D getPosition() const { return this->_position; };
+    void setPosition(const QVector3D &position) { this->_position = position; };
 
     double getI_0() const { return this->_I_0; }
     double getK_d() const { return this->_K_d; }

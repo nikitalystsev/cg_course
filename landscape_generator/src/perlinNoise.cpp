@@ -146,13 +146,3 @@ double PerlinNoise::grad(int hash, double x, double y, double z)
                                               : z;
     return ((h & 1) == 0 ? u : -u) + ((h & 2) == 0 ? v : -v);
 }
-
-void PerlinNoise::printParamNoise()
-{
-    std::cout << "[=] seed        = " << this->_seed << std::endl;
-    std::cout << "[=] octaves     = " << this->_octaves << std::endl;
-    std::cout << "[=] frequency   = " << this->_frequency << std::endl;
-    std::cout << "[=] lacunarity  = " << this->_lacunarity << std::endl;
-    std::cout << "[=] amplitude   = " << this->_amplitude << std::endl;
-    std::cout << "[=] persistence = " << this->_persistence << std::endl;
-}

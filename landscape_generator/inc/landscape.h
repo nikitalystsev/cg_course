@@ -21,17 +21,19 @@ using Matrix = std::vector<std::vector<T>>;
 class Landscape
 {
 private:
-    Matrix<double> _heightMap;                     // карта высот
-    Matrix<double> _withoutWaterHeightMap = {};    // карта высот без учета уровня воды
-    Matrix<QVector3D> _screenHeightMap;            // карта высот для вывода на экран
-    Matrix<pair<QVector3D, QVector3D>> _normalMap; // матрица векторов внешней нормали к каждой из граней
-    Matrix<QVector3D> _normalVertexMap;            // матрица векторов нормалей для каждой вершины
-    Matrix<double> _intensityVertexMap;            // матрица интенсивности в каждой вершине
-    int _rows, _cols;                              // размеры ландшафтных матриц
-    int _width, _lenght;                           // длина и ширина карты высот (в количестве полигонов)
-    double _waterlevel;                            // уровень воды
-    double _maxHeight = 0;                         // максимальная сгенерированная высота
-    vector<Operation> _operations;                 // цепочка преобразований, выполненных над ландшафтом
+    Matrix<double> _heightMap;                  // карта высот
+    Matrix<double> _withoutWaterHeightMap = {}; // карта высот без учета уровня воды
+    Matrix<QVector3D> _screenHeightMap;         // карта высот для вывода на экран
+    Matrix<pair<QVector3D, QVector3D>>
+        _normalMap;                     // матрица векторов внешней нормали к каждой из граней
+    Matrix<QVector3D> _normalVertexMap; // матрица векторов нормалей для каждой вершины
+    Matrix<double> _intensityVertexMap; // матрица интенсивности в каждой вершине
+    int _rows, _cols;                   // размеры ландшафтных матриц
+    int _width, _lenght;                // длина и ширина карты высот (в количестве полигонов)
+    double _waterlevel;                 // уровень воды
+    double _maxHeight = 0;              // максимальная сгенерированная высота
+    int _maxGenHeight = 1000;           // максимально возможная генерируемая высота
+    vector<Operation> _operations;      // цепочка преобразований, выполненных над ландшафтом
 
 public:
     Landscape();
@@ -47,34 +49,37 @@ public:
     void resizeMatrix(Matrix<T> &matrix, int newWidth, int newLenght);
     void resize(const int width, const int lenght);
 
-    double getWaterlevel() const;
-    void setWaterlevel(const double waterlevel);
+    double getWaterlevel() const { return this->_waterlevel; };
+    void setWaterlevel(const double waterlevel) { this->_waterlevel = waterlevel; };
 
-    int getMaxHeight() const;
-    void setMaxHeight(const double maxHeight);
+    int getMaxHeight() const { return this->_maxHeight; };
+    void setMaxHeight(const double maxHeight) { this->_maxHeight = maxHeight; };
 
-    int getWidth() const;
-    void setWidth(const int width);
+    int getMaxGenHeight() const { return this->_maxGenHeight; };
+    void setMaxGenHeight(const double maxGenHeight) { this->_maxGenHeight = maxGenHeight; };
 
-    int getLenght() const;
-    void setLenght(const int lenght);
+    int getWidth() const { return this->_width; };
+    void setWidth(const int width) { this->_width = width; };
 
-    int getCols() const;
-    int getRows() const;
+    int getLenght() const { return this->_lenght; };
+    void setLenght(const int lenght) { this->_width = lenght; };
 
-    vector<Operation> &getOperations();
+    int getCols() const { return this->_cols; };
+    int getRows() const { return this->_rows; };
 
-    Matrix<double> &getHeightMap();
+    vector<Operation> &getOperations() { return this->_operations; };
 
-    Matrix<QVector3D> &getScreenHeightMap();
+    Matrix<double> &getHeightMap() { return this->_heightMap; };
 
-    Matrix<double> &getWithoutWaterHeightMap();
+    Matrix<QVector3D> &getScreenHeightMap() { return this->_screenHeightMap; };
 
-    Matrix<pair<QVector3D, QVector3D>> &getNormalMap();
+    Matrix<double> &getWithoutWaterHeightMap() { return this->_withoutWaterHeightMap; };
 
-    Matrix<QVector3D> &getNormalVertexMap();
+    Matrix<pair<QVector3D, QVector3D>> &getNormalMap() { return this->_normalMap; };
 
-    Matrix<double> &getIntensityVertexMap();
+    Matrix<QVector3D> &getNormalVertexMap() { return this->_normalVertexMap; };
+
+    Matrix<double> &getIntensityVertexMap() { return this->_intensityVertexMap; };
 
 public:
     static const int square = 3;

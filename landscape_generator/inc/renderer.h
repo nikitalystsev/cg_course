@@ -44,8 +44,8 @@ public:
 
     void renderLandscape(Landscape &landscape, QGraphicsScene *scene);
 
-    int getScreenWidth() const;
-    int getScreenHeight() const;
+    int getScreenWidth() const { return this->_screenWidth; };
+    int getScreenHeight() const { return this->_screenHeight; };
 
     void clean();
 };

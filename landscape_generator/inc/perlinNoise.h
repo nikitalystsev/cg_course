@@ -38,8 +38,6 @@ public:
 
     double generateNoise(const double x, const double y);
 
-    void printParamNoise();
-
 public:
     static double smooth(const double t);
     static double lerp(const double a, const double b, const double t);
