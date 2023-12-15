@@ -51,7 +51,7 @@ void Renderer::_renderPlane(const Plane &screenPlane, const vector<double> &heig
     allLines.insert(allLines.end(), line2.begin(), line2.end());
     allLines.insert(allLines.end(), line3.begin(), line3.end());
 
-#pragma omp parallel for
+    //#pragma omp parallel for
 
     // обходим только ту часть матрицы z-буфера, что является
     // описывающим прямоугольником
@@ -124,7 +124,8 @@ void Renderer::_renderPlane(const Plane &screenPlane, const vector<double> &heig
                         b = this->_getCorrectChannel(14, I);
                     }
 
-                    this->_framebuffer.setPixelColor(_x, _y, QColor(r, g, b));
+                    if (_x >= 0 && _x < 1089 && _y >= 0 && _y < 799)
+                        this->_framebuffer.setPixelColor(_x, _y, QColor(r, g, b));
                 }
             }
         }

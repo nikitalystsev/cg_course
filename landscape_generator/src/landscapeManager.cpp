@@ -21,6 +21,8 @@ void LandscapeManager::generateHeightMap(Landscape &landscape, PerlinNoise &para
 
     vector<Operation> &operations = landscape.getOperations();
 
+#pragma omp parallel for
+
     for (int i = 0, m = a; i < rows && m <= c; ++i, m += square)
         for (int j = 0, n = b; j < cols && n <= d; ++j, n += square)
         {
@@ -64,6 +66,8 @@ void LandscapeManager::changeWaterlevel(Landscape &landscape, int newWaterlevel)
     int b = -((landscape.getLenght() * square) / 2);
     int c = -a;
     int d = -b;
+
+#pragma omp parallel for
 
     for (int i = 0, m = a; i < rows && m <= c; ++i, m += square)
         for (int j = 0, n = b; j < cols && n <= d; ++j, n += square)
