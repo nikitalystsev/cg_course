@@ -109,7 +109,7 @@ void MainWindow::_changeParamLight()
 
 void MainWindow::__changeMoveParams()
 {
-    move_t move;
+    Move move;
     move.dx = ui->moveXSpinbox->value();
     move.dy = ui->moveYSpinbox->value();
     move.dz = ui->moveZSpinbox->value();
@@ -129,7 +129,7 @@ void MainWindow::_changeMoveParams()
 
 void MainWindow::__changeRotateParams()
 {
-    rotate_t rotate;
+    Rotate rotate;
     rotate.xAngle = ui->rotateXSpinbox->value();
     rotate.yAngle = ui->rotateYSpinbox->value();
     rotate.zAngle = ui->rotateZSpinbox->value();

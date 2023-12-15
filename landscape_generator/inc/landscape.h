@@ -18,29 +18,20 @@ using pair = std::pair<T1, T2>;
 template <typename T>
 using Matrix = std::vector<std::vector<T>>;
 
-struct Operation
-{
-    int operIndex; // индекс выполняемой операции (0, 1, 2)
-    int axisIndex; // индекс оси, на которой выполнялась операция (0, 1, 2)
-    int value;     //  значение
-};
-
 class Landscape
 {
 private:
-    Matrix<QVector3D> _heightMap;               // карта высот
-    Matrix<QVector3D> _screenHeightMap;         // карта высот для вывода на экран
-    Matrix<double> _withoutWaterHeightMap = {}; // карта высот без учета уровня воды
-    int _rows, _cols;                           // размеры ландшафтных матриц
-    int _width, _lenght;                        // длина и ширина карты высот (в количестве полигонов)
-    double _waterlevel;                         // уровень воды
-    double _maxHeight = 0;                      // максимальная сгенерированная высота
-
+    Matrix<double> _heightMap;                     // карта высот
+    Matrix<double> _withoutWaterHeightMap = {};    // карта высот без учета уровня воды
+    Matrix<QVector3D> _screenHeightMap;            // карта высот для вывода на экран
     Matrix<pair<QVector3D, QVector3D>> _normalMap; // матрица векторов внешней нормали к каждой из граней
     Matrix<QVector3D> _normalVertexMap;            // матрица векторов нормалей для каждой вершины
     Matrix<double> _intensityVertexMap;            // матрица интенсивности в каждой вершине
-
-    vector<Operation> _operations; // цепочка преобразований, выполненных над ландшафтом
+    int _rows, _cols;                              // размеры ландшафтных матриц
+    int _width, _lenght;                           // длина и ширина карты высот (в количестве полигонов)
+    double _waterlevel;                            // уровень воды
+    double _maxHeight = 0;                         // максимальная сгенерированная высота
+    vector<Operation> _operations;                 // цепочка преобразований, выполненных над ландшафтом
 
 public:
     Landscape();
@@ -73,7 +64,7 @@ public:
 
     vector<Operation> &getOperations();
 
-    Matrix<QVector3D> &getHeightMap();
+    Matrix<double> &getHeightMap();
 
     Matrix<QVector3D> &getScreenHeightMap();
 

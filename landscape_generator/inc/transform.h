@@ -6,25 +6,32 @@
 
 #include <QVector3D>
 
-struct rotate_t
+struct Rotate
 {
-    double xAngle;
-    double yAngle;
-    double zAngle;
+    int xAngle;
+    int yAngle;
+    int zAngle;
 };
 
-struct move_t
+struct Move
 {
-    double dx;
-    double dy;
-    double dz;
+    int dx;
+    int dy;
+    int dz;
 };
 
-struct scale_t
+struct Scale
 {
-    double kx;
-    double ky;
-    double kz;
+    int kx;
+    int ky;
+    int kz;
+};
+
+struct Operation
+{
+    int operIndex; // индекс выполняемой операции (0, 1, 2)
+    int axisIndex; // индекс оси, на которой выполнялась операция (0, 1, 2)
+    int value;     //  значение
 };
 
 // класс трансформаций для точки
@@ -37,10 +44,10 @@ public:
     static void rotateByX(QVector3D &point, const double angle);
     static void rotateByY(QVector3D &point, const double angle);
     static void rotateByZ(QVector3D &point, const double angle);
-    static void rotate(QVector3D &point, const rotate_t &rotate);
+    static void rotate(QVector3D &point, const Rotate &rotate);
 
     // перенос
-    static void move(QVector3D &point, const move_t &move);
+    static void move(QVector3D &point, const Move &move);
 
     // масштабирование в процессеы
 };

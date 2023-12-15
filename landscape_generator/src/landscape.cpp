@@ -8,7 +8,7 @@ Landscape::Landscape() :
 Landscape::Landscape(const int width, const int lenght, const int waterlevel) :
     _width(width), _lenght(lenght), _waterlevel(waterlevel),
     _rows(width + 1), _cols(lenght + 1),
-    _heightMap(width + 1, vector<QVector3D>(lenght + 1)),
+    _heightMap(width + 1, vector<double>(lenght + 1)),
     _screenHeightMap(width + 1, vector<QVector3D>(lenght + 1)),
     _withoutWaterHeightMap(width + 1, vector<double>(lenght + 1)),
     _normalMap(width + 1, vector<pair<QVector3D, QVector3D>>(lenght + 1)),
@@ -114,7 +114,7 @@ void Landscape::resize(const int width, const int lenght)
     this->_normalVertexMap.clear();
     this->_intensityVertexMap.clear();
 
-    this->resizeMatrix<QVector3D>(this->_heightMap, this->_rows, this->_cols);
+    this->resizeMatrix<double>(this->_heightMap, this->_rows, this->_cols);
     this->resizeMatrix<QVector3D>(this->_screenHeightMap, this->_rows, this->_cols);
     this->resizeMatrix<double>(this->_withoutWaterHeightMap, this->_rows, this->_cols);
     this->resizeMatrix<pair<QVector3D, QVector3D>>(this->_normalMap, this->_rows, this->_cols);
@@ -177,7 +177,7 @@ vector<Operation> &Landscape::getOperations()
     return this->_operations;
 }
 
-Matrix<QVector3D> &Landscape::getHeightMap()
+Matrix<double> &Landscape::getHeightMap()
 {
     return this->_heightMap;
 }

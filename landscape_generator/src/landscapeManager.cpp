@@ -13,9 +13,9 @@ void LandscapeManager::generateHeightMap(Landscape &landscape, PerlinNoise &para
     int currWaterlevel = landscape.getWaterlevel();
     int maxHeight = 0;
 
-    Matrix<QVector3D> &heightMap = landscape.getHeightMap();
+    Matrix<double> &heightMap = landscape.getHeightMap();
+    Matrix<double> &withoutWaterHeightMap = landscape.getWithoutWaterHeightMap();
     Matrix<QVector3D> &screenHeightMap = landscape.getScreenHeightMap();
-    Matrix<double> &withoutWaterMap = landscape.getWithoutWaterHeightMap();
 
     vector<Operation> &operations = landscape.getOperations();
 
@@ -33,15 +33,14 @@ void LandscapeManager::generateHeightMap(Landscape &landscape, PerlinNoise &para
                 maxHeight = height;
 
             if (height < currWaterlevel)
-                heightMap[i][j] = QVector3D(m, n, currWaterlevel);
+                screenHeightMap[i][j] = QVector3D(m, n, currWaterlevel);
             else
-                heightMap[i][j] = QVector3D(m, n, height);
+                screenHeightMap[i][j] = QVector3D(m, n, height);
 
-            screenHeightMap[i][j] = heightMap[i][j];
+            heightMap[i][j] = screenHeightMap[i][j].z();
+            withoutWaterHeightMap[i][j] = height;
 
             applyOperation(screenHeightMap[i][j], operations);
-
-            withoutWaterMap[i][j] = height;
         }
 
     landscape.setMaxHeight(maxHeight);
@@ -52,21 +51,26 @@ void LandscapeManager::changeWaterlevel(Landscape &landscape, int newWaterlevel)
     int rows = landscape.getRows();
     int cols = landscape.getCols();
 
-    Matrix<QVector3D> &heightMap = landscape.getHeightMap();
+    Matrix<double> &heightMap = landscape.getHeightMap();
     Matrix<QVector3D> &screenHeightMap = landscape.getScreenHeightMap();
     Matrix<double> &withoutWaterHeightMap = landscape.getWithoutWaterHeightMap();
 
     vector<Operation> &operations = landscape.getOperations();
 
-    for (int i = 0; i < rows; ++i)
-        for (int j = 0; j < cols; ++j)
+    int a = -((landscape.getWidth() * landscape.square) / 2);
+    int b = -((landscape.getLenght() * landscape.square) / 2);
+    int c = -a;
+    int d = -b;
+
+    for (int i = 0, m = a; i < rows && m <= c; ++i, m += landscape.square)
+        for (int j = 0, n = b; j < cols && n <= d; ++j, n += landscape.square)
         {
             if (withoutWaterHeightMap[i][j] < newWaterlevel)
-                heightMap[i][j].setZ(newWaterlevel);
+                screenHeightMap[i][j] = QVector3D(m, n, newWaterlevel);
             else
-                heightMap[i][j].setZ(withoutWaterHeightMap[i][j]);
+                screenHeightMap[i][j] = QVector3D(m, n, withoutWaterHeightMap[i][j]);
 
-            screenHeightMap[i][j] = heightMap[i][j];
+            heightMap[i][j] = screenHeightMap[i][j].z();
 
             applyOperation(screenHeightMap[i][j], operations);
         }
@@ -120,12 +124,9 @@ void LandscapeManager::applyOperation(QVector3D &point, vector<Operation> &opera
 
 void LandscapeManager::calcNormalForEachPlane(Landscape &landscape)
 {
-    //    std::cout << "[B] calcNormalForEachPlane" << std::endl;
-
     int width = landscape.getWidth();
     int lenght = landscape.getLenght();
 
-    //    Matrix<QVector3D> &map = landscape.getHeightMap();
     Matrix<QVector3D> &screenHeightMap = landscape.getScreenHeightMap();
     Matrix<pair<QVector3D, QVector3D>> &normalMap = landscape.getNormalMap();
 
@@ -152,8 +153,6 @@ void LandscapeManager::calcNormalForEachPlane(Landscape &landscape)
 
 void LandscapeManager::calcNormalForEachVertex(Landscape &landscape)
 {
-    //    std::cout << "[B] calcNormalForEachVertex" << std::endl;
-
     int rows = landscape.getRows();
     int cols = landscape.getCols();
 
@@ -223,8 +222,6 @@ void LandscapeManager::calcNormalForEachVertex(Landscape &landscape)
 
 void LandscapeManager::calcIntensityForEachVertex(Landscape &landscape, Light &light)
 {
-    //    std::cout << "[B] calcIntensityForEachVertex" << std::endl;
-
     int rows = landscape.getRows();
     int cols = landscape.getCols();
 
@@ -257,7 +254,7 @@ void LandscapeManager::updateLandscape(Landscape &landscape, PerlinNoise &paramN
     calcIntensityForEachVertex(landscape, light);
 }
 
-void LandscapeManager::rotateLandscape(Landscape &landscape, rotate_t &rotate)
+void LandscapeManager::rotateLandscape(Landscape &landscape, Rotate &rotate)
 {
     Matrix<QVector3D> &screenHeightMap = landscape.getScreenHeightMap();
 
@@ -265,31 +262,29 @@ void LandscapeManager::rotateLandscape(Landscape &landscape, rotate_t &rotate)
 
     for (auto &row : screenHeightMap)
         for (auto &point : row)
-        {
             Transform::rotate(point, rotate);
-        }
 
     Operation newOperation;
 
     if (rotate.xAngle != 0)
     {
-        newOperation = {2, 0, (int)rotate.xAngle};
+        newOperation = {2, 0, rotate.xAngle};
         operations.push_back(newOperation);
     }
     if (rotate.yAngle != 0)
     {
-        newOperation = {2, 1, (int)rotate.yAngle};
+        newOperation = {2, 1, rotate.yAngle};
         operations.push_back(newOperation);
     }
 
     if (rotate.zAngle != 0)
     {
-        newOperation = {2, 2, (int)rotate.zAngle};
+        newOperation = {2, 2, rotate.zAngle};
         operations.push_back(newOperation);
     }
 }
 
-void LandscapeManager::moveLandscape(Landscape &landscape, move_t &move)
+void LandscapeManager::moveLandscape(Landscape &landscape, Move &move)
 {
     Matrix<QVector3D> &screenHeightMap = landscape.getScreenHeightMap();
 
@@ -297,9 +292,7 @@ void LandscapeManager::moveLandscape(Landscape &landscape, move_t &move)
 
     for (auto &row : screenHeightMap)
         for (auto &point : row)
-        {
             Transform::move(point, move);
-        }
 
     Operation newOperation;
 

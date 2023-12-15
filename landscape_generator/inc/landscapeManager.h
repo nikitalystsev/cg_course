@@ -22,8 +22,8 @@ public:
     static void calcIntensityForEachVertex(Landscape &landscape, Light &light);
     static void updateLandscape(Landscape &landscape, PerlinNoise &paramNoise, Light &light);
 
-    static void rotateLandscape(Landscape &landscape, rotate_t &angles);
-    static void moveLandscape(Landscape &landscape, move_t &move);
+    static void rotateLandscape(Landscape &landscape, Rotate &rotate);
+    static void moveLandscape(Landscape &landscape, Move &move);
 };
 
 #endif // __LANDSCAPE_MANAGER_H__

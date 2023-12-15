@@ -38,14 +38,14 @@ void Transform::rotateByZ(QVector3D &point, const double angle)
     point.setY(-tmp_x * sin_angle + point.y() * cos_angle);
 }
 
-void Transform::rotate(QVector3D &point, const rotate_t &rotate)
+void Transform::rotate(QVector3D &point, const Rotate &rotate)
 {
     rotateByX(point, rotate.xAngle);
     rotateByY(point, rotate.yAngle);
     rotateByZ(point, rotate.zAngle);
 }
 
-void Transform::move(QVector3D &point, const move_t &move)
+void Transform::move(QVector3D &point, const Move &move)
 {
     point.setX(point.x() + move.dx);
     point.setY(point.y() + move.dy);

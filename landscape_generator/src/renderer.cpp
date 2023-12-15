@@ -222,7 +222,7 @@ void Renderer::renderLandscape(Landscape &landscape, QGraphicsScene *scene)
 {
     this->clean();
 
-    Matrix<QVector3D> &map = landscape.getHeightMap();
+    Matrix<double> &heightMap = landscape.getHeightMap();
     Matrix<QVector3D> &screenHeightMap = landscape.getScreenHeightMap();
     Matrix<double> &intensityVertexMap = landscape.getIntensityVertexMap();
 
@@ -244,10 +244,10 @@ void Renderer::renderLandscape(Landscape &landscape, QGraphicsScene *scene)
             Plane plane2(screenHeightMap[i][j], screenHeightMap[i][j + 1], screenHeightMap[i + 1][j + 1]);
 
             // определяем высоты вершин квадрата
-            double z1 = map[i][j].z();
-            double z2 = map[i + 1][j].z();
-            double z3 = map[i + 1][j + 1].z();
-            double z4 = map[i][j + 1].z();
+            double z1 = heightMap[i][j];
+            double z2 = heightMap[i + 1][j];
+            double z3 = heightMap[i + 1][j + 1];
+            double z4 = heightMap[i][j + 1];
 
             // определяем интенсивности вершин квадрата
             double I1 = intensityVertexMap[i][j];
