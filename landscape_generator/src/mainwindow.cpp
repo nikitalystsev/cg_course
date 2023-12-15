@@ -78,9 +78,7 @@ void MainWindow::__changeParamNoise()
 
     this->_paramNoise = PerlinNoise(seed, octaves, frequency, lacunarity, amplitude, persistence);
 
-    LandscapeManager::generateHeightMap(this->_landscape, this->_paramNoise);
-    LandscapeManager::calcNormalForEachPlane(this->_landscape);
-    LandscapeManager::calcNormalForEachVertex(this->_landscape);
+    LandscapeManager::updateLandscape(this->_landscape, this->_paramNoise, this->_light);
 }
 
 void MainWindow::_changeParamNoise()
@@ -91,9 +89,6 @@ void MainWindow::_changeParamNoise()
 
 void MainWindow::__changeParamLight()
 {
-    std::cout << ui->landscapeGraphicsView->width() << std::endl;
-    std::cout << ui->landscapeGraphicsView->height() << std::endl;
-
     QVector3D lightPosition(ui->lightXSpinBox->value(),
                             ui->lightYSpinBox->value(),
                             ui->lightZSpinBox->value());
@@ -121,6 +116,8 @@ void MainWindow::__changeMoveParams()
 
     LandscapeManager::moveLandscape(this->_landscape, move);
 
+    LandscapeManager::calcNormalForEachPlane(this->_landscape);
+    LandscapeManager::calcNormalForEachVertex(this->_landscape);
     LandscapeManager::calcIntensityForEachVertex(this->_landscape, this->_light);
 }
 
@@ -139,6 +136,8 @@ void MainWindow::__changeRotateParams()
 
     LandscapeManager::rotateLandscape(this->_landscape, rotate);
 
+    LandscapeManager::calcNormalForEachPlane(this->_landscape);
+    LandscapeManager::calcNormalForEachVertex(this->_landscape);
     LandscapeManager::calcIntensityForEachVertex(this->_landscape, this->_light);
 }
 
@@ -166,7 +165,7 @@ void MainWindow::_changeLandscapeSize()
 
 void MainWindow::on_waterlevelSlider_valueChanged(int value)
 {
-    this->_landscape.updateWaterlevel(value);
+    LandscapeManager::changeWaterlevel(this->_landscape, value);
 
     LandscapeManager::calcNormalForEachPlane(this->_landscape);
     LandscapeManager::calcNormalForEachVertex(this->_landscape);

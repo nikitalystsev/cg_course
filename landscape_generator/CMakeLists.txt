@@ -20,6 +20,7 @@ set(PROJECT_SOURCES
         src/light.cpp
         inc/light.h
         inc/transform.h
+        src/transform.cpp
         inc/landscape.h
         src/landscape.cpp
         inc/perlinNoise.h

@@ -1,6 +1,7 @@
 #ifndef LANDSCAPE_H
 #define LANDSCAPE_H
 
+#include "transform.h"
 #include <QGraphicsScene>
 #include <QPainter>
 #include <QVector3D>
@@ -17,6 +18,13 @@ using pair = std::pair<T1, T2>;
 template <typename T>
 using Matrix = std::vector<std::vector<T>>;
 
+struct Operation
+{
+    int operIndex; // индекс выполняемой операции (0, 1, 2)
+    int axisIndex; // индекс оси, на которой выполнялась операция (0, 1, 2)
+    int value;     //  значение
+};
+
 class Landscape
 {
 private:
@@ -30,10 +38,9 @@ private:
 
     Matrix<pair<QVector3D, QVector3D>> _normalMap; // матрица векторов внешней нормали к каждой из граней
     Matrix<QVector3D> _normalVertexMap;            // матрица векторов нормалей для каждой вершины
-    Matrix<double> _intensityVertexMap;            // расчет интенсивности в каждой вершине
+    Matrix<double> _intensityVertexMap;            // матрица интенсивности в каждой вершине
 
-    //    void _shiftPointToOrigin(Point3D<double> &point);
-    //    void _shiftPointBackToOrigin(Point3D<double> &point);
+    vector<Operation> _operations; // цепочка преобразований, выполненных над ландшафтом
 
 public:
     Landscape();
@@ -50,7 +57,7 @@ public:
     void resize(const int width, const int lenght);
 
     double getWaterlevel() const;
-    void updateWaterlevel(const double waterlevel);
+    void setWaterlevel(const double waterlevel);
 
     int getMaxHeight() const;
     void setMaxHeight(const double maxHeight);
@@ -63,6 +70,8 @@ public:
 
     int getCols() const;
     int getRows() const;
+
+    vector<Operation> &getOperations();
 
     Matrix<QVector3D> &getHeightMap();
 

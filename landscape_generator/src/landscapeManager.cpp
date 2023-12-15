@@ -2,8 +2,6 @@
 
 void LandscapeManager::generateHeightMap(Landscape &landscape, PerlinNoise &paramNoise)
 {
-    std::cout << "[B] generateHeightMap" << std::endl;
-
     int rows = landscape.getRows();
     int cols = landscape.getCols();
 
@@ -19,6 +17,8 @@ void LandscapeManager::generateHeightMap(Landscape &landscape, PerlinNoise &para
     Matrix<QVector3D> &screenHeightMap = landscape.getScreenHeightMap();
     Matrix<double> &withoutWaterMap = landscape.getWithoutWaterHeightMap();
 
+    vector<Operation> &operations = landscape.getOperations();
+
     for (int i = 0, m = a; i < rows && m <= c; ++i, m += landscape.square)
         for (int j = 0, n = b; j < cols && n <= d; ++j, n += landscape.square)
         {
@@ -33,24 +33,94 @@ void LandscapeManager::generateHeightMap(Landscape &landscape, PerlinNoise &para
                 maxHeight = height;
 
             if (height < currWaterlevel)
-            {
                 heightMap[i][j] = QVector3D(m, n, currWaterlevel);
-            }
             else
-            {
                 heightMap[i][j] = QVector3D(m, n, height);
-            }
 
             screenHeightMap[i][j] = heightMap[i][j];
+
+            applyOperation(screenHeightMap[i][j], operations);
+
             withoutWaterMap[i][j] = height;
         }
 
     landscape.setMaxHeight(maxHeight);
 }
 
+void LandscapeManager::changeWaterlevel(Landscape &landscape, int newWaterlevel)
+{
+    int rows = landscape.getRows();
+    int cols = landscape.getCols();
+
+    Matrix<QVector3D> &heightMap = landscape.getHeightMap();
+    Matrix<QVector3D> &screenHeightMap = landscape.getScreenHeightMap();
+    Matrix<double> &withoutWaterHeightMap = landscape.getWithoutWaterHeightMap();
+
+    vector<Operation> &operations = landscape.getOperations();
+
+    for (int i = 0; i < rows; ++i)
+        for (int j = 0; j < cols; ++j)
+        {
+            if (withoutWaterHeightMap[i][j] < newWaterlevel)
+                heightMap[i][j].setZ(newWaterlevel);
+            else
+                heightMap[i][j].setZ(withoutWaterHeightMap[i][j]);
+
+            screenHeightMap[i][j] = heightMap[i][j];
+
+            applyOperation(screenHeightMap[i][j], operations);
+        }
+
+    landscape.setWaterlevel(newWaterlevel);
+}
+
+void LandscapeManager::applyOperation(QVector3D &point, vector<Operation> &operations)
+{
+    for (auto &operation : operations)
+        switch (operation.operIndex)
+        {
+        case 0:
+            switch (operation.axisIndex)
+            {
+            case 0:
+                point.setX(point.x() + operation.value);
+                break;
+            case 1:
+                point.setY(point.y() + operation.value);
+                break;
+            case 2:
+                point.setZ(point.z() + operation.value);
+                break;
+            default:
+                break;
+            }
+            break;
+        case 1:
+            break;
+        case 2:
+            switch (operation.axisIndex)
+            {
+            case 0:
+                Transform::rotateByX(point, operation.value);
+                break;
+            case 1:
+                Transform::rotateByY(point, operation.value);
+                break;
+            case 2:
+                Transform::rotateByZ(point, operation.value);
+                break;
+            default:
+                break;
+            }
+            break;
+        default:
+            break;
+        }
+}
+
 void LandscapeManager::calcNormalForEachPlane(Landscape &landscape)
 {
-    std::cout << "[B] calcNormalForEachPlane" << std::endl;
+    //    std::cout << "[B] calcNormalForEachPlane" << std::endl;
 
     int width = landscape.getWidth();
     int lenght = landscape.getLenght();
@@ -82,7 +152,7 @@ void LandscapeManager::calcNormalForEachPlane(Landscape &landscape)
 
 void LandscapeManager::calcNormalForEachVertex(Landscape &landscape)
 {
-    std::cout << "[B] calcNormalForEachVertex" << std::endl;
+    //    std::cout << "[B] calcNormalForEachVertex" << std::endl;
 
     int rows = landscape.getRows();
     int cols = landscape.getCols();
@@ -153,7 +223,7 @@ void LandscapeManager::calcNormalForEachVertex(Landscape &landscape)
 
 void LandscapeManager::calcIntensityForEachVertex(Landscape &landscape, Light &light)
 {
-    std::cout << "[B] calcIntensityForEachVertex" << std::endl;
+    //    std::cout << "[B] calcIntensityForEachVertex" << std::endl;
 
     int rows = landscape.getRows();
     int cols = landscape.getCols();
@@ -187,28 +257,66 @@ void LandscapeManager::updateLandscape(Landscape &landscape, PerlinNoise &paramN
     calcIntensityForEachVertex(landscape, light);
 }
 
-void LandscapeManager::rotateLandscape(Landscape &landscape, rotate_t &angles)
+void LandscapeManager::rotateLandscape(Landscape &landscape, rotate_t &rotate)
 {
     Matrix<QVector3D> &screenHeightMap = landscape.getScreenHeightMap();
+
+    vector<Operation> &operations = landscape.getOperations();
 
     for (auto &row : screenHeightMap)
         for (auto &point : row)
         {
-            Transform::rotateByX(point, angles.xAngle);
-            Transform::rotateByY(point, angles.yAngle);
-            Transform::rotateByZ(point, angles.zAngle);
+            Transform::rotate(point, rotate);
         }
+
+    Operation newOperation;
+
+    if (rotate.xAngle != 0)
+    {
+        newOperation = {2, 0, (int)rotate.xAngle};
+        operations.push_back(newOperation);
+    }
+    if (rotate.yAngle != 0)
+    {
+        newOperation = {2, 1, (int)rotate.yAngle};
+        operations.push_back(newOperation);
+    }
+
+    if (rotate.zAngle != 0)
+    {
+        newOperation = {2, 2, (int)rotate.zAngle};
+        operations.push_back(newOperation);
+    }
 }
 
 void LandscapeManager::moveLandscape(Landscape &landscape, move_t &move)
 {
     Matrix<QVector3D> &screenHeightMap = landscape.getScreenHeightMap();
 
+    vector<Operation> &operations = landscape.getOperations();
+
     for (auto &row : screenHeightMap)
         for (auto &point : row)
         {
-            point.setX(point.x() + move.dx);
-            point.setY(point.y() + move.dy);
-            point.setZ(point.z() + move.dz);
+            Transform::move(point, move);
         }
+
+    Operation newOperation;
+
+    if (move.dx != 0)
+    {
+        newOperation = {0, 0, (int)move.dx};
+        operations.push_back(newOperation);
+    }
+    if (move.dy != 0)
+    {
+        newOperation = {0, 1, (int)move.dy};
+        operations.push_back(newOperation);
+    }
+
+    if (move.dz != 0)
+    {
+        newOperation = {0, 2, (int)move.dz};
+        operations.push_back(newOperation);
+    }
 }

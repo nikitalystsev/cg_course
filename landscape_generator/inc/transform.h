@@ -6,47 +6,43 @@
 
 #include <QVector3D>
 
+struct rotate_t
+{
+    double xAngle;
+    double yAngle;
+    double zAngle;
+};
+
+struct move_t
+{
+    double dx;
+    double dy;
+    double dz;
+};
+
+struct scale_t
+{
+    double kx;
+    double ky;
+    double kz;
+};
+
 // класс трансформаций для точки
 class Transform
 {
 public:
-    static double toRadians(const double angle)
-    {
-        return angle * (M_PI / 180);
-    }
+    static double toRadians(const double angle);
 
-    static void rotateByX(QVector3D &point, const double angle)
-    {
-        double cos_angle = cos(toRadians(angle));
-        double sin_angle = sin(toRadians(angle));
+    // поворот
+    static void rotateByX(QVector3D &point, const double angle);
+    static void rotateByY(QVector3D &point, const double angle);
+    static void rotateByZ(QVector3D &point, const double angle);
+    static void rotate(QVector3D &point, const rotate_t &rotate);
 
-        double tmp_y = point.y();
+    // перенос
+    static void move(QVector3D &point, const move_t &move);
 
-        point.setY(point.y() * cos_angle + point.z() * sin_angle);
-        point.setZ(-tmp_y * sin_angle + point.z() * cos_angle);
-    }
-
-    static void rotateByY(QVector3D &point, const double angle)
-    {
-        double cos_angle = cos(toRadians(angle));
-        double sin_angle = sin(toRadians(angle));
-
-        double tmp_x = point.x();
-
-        point.setX(point.x() * cos_angle - point.z() * sin_angle);
-        point.setZ(tmp_x * sin_angle + point.z() * cos_angle);
-    }
-
-    static void rotateByZ(QVector3D &point, const double angle)
-    {
-        double cos_angle = cos(toRadians(angle));
-        double sin_angle = sin(toRadians(angle));
-
-        double tmp_x = point.x();
-
-        point.setX(point.x() * cos_angle + point.y() * sin_angle);
-        point.setY(-tmp_x * sin_angle + point.y() * cos_angle);
-    }
+    // масштабирование в процессеы
 };
 
 #endif

@@ -1,5 +1,4 @@
 #include "../inc/landscape.h"
-#include "../inc/perlinNoise.h"
 
 Landscape::Landscape() :
     Landscape(100, 100, 0)
@@ -30,10 +29,11 @@ Landscape::Landscape(const Landscape &other)
     this->_width = other._width;
     this->_lenght = other._lenght;
     this->_waterlevel = other._waterlevel;
+    this->_maxHeight = other._maxHeight;
     this->_normalMap = other._normalMap;
     this->_normalVertexMap = other._normalVertexMap;
     this->_intensityVertexMap = other._intensityVertexMap;
-    this->_maxHeight = other._maxHeight;
+    this->_operations = other._operations;
 }
 
 Landscape::Landscape(Landscape &&other) noexcept
@@ -46,10 +46,11 @@ Landscape::Landscape(Landscape &&other) noexcept
     this->_width = other._width;
     this->_lenght = other._lenght;
     this->_waterlevel = other._waterlevel;
+    this->_maxHeight = other._maxHeight;
     this->_normalMap = other._normalMap;
     this->_normalVertexMap = other._normalVertexMap;
     this->_intensityVertexMap = other._intensityVertexMap;
-    this->_maxHeight = other._maxHeight;
+    this->_operations = other._operations;
 }
 
 Landscape &Landscape::operator=(const Landscape &other)
@@ -62,10 +63,11 @@ Landscape &Landscape::operator=(const Landscape &other)
     this->_width = other._width;
     this->_lenght = other._lenght;
     this->_waterlevel = other._waterlevel;
+    this->_maxHeight = other._maxHeight;
     this->_normalMap = other._normalMap;
     this->_normalVertexMap = other._normalVertexMap;
     this->_intensityVertexMap = other._intensityVertexMap;
-    this->_maxHeight = other._maxHeight;
+    this->_operations = other._operations;
 
     return *this;
 }
@@ -80,10 +82,11 @@ Landscape &Landscape::operator=(Landscape &&other) noexcept
     this->_width = other._width;
     this->_lenght = other._lenght;
     this->_waterlevel = other._waterlevel;
+    this->_maxHeight = other._maxHeight;
     this->_normalMap = other._normalMap;
     this->_normalVertexMap = other._normalVertexMap;
     this->_intensityVertexMap = other._intensityVertexMap;
-    this->_maxHeight = other._maxHeight;
+    this->_operations = other._operations;
 
     return *this;
 }
@@ -119,23 +122,8 @@ void Landscape::resize(const int width, const int lenght)
     this->resizeMatrix<double>(this->_intensityVertexMap, this->_rows, this->_cols);
 }
 
-void Landscape::updateWaterlevel(const double waterlevel)
+void Landscape::setWaterlevel(const double waterlevel)
 {
-    for (int i = 0; i < this->_rows; ++i)
-        for (int j = 0; j < this->_cols; ++j)
-        {
-            if (this->_withoutWaterHeightMap[i][j] < waterlevel)
-            {
-                this->_heightMap[i][j].setZ(waterlevel);
-            }
-            else
-            {
-                this->_heightMap[i][j].setZ(this->_withoutWaterHeightMap[i][j]);
-            }
-
-            this->_screenHeightMap[i][j] = this->_heightMap[i][j];
-        }
-
     this->_waterlevel = waterlevel;
 }
 
@@ -182,6 +170,11 @@ int Landscape::getCols() const
 int Landscape::getRows() const
 {
     return this->_rows;
+}
+
+vector<Operation> &Landscape::getOperations()
+{
+    return this->_operations;
 }
 
 Matrix<QVector3D> &Landscape::getHeightMap()
