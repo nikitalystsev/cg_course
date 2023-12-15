@@ -35,6 +35,7 @@ Landscape::Landscape(const Landscape &other)
     this->_normalVertexMap = other._normalVertexMap;
     this->_intensityVertexMap = other._intensityVertexMap;
     this->_operations = other._operations;
+    this->_square = other._square;
 }
 
 Landscape::Landscape(Landscape &&other) noexcept
@@ -53,6 +54,7 @@ Landscape::Landscape(Landscape &&other) noexcept
     this->_normalVertexMap = other._normalVertexMap;
     this->_intensityVertexMap = other._intensityVertexMap;
     this->_operations = other._operations;
+    this->_square = other._square;
 }
 
 Landscape &Landscape::operator=(const Landscape &other)
@@ -71,6 +73,7 @@ Landscape &Landscape::operator=(const Landscape &other)
     this->_normalVertexMap = other._normalVertexMap;
     this->_intensityVertexMap = other._intensityVertexMap;
     this->_operations = other._operations;
+    this->_square = other._square;
 
     return *this;
 }
@@ -91,6 +94,7 @@ Landscape &Landscape::operator=(Landscape &&other) noexcept
     this->_normalVertexMap = other._normalVertexMap;
     this->_intensityVertexMap = other._intensityVertexMap;
     this->_operations = other._operations;
+    this->_square = other._square;
 
     return *this;
 }

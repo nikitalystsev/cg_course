@@ -9,6 +9,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->landscapeGraphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->landscapeGraphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
+    connect(ui->waterlevelSlider, &QSlider::valueChanged, ui->waterLevelSpinbox, &QSpinBox::setValue);
+    connect(ui->waterLevelSpinbox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), ui->waterlevelSlider, &QSlider::setValue);
+
     connect(ui->seedSpinBox, SIGNAL(valueChanged(int)), this,
             SLOT(_changeParamNoise()));
     connect(ui->octavesSpinBox, SIGNAL(valueChanged(int)), this,
@@ -48,6 +51,13 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->moveZSpinbox, SIGNAL(valueChanged(int)), this,
             SLOT(_changeMoveParams()));
 
+    connect(ui->scaleXSpinbox, SIGNAL(valueChanged(double)), this,
+            SLOT(_changeScaleParams()));
+    connect(ui->scaleYSpinbox, SIGNAL(valueChanged(double)), this,
+            SLOT(_changeScaleParams()));
+    connect(ui->scaleZSpinbox, SIGNAL(valueChanged(double)), this,
+            SLOT(_changeScaleParams()));
+
     connect(ui->rotateXSpinbox, SIGNAL(valueChanged(int)), this,
             SLOT(_changeRotateParams()));
     connect(ui->rotateYSpinbox, SIGNAL(valueChanged(int)), this,
@@ -59,6 +69,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->__changeParamLight();
     this->__changeMoveParams();
     this->__changeRotateParams();
+    this->__changeScaleParams();
     this->__changeLandscapeSize();
 
     this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
@@ -81,6 +92,9 @@ void MainWindow::__changeParamNoise()
     this->_paramNoise = PerlinNoise(seed, octaves, frequency, lacunarity, amplitude, persistence);
 
     LandscapeManager::updateLandscape(this->_landscape, this->_paramNoise, this->_light);
+
+    ui->waterlevelSlider->setMaximum(this->_landscape.getMaxHeight());
+    ui->waterLevelSpinbox->setMaximum(this->_landscape.getMaxHeight());
 }
 
 void MainWindow::_changeParamNoise()
@@ -149,6 +163,26 @@ void MainWindow::__changeRotateParams()
 void MainWindow::_changeRotateParams()
 {
     this->__changeRotateParams();
+    this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
+}
+
+void MainWindow::__changeScaleParams()
+{
+    Scale scale;
+    scale.kx = ui->scaleXSpinbox->value();
+    scale.ky = ui->scaleYSpinbox->value();
+    scale.kz = ui->scaleZSpinbox->value();
+
+    LandscapeManager::scaleLandscape(this->_landscape, scale);
+
+    LandscapeManager::calcNormalForEachPlane(this->_landscape);
+    LandscapeManager::calcNormalForEachVertex(this->_landscape);
+    LandscapeManager::calcIntensityForEachVertex(this->_landscape, this->_light);
+}
+
+void MainWindow::_changeScaleParams()
+{
+    this->__changeScaleParams();
     this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
 }
 

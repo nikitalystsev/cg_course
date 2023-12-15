@@ -1,7 +1,7 @@
 #include "../inc/renderer.h"
 
 Renderer::Renderer() :
-    Renderer(1089, 766)
+    Renderer(1089, 799)
 {
 }
 
@@ -283,8 +283,8 @@ void Renderer::clean()
 
 int Renderer::toSceneX(double originX)
 {
-    double xMin = -545, xMax = 545;
-    double yMin = -383, yMax = 383;
+    double xMin = -(this->_screenWidth / 2), yMin = -(this->_screenHeight / 2);
+    double xMax = -xMin, yMax = -yMin;
 
     double kx = (this->_screenWidth - 0) / (xMax - xMin);
     double ky = (this->_screenHeight - 0) / (yMax - yMin);
@@ -297,8 +297,8 @@ int Renderer::toSceneX(double originX)
 
 int Renderer::toSceneY(double originY)
 {
-    double xMin = -545, xMax = 545;
-    double yMin = -383, yMax = 383;
+    double xMin = -(this->_screenWidth / 2), yMin = -(this->_screenHeight / 2);
+    double xMax = -xMin, yMax = -yMin;
 
     double kx = (this->_screenWidth - 0) / (xMax - xMin);
     double ky = (this->_screenHeight - 0) / (yMax - yMin);

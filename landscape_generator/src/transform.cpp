@@ -51,3 +51,10 @@ void Transform::move(QVector3D &point, const Move &move)
     point.setY(point.y() + move.dy);
     point.setZ(point.z() + move.dz);
 }
+
+void Transform::scale(QVector3D &point, const Scale &scale)
+{
+    point.setX(scale.kx * point.x() + (1 - scale.kx) * 0);
+    point.setY(scale.ky * point.y() + (1 - scale.ky) * 0);
+    point.setZ(scale.kz * point.z() + (1 - scale.kz) * 0);
+}

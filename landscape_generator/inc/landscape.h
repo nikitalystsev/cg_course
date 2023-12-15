@@ -34,6 +34,7 @@ private:
     double _maxHeight = 0;              // максимальная сгенерированная высота
     int _maxGenHeight = 1000;           // максимально возможная генерируемая высота
     vector<Operation> _operations;      // цепочка преобразований, выполненных над ландшафтом
+    int _square = 3;                    // казмер одного квадрата
 
 public:
     Landscape();
@@ -61,6 +62,9 @@ public:
     int getWidth() const { return this->_width; };
     void setWidth(const int width) { this->_width = width; };
 
+    int getSquare() const { return this->_square; };
+    void setSquare(const int square) { this->_square = square; };
+
     int getLenght() const { return this->_lenght; };
     void setLenght(const int lenght) { this->_width = lenght; };
 
@@ -80,9 +84,6 @@ public:
     Matrix<QVector3D> &getNormalVertexMap() { return this->_normalVertexMap; };
 
     Matrix<double> &getIntensityVertexMap() { return this->_intensityVertexMap; };
-
-public:
-    static const int square = 3;
 };
 
 #endif

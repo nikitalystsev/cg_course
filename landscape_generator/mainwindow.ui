@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1408</width>
-    <height>773</height>
+    <height>839</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,7 +18,7 @@
     <item>
      <layout class="QVBoxLayout" name="interfaceWidgetsLayout">
       <item>
-       <widget class="QLabel" name="paramPerlin">
+       <widget class="QLabel" name="paramGenerationLabel">
         <property name="font">
          <font>
           <pointsize>12</pointsize>
@@ -269,16 +269,16 @@
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout" name="waterlevellLayout">
         <item>
-         <widget class="QLabel" name="label">
+         <widget class="QLabel" name="waterlevelLabel2">
           <property name="text">
            <string>Уровень воды</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="spinBox"/>
+         <widget class="QSpinBox" name="waterLevelSpinbox"/>
         </item>
        </layout>
       </item>
@@ -419,7 +419,7 @@
        </layout>
       </item>
       <item>
-       <widget class="QLabel" name="paramPerlin_4">
+       <widget class="QLabel" name="transformationsLabel">
         <property name="font">
          <font>
           <pointsize>12</pointsize>
@@ -444,7 +444,7 @@
       <item>
        <widget class="QTabWidget" name="tabWidget">
         <property name="currentIndex">
-         <number>1</number>
+         <number>2</number>
         </property>
         <widget class="QWidget" name="rotateTab">
          <attribute name="title">
@@ -594,11 +594,11 @@
          </attribute>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
-           <layout class="QGridLayout" name="gridLayout_9">
+           <layout class="QGridLayout" name="scaleLayout">
             <item row="0" column="0">
-             <widget class="QLabel" name="label_27">
+             <widget class="QLabel" name="scaleXLabel">
               <property name="text">
-               <string>X</string>
+               <string>Kx</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -606,9 +606,19 @@
              </widget>
             </item>
             <item row="1" column="0">
-             <widget class="QLabel" name="label_28">
+             <widget class="QLabel" name="scaleYLabel">
               <property name="text">
-               <string>Y</string>
+               <string>Ky</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="scaleZLabel">
+              <property name="text">
+               <string>Kz</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -616,23 +626,43 @@
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="QSpinBox" name="spinBox_19"/>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_29">
-              <property name="text">
-               <string>Z</string>
+             <widget class="QDoubleSpinBox" name="scaleYSpinbox">
+              <property name="minimum">
+               <double>0.000000000000000</double>
               </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              <property name="singleStep">
+               <double>0.100000000000000</double>
+              </property>
+              <property name="value">
+               <double>1.000000000000000</double>
               </property>
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="QSpinBox" name="spinBox_20"/>
+             <widget class="QDoubleSpinBox" name="scaleXSpinbox">
+              <property name="minimum">
+               <double>0.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.100000000000000</double>
+              </property>
+              <property name="value">
+               <double>1.000000000000000</double>
+              </property>
+             </widget>
             </item>
             <item row="2" column="1">
-             <widget class="QSpinBox" name="spinBox_21"/>
+             <widget class="QDoubleSpinBox" name="scaleZSpinbox">
+              <property name="minimum">
+               <double>0.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.100000000000000</double>
+              </property>
+              <property name="value">
+               <double>1.000000000000000</double>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>

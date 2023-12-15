@@ -4,9 +4,10 @@ void LandscapeManager::generateHeightMap(Landscape &landscape, PerlinNoise &para
 {
     int rows = landscape.getRows();
     int cols = landscape.getCols();
+    int square = landscape.getSquare();
 
-    int a = -((landscape.getWidth() * landscape.square) / 2);
-    int b = -((landscape.getLenght() * landscape.square) / 2);
+    int a = -((landscape.getWidth() * square) / 2);
+    int b = -((landscape.getLenght() * square) / 2);
     int c = -a;
     int d = -b;
 
@@ -20,8 +21,8 @@ void LandscapeManager::generateHeightMap(Landscape &landscape, PerlinNoise &para
 
     vector<Operation> &operations = landscape.getOperations();
 
-    for (int i = 0, m = a; i < rows && m <= c; ++i, m += landscape.square)
-        for (int j = 0, n = b; j < cols && n <= d; ++j, n += landscape.square)
+    for (int i = 0, m = a; i < rows && m <= c; ++i, m += square)
+        for (int j = 0, n = b; j < cols && n <= d; ++j, n += square)
         {
             double nx = i / (double)rows - 1 - 0.5;
             double ny = j / (double)cols - 1 - 0.5;
@@ -51,6 +52,7 @@ void LandscapeManager::changeWaterlevel(Landscape &landscape, int newWaterlevel)
 {
     int rows = landscape.getRows();
     int cols = landscape.getCols();
+    int square = landscape.getSquare();
 
     Matrix<double> &heightMap = landscape.getHeightMap();
     Matrix<QVector3D> &screenHeightMap = landscape.getScreenHeightMap();
@@ -58,13 +60,13 @@ void LandscapeManager::changeWaterlevel(Landscape &landscape, int newWaterlevel)
 
     vector<Operation> &operations = landscape.getOperations();
 
-    int a = -((landscape.getWidth() * landscape.square) / 2);
-    int b = -((landscape.getLenght() * landscape.square) / 2);
+    int a = -((landscape.getWidth() * square) / 2);
+    int b = -((landscape.getLenght() * square) / 2);
     int c = -a;
     int d = -b;
 
-    for (int i = 0, m = a; i < rows && m <= c; ++i, m += landscape.square)
-        for (int j = 0, n = b; j < cols && n <= d; ++j, n += landscape.square)
+    for (int i = 0, m = a; i < rows && m <= c; ++i, m += square)
+        for (int j = 0, n = b; j < cols && n <= d; ++j, n += square)
         {
             if (withoutWaterHeightMap[i][j] < newWaterlevel)
                 screenHeightMap[i][j] = QVector3D(m, n, newWaterlevel);
@@ -101,6 +103,20 @@ void LandscapeManager::applyOperation(QVector3D &point, vector<Operation> &opera
             }
             break;
         case 1:
+            switch (operation.axisIndex)
+            {
+            case 0:
+                point.setX(operation.value * point.x() + (1 - operation.value) * 0);
+                break;
+            case 1:
+                point.setY(operation.value * point.y() + (1 - operation.value) * 0);
+                break;
+            case 2:
+                point.setZ(operation.value * point.z() + (1 - operation.value) * 0);
+                break;
+            default:
+                break;
+            }
             break;
         case 2:
             switch (operation.axisIndex)
@@ -269,18 +285,18 @@ void LandscapeManager::rotateLandscape(Landscape &landscape, Rotate &rotate)
 
     if (rotate.xAngle != 0)
     {
-        newOperation = {2, 0, rotate.xAngle};
+        newOperation = {2, 0, (double)rotate.xAngle};
         operations.push_back(newOperation);
     }
     if (rotate.yAngle != 0)
     {
-        newOperation = {2, 1, rotate.yAngle};
+        newOperation = {2, 1, (double)rotate.yAngle};
         operations.push_back(newOperation);
     }
 
     if (rotate.zAngle != 0)
     {
-        newOperation = {2, 2, rotate.zAngle};
+        newOperation = {2, 2, (double)rotate.zAngle};
         operations.push_back(newOperation);
     }
 }
@@ -299,18 +315,47 @@ void LandscapeManager::moveLandscape(Landscape &landscape, Move &move)
 
     if (move.dx != 0)
     {
-        newOperation = {0, 0, (int)move.dx};
+        newOperation = {0, 0, (double)move.dx};
         operations.push_back(newOperation);
     }
     if (move.dy != 0)
     {
-        newOperation = {0, 1, (int)move.dy};
+        newOperation = {0, 1, (double)move.dy};
         operations.push_back(newOperation);
     }
 
     if (move.dz != 0)
     {
-        newOperation = {0, 2, (int)move.dz};
+        newOperation = {0, 2, (double)move.dz};
+        operations.push_back(newOperation);
+    }
+}
+
+void LandscapeManager::scaleLandscape(Landscape &landscape, Scale &scale)
+{
+    Matrix<QVector3D> &screenHeightMap = landscape.getScreenHeightMap();
+
+    vector<Operation> &operations = landscape.getOperations();
+
+    for (auto &row : screenHeightMap)
+        for (auto &point : row)
+            Transform::scale(point, scale);
+
+    Operation newOperation;
+
+    if (scale.kx != 0)
+    {
+        newOperation = {1, 0, scale.kx};
+        operations.push_back(newOperation);
+    }
+    if (scale.ky != 0)
+    {
+        newOperation = {1, 1, scale.ky};
+        operations.push_back(newOperation);
+    }
+    if (scale.kz != 0)
+    {
+        newOperation = {1, 2, scale.kz};
         operations.push_back(newOperation);
     }
 }

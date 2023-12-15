@@ -22,16 +22,16 @@ struct Move
 
 struct Scale
 {
-    int kx;
-    int ky;
-    int kz;
+    double kx;
+    double ky;
+    double kz;
 };
 
 struct Operation
 {
     int operIndex; // индекс выполняемой операции (0, 1, 2)
     int axisIndex; // индекс оси, на которой выполнялась операция (0, 1, 2)
-    int value;     //  значение
+    double value;  //  значение
 };
 
 // класс трансформаций для точки
@@ -49,7 +49,8 @@ public:
     // перенос
     static void move(QVector3D &point, const Move &move);
 
-    // масштабирование в процессеы
+    // масштабирование
+    static void scale(QVector3D &point, const Scale &scale);
 };
 
 #endif

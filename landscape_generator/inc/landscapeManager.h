@@ -24,6 +24,7 @@ public:
 
     static void rotateLandscape(Landscape &landscape, Rotate &rotate);
     static void moveLandscape(Landscape &landscape, Move &move);
+    static void scaleLandscape(Landscape &landscape, Scale &scale);
 };
 
 #endif // __LANDSCAPE_MANAGER_H__
