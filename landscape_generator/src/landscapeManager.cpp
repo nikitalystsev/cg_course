@@ -23,7 +23,7 @@ void LandscapeManager::generateHeightMap(Landscape &landscape, PerlinNoise &para
 
     vector<Operation> &operations = landscape.getOperations();
 
-#pragma omp parallel for
+    //#pragma omp parallel for
 
     for (int i = 0, m = a; i < rows && m <= c; ++i, m += square)
         for (int j = 0, n = b; j < cols && n <= d; ++j, n += square)
@@ -69,7 +69,7 @@ void LandscapeManager::changeWaterlevel(Landscape &landscape, int newWaterlevel)
     int c = -a;
     int d = -b;
 
-#pragma omp parallel for
+    //#pragma omp parallel for
 
     for (int i = 0, m = a; i < rows && m <= c; ++i, m += square)
         for (int j = 0, n = b; j < cols && n <= d; ++j, n += square)
@@ -154,9 +154,10 @@ void LandscapeManager::calcNormalForEachPlane(Landscape &landscape)
 
     Matrix<QVector3D> &screenHeightMap = landscape.getScreenHeightMap();
     Matrix<pair<QVector3D, QVector3D>> &normalMap = landscape.getNormalMap();
-
+    //#pragma omp parallel for
     // идем по всем квадратам ландшафной сетки
     for (int i = 0; i < width; ++i)
+        //#pragma omp parallel for
         for (int j = 0; j < lenght; ++j)
         {
             // в каждом квадрате сетки 2 треугольника - 2 плоскости
@@ -258,8 +259,10 @@ void LandscapeManager::calcIntensityForEachVertex(Landscape &landscape, Light &l
     Matrix<QVector3D> &normalVertexMap = landscape.getNormalVertexMap();
     Matrix<QVector3D> &screenHeightMap = landscape.getScreenHeightMap();
 
-    // цикл по всем вершинам ландшафтной сетки
+// цикл по всем вершинам ландшафтной сетки
+#pragma omp parallel for
     for (int i = 0; i < rows; ++i)
+#pragma omp parallel for
         for (int j = 0; j < cols; ++j)
         {
             // получили вектор направления света

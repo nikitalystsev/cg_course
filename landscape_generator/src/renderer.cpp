@@ -59,7 +59,7 @@ void Renderer::_renderPlane(const Plane &screenPlane, const vector<double> &heig
     allLines.insert(allLines.end(), line2.begin(), line2.end());
     allLines.insert(allLines.end(), line3.begin(), line3.end());
 
-    //#pragma omp parallel for
+#pragma omp parallel for
 
     // обходим только ту часть матрицы z-буфера, что является
     // описывающим прямоугольником
@@ -81,7 +81,7 @@ void Renderer::_renderPlane(const Plane &screenPlane, const vector<double> &heig
         double x0 = yn[0].vec.x(), I0 = yn[0].I;
         double Z0 = yn[0].vec.z();
 
-        //#pragma omp parallel for
+#pragma omp parallel for
         for (int x = pMin.x(); x <= pMax.x(); ++x)
         {
             // уравнения сторон
