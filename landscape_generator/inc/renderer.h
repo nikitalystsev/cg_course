@@ -28,6 +28,10 @@ private:
     Matrix<double> _zbuffer;
     QImage _framebuffer; // буфер кадра
 
+    int _xMin, _xMax;
+    int _yMin, _yMax;
+    double _km;
+
     vector<Pixel> _getLineByBresenham(const QVector3D &p1, const QVector3D &p2);
     void _calcIntensityForLine(vector<Pixel> &line, const double &IPStart, const double &IPEnd);
     void _calcHeightForLine(vector<Pixel> &line, const double &ZPStart, const double &ZPEnd);

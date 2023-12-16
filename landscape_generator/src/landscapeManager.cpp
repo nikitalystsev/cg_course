@@ -2,6 +2,8 @@
 
 void LandscapeManager::generateHeightMap(Landscape &landscape, PerlinNoise &paramNoise)
 {
+    //    std::cout << "[INFO] call generateHeightMap" << std::endl;
+
     int rows = landscape.getRows();
     int cols = landscape.getCols();
     int square = landscape.getSquare();
@@ -145,6 +147,8 @@ void LandscapeManager::applyOperation(QVector3D &point, vector<Operation> &opera
 
 void LandscapeManager::calcNormalForEachPlane(Landscape &landscape)
 {
+    //    std::cout << "[INFO] call calcNormalForEachPlane" << std::endl;
+
     int width = landscape.getWidth();
     int lenght = landscape.getLenght();
 
@@ -174,6 +178,8 @@ void LandscapeManager::calcNormalForEachPlane(Landscape &landscape)
 
 void LandscapeManager::calcNormalForEachVertex(Landscape &landscape)
 {
+    //    std::cout << "[INFO] call calcNormalForEachVertex" << std::endl;
+
     int rows = landscape.getRows();
     int cols = landscape.getCols();
 
@@ -243,6 +249,8 @@ void LandscapeManager::calcNormalForEachVertex(Landscape &landscape)
 
 void LandscapeManager::calcIntensityForEachVertex(Landscape &landscape, Light &light)
 {
+    //    std::cout << "[INFO] call calcIntensityForEachVertex" << std::endl;
+
     int rows = landscape.getRows();
     int cols = landscape.getCols();
 
@@ -269,6 +277,8 @@ void LandscapeManager::calcIntensityForEachVertex(Landscape &landscape, Light &l
 
 void LandscapeManager::updateLandscape(Landscape &landscape, PerlinNoise &paramNoise, Light &light)
 {
+    //    std::cout << "[INFO] call updateLandscape" << std::endl;
+
     generateHeightMap(landscape, paramNoise);
     calcNormalForEachPlane(landscape);
     calcNormalForEachVertex(landscape);
@@ -277,6 +287,8 @@ void LandscapeManager::updateLandscape(Landscape &landscape, PerlinNoise &paramN
 
 void LandscapeManager::rotateLandscape(Landscape &landscape, Rotate &rotate)
 {
+    //    std::cout << "[INFO] call rotateLandscape" << std::endl;
+
     Matrix<QVector3D> &screenHeightMap = landscape.getScreenHeightMap();
 
     vector<Operation> &operations = landscape.getOperations();
@@ -307,6 +319,8 @@ void LandscapeManager::rotateLandscape(Landscape &landscape, Rotate &rotate)
 
 void LandscapeManager::moveLandscape(Landscape &landscape, Move &move)
 {
+    //    std::cout << "[INFO] call moveLandscape" << std::endl;
+
     Matrix<QVector3D> &screenHeightMap = landscape.getScreenHeightMap();
 
     vector<Operation> &operations = landscape.getOperations();
@@ -337,6 +351,8 @@ void LandscapeManager::moveLandscape(Landscape &landscape, Move &move)
 
 void LandscapeManager::scaleLandscape(Landscape &landscape, Scale &scale)
 {
+    //    std::cout << "[INFO] call scaleLandscape" << std::endl;
+
     Matrix<QVector3D> &screenHeightMap = landscape.getScreenHeightMap();
 
     vector<Operation> &operations = landscape.getOperations();

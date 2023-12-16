@@ -8,12 +8,20 @@ Renderer::Renderer() :
 Renderer::Renderer(const int &width, const int &height) :
     _screenWidth(width), _screenHeight(height), _zbuffer(width, vector<double>(height, INT_MIN)), _framebuffer(width, height, QImage::Format_RGB32)
 {
+    this->_xMax = this->_screenWidth / 2, this->_yMax = this->_screenHeight / 2;
+    this->_xMin = -this->_xMax, this->_yMin = -this->_yMax;
+
+    double kx = (double)(this->_screenWidth - 0) / (this->_xMax - this->_xMin);
+    double ky = (double)(this->_screenHeight - 0) / (this->_yMax - this->_yMin);
+
+    this->_km = std::min(kx, ky);
 }
 
 Renderer::~Renderer() {}
 
 void Renderer::_renderPlane(const Plane &screenPlane, const vector<double> &heights, const vector<double> &intensity, const double waterlevel, const double maxHeight)
 {
+    //    std::cout << "[INFO] call _renderPlane" << std::endl;
     // получаем координаты описывающего прямоугольника
     QVector2D pMin = screenPlane.getPMin();
     QVector2D pMax = screenPlane.getPMax();
@@ -57,6 +65,7 @@ void Renderer::_renderPlane(const Plane &screenPlane, const vector<double> &heig
     // описывающим прямоугольником
     for (int y = pMin.y(); y <= pMax.y(); ++y)
     {
+        //        std::cout << "[INFO] in first cycle" << std::endl;
         // вектор точек ребер на сканирующей строке
         // Выборка точек с заданным y с использованием std::copy_if
         vector<Pixel> yn;
@@ -80,72 +89,68 @@ void Renderer::_renderPlane(const Plane &screenPlane, const vector<double> &heig
             double bSide = x * deltaY23 + y * deltaX32 + var2;
             double cSide = x * deltaY31 + y * deltaX13 + var3;
 
-            // принадлежность точки треугольнику
-            int isInTriangle = (aSide >= 0 && bSide >= 0 && cSide >= 0) || (aSide < 0 && bSide < 0 && cSide < 0);
+            int sceneX = this->toSceneX(x), sceneY = this->toSceneY(y);
 
-            if (isInTriangle)
+            if (sceneX < 0 || sceneX >= this->_screenWidth || sceneY < 0 || sceneY >= this->_screenHeight)
+                continue;
+
+            // принадлежность точки треугольнику (если не принадлежит)
+            if (!((aSide >= 0 && bSide >= 0 && cSide >= 0) || (aSide < 0 && bSide < 0 && cSide < 0)))
+                continue;
+
+            double u = (x - x0) * invDeltaX;
+            double I = (deltaX == 0) ? I0 : (u * I0 + (1 - u) * yn[yn.size() - 1].I);
+            double height = (deltaX == 0) ? Z0 : (u * Z0 + (1 - u) * yn[yn.size() - 1].vec.z());
+
+            double z = screenPlane.caclZ(x, y);
+
+            if (z > this->_zbuffer[sceneX][sceneY])
             {
-                double u = (x - x0) * invDeltaX;
-                double I = (deltaX == 0) ? I0 : (u * I0 + (1 - u) * yn[yn.size() - 1].I);
-                double Z = (deltaX == 0) ? Z0 : (u * Z0 + (1 - u) * yn[yn.size() - 1].vec.z());
+                this->_zbuffer[sceneX][sceneY] = z;
 
-                double z = screenPlane.caclZ(x, y);
+                int r, g, b;
 
-                int _x = toSceneX(x), _y = toSceneY(y);
-
-                if (z > this->_zbuffer[_x][_y])
+                if (height == waterlevel)
                 {
-                    this->_zbuffer[_x][_y] = z;
-
-                    int r, g, b;
-
-                    if (Z == waterlevel)
-                    {
-                        r = this->_getCorrectChannel(7, I);
-                        g = this->_getCorrectChannel(11, I);
-                        b = this->_getCorrectChannel(117, I);
-                    }
-                    else if (Z > waterlevel && Z < waterlevel + 5)
-                    {
-                        r = this->_getCorrectChannel(64, I);
-                        g = this->_getCorrectChannel(56, I);
-                        b = this->_getCorrectChannel(15, I);
-                    }
-                    else if (Z < maxHeight && Z > maxHeight - 100)
-                    {
-                        r = this->_getCorrectChannel(197, I);
-                        g = this->_getCorrectChannel(229, I);
-                        b = this->_getCorrectChannel(227, I);
-                    }
-                    else
-                    {
-                        r = this->_getCorrectChannel(12, I);
-                        g = this->_getCorrectChannel(71, I);
-                        b = this->_getCorrectChannel(14, I);
-                    }
-
-                    if (_x >= 0 && _x < 1089 && _y >= 0 && _y < 799)
-                        this->_framebuffer.setPixelColor(_x, _y, QColor(r, g, b));
+                    r = this->_getCorrectChannel(7, I);
+                    g = this->_getCorrectChannel(11, I);
+                    b = this->_getCorrectChannel(117, I);
                 }
+                else if (height > waterlevel && height < waterlevel + 5)
+                {
+                    r = this->_getCorrectChannel(64, I);
+                    g = this->_getCorrectChannel(56, I);
+                    b = this->_getCorrectChannel(15, I);
+                }
+                else if (height < maxHeight && height > maxHeight - 100)
+                {
+                    r = this->_getCorrectChannel(197, I);
+                    g = this->_getCorrectChannel(229, I);
+                    b = this->_getCorrectChannel(227, I);
+                }
+                else
+                {
+                    r = this->_getCorrectChannel(12, I);
+                    g = this->_getCorrectChannel(71, I);
+                    b = this->_getCorrectChannel(14, I);
+                }
+
+                this->_framebuffer.setPixelColor(sceneX, sceneY, QColor(r, g, b));
             }
         }
     }
 }
 
-int Renderer::_getCorrectChannel(int _R, double I)
+int Renderer::_getCorrectChannel(int channel, double I)
 {
-    int _r = _R * I;
+    int value = channel * I;
 
-    if (_r > 255)
-    {
-        _r = 255;
-    }
-    else if (_r < 0)
-    {
-        _r = 0;
-    }
+    if (value > 255)
+        value = 255;
+    else if (value < 0)
+        value = 0;
 
-    return _r;
+    return value;
 }
 
 vector<Pixel> Renderer::_getLineByBresenham(const QVector3D &p1, const QVector3D &p2)
@@ -221,6 +226,8 @@ void Renderer::_calcHeightForLine(vector<Pixel> &line, const double &ZPStart, co
 
 void Renderer::renderLandscape(Landscape &landscape, QGraphicsScene *scene)
 {
+    //    std::cout << "[INFO] call renderLandscape" << std::endl;
+
     this->clean();
 
     Matrix<double> &heightMap = landscape.getHeightMap();
@@ -284,28 +291,10 @@ void Renderer::clean()
 
 int Renderer::toSceneX(double originX)
 {
-    double xMin = -(this->_screenWidth / 2), yMin = -(this->_screenHeight / 2);
-    double xMax = -xMin, yMax = -yMin;
-
-    double kx = (this->_screenWidth - 0) / (xMax - xMin);
-    double ky = (this->_screenHeight - 0) / (yMax - yMin);
-    double km = std::min(kx, ky);
-
-    int canvasX = 0 + (originX - xMin) * km;
-
-    return canvasX;
+    return 0 + (originX - this->_xMin) * this->_km;
 }
 
 int Renderer::toSceneY(double originY)
 {
-    double xMin = -(this->_screenWidth / 2), yMin = -(this->_screenHeight / 2);
-    double xMax = -xMin, yMax = -yMin;
-
-    double kx = (this->_screenWidth - 0) / (xMax - xMin);
-    double ky = (this->_screenHeight - 0) / (yMax - yMin);
-    double km = std::min(kx, ky);
-
-    int canvasY = 0 + (originY - yMin) * km;
-
-    return canvasY;
+    return 0 + (originY - this->_yMin) * this->_km;
 }
