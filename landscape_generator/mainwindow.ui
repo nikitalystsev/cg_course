@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout_5">
+   <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <layout class="QVBoxLayout" name="interfaceWidgetsLayout">
       <item>
@@ -444,7 +444,7 @@
       <item>
        <widget class="QTabWidget" name="tabWidget">
         <property name="currentIndex">
-         <number>1</number>
+         <number>2</number>
         </property>
         <widget class="QWidget" name="rotateTab">
          <attribute name="title">
@@ -453,7 +453,7 @@
          <layout class="QHBoxLayout" name="horizontalLayout_4">
           <item>
            <layout class="QGridLayout" name="rotateLayout">
-            <item row="1" column="0">
+            <item row="1" column="2">
              <widget class="QLabel" name="rotateYLabel">
               <property name="text">
                <string>Y</string>
@@ -463,20 +463,7 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
-             <widget class="QSpinBox" name="rotateXSpinbox">
-              <property name="minimum">
-               <number>-180</number>
-              </property>
-              <property name="maximum">
-               <number>180</number>
-              </property>
-              <property name="value">
-               <number>0</number>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
+            <item row="2" column="3">
              <widget class="QSpinBox" name="rotateZSpinbox">
               <property name="minimum">
                <number>-180</number>
@@ -489,7 +476,33 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="0">
+            <item row="0" column="1">
+             <widget class="QSpinBox" name="rotateXcSpinBox"/>
+            </item>
+            <item row="2" column="2">
+             <widget class="QLabel" name="rotateZLabel">
+              <property name="text">
+               <string>Z</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="3">
+             <widget class="QSpinBox" name="rotateXSpinbox">
+              <property name="minimum">
+               <number>-180</number>
+              </property>
+              <property name="maximum">
+               <number>180</number>
+              </property>
+              <property name="value">
+               <number>0</number>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
              <widget class="QLabel" name="rotateXLabel">
               <property name="text">
                <string>X</string>
@@ -499,7 +512,7 @@
               </property>
              </widget>
             </item>
-            <item row="1" column="1">
+            <item row="1" column="3">
              <widget class="QSpinBox" name="rotateYSpinbox">
               <property name="minimum">
                <number>-180</number>
@@ -509,10 +522,36 @@
               </property>
              </widget>
             </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="rotateZLabel">
+            <item row="0" column="0">
+             <widget class="QLabel" name="rotateXcLabel">
               <property name="text">
-               <string>Z</string>
+               <string>Xc</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QSpinBox" name="rotateYcSpinBox"/>
+            </item>
+            <item row="2" column="1">
+             <widget class="QSpinBox" name="rotateZcSpinBox"/>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="rotateYcLabel">
+              <property name="text">
+               <string>Yc</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="rotateZcLabel">
+              <property name="text">
+               <string>Zc</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -601,7 +640,10 @@
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
            <layout class="QGridLayout" name="scaleLayout">
-            <item row="0" column="0">
+            <item row="1" column="1">
+             <widget class="QSpinBox" name="scaleYcSpinBox"/>
+            </item>
+            <item row="0" column="2">
              <widget class="QLabel" name="scaleXLabel">
               <property name="text">
                <string>Kx</string>
@@ -611,7 +653,7 @@
               </property>
              </widget>
             </item>
-            <item row="1" column="0">
+            <item row="1" column="2">
              <widget class="QLabel" name="scaleYLabel">
               <property name="text">
                <string>Ky</string>
@@ -621,17 +663,7 @@
               </property>
              </widget>
             </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="scaleZLabel">
-              <property name="text">
-               <string>Kz</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
+            <item row="1" column="3">
              <widget class="QDoubleSpinBox" name="scaleYSpinbox">
               <property name="minimum">
                <double>0.000000000000000</double>
@@ -644,7 +676,7 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
+            <item row="0" column="3">
              <widget class="QDoubleSpinBox" name="scaleXSpinbox">
               <property name="minimum">
                <double>0.000000000000000</double>
@@ -657,7 +689,7 @@
               </property>
              </widget>
             </item>
-            <item row="2" column="1">
+            <item row="2" column="3">
              <widget class="QDoubleSpinBox" name="scaleZSpinbox">
               <property name="minimum">
                <double>0.000000000000000</double>
@@ -667,6 +699,52 @@
               </property>
               <property name="value">
                <double>1.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="2">
+             <widget class="QLabel" name="scaleZLabel">
+              <property name="text">
+               <string>Kz</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QSpinBox" name="scaleXcSpinBox"/>
+            </item>
+            <item row="2" column="1">
+             <widget class="QSpinBox" name="scaleZcSpinBox"/>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="scaleXcLabel">
+              <property name="text">
+               <string>Xc</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="scaleYcLabel">
+              <property name="text">
+               <string>Yc</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="scaleZcLabel">
+              <property name="text">
+               <string>Zc</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>

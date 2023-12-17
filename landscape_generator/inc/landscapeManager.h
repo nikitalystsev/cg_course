@@ -22,9 +22,9 @@ public:
     static void calcIntensityForEachVertex(Landscape &landscape, Light &light);
     static void updateLandscape(Landscape &landscape, PerlinNoise &paramNoise, Light &light);
 
-    static void rotateLandscape(Landscape &landscape, Rotate &rotate);
+    static void rotateLandscape(Landscape &landscape, Rotate &rotate, QVector3D &centerRotate);
     static void moveLandscape(Landscape &landscape, Move &move);
-    static void scaleLandscape(Landscape &landscape, Scale &scale);
+    static void scaleLandscape(Landscape &landscape, Scale &scale, QVector3D &centerScale);
 };
 
 #endif // __LANDSCAPE_MANAGER_H__

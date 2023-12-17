@@ -153,7 +153,13 @@ void MainWindow::__changeRotateParams()
     rotate.yAngle = ui->rotateYSpinbox->value();
     rotate.zAngle = ui->rotateZSpinbox->value();
 
-    LandscapeManager::rotateLandscape(this->_landscape, rotate);
+    int rotateXc = ui->rotateXcSpinBox->value();
+    int rotateYc = ui->rotateYcSpinBox->value();
+    int rotateZc = ui->rotateZcSpinBox->value();
+
+    QVector3D centerRotate(rotateXc, rotateYc, rotateZc);
+
+    LandscapeManager::rotateLandscape(this->_landscape, rotate, centerRotate);
 
     LandscapeManager::calcNormalForEachPlane(this->_landscape);
     LandscapeManager::calcNormalForEachVertex(this->_landscape);
@@ -173,7 +179,13 @@ void MainWindow::__changeScaleParams()
     scale.ky = ui->scaleYSpinbox->value();
     scale.kz = ui->scaleZSpinbox->value();
 
-    LandscapeManager::scaleLandscape(this->_landscape, scale);
+    int scaleXc = ui->scaleXcSpinBox->value();
+    int scaleYc = ui->scaleYcSpinBox->value();
+    int scaleZc = ui->scaleZcSpinBox->value();
+
+    QVector3D centerScale(scaleXc, scaleYc, scaleZc);
+
+    LandscapeManager::scaleLandscape(this->_landscape, scale, centerScale);
 
     LandscapeManager::calcNormalForEachPlane(this->_landscape);
     LandscapeManager::calcNormalForEachVertex(this->_landscape);
