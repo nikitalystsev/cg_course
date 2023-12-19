@@ -13,29 +13,29 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->waterLevelSpinbox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), ui->waterlevelSlider, &QSlider::setValue);
 
     connect(ui->seedSpinBox, SIGNAL(valueChanged(int)), this,
-            SLOT(_changeParamNoise()));
+            SLOT(_changeSeed()));
     connect(ui->octavesSpinBox, SIGNAL(valueChanged(int)), this,
-            SLOT(_changeParamNoise()));
+            SLOT(_changeOctaves()));
     connect(ui->frequencySpinBox, SIGNAL(valueChanged(double)), this,
-            SLOT(_changeParamNoise()));
+            SLOT(_changeFrequency()));
     connect(ui->lacunaritySpinBox, SIGNAL(valueChanged(double)), this,
-            SLOT(_changeParamNoise()));
+            SLOT(_changeLacunarity()));
     connect(ui->amplitudeSpinBox, SIGNAL(valueChanged(double)), this,
-            SLOT(_changeParamNoise()));
+            SLOT(_changeAmplitude()));
     connect(ui->persistenceSpinBox, SIGNAL(valueChanged(double)), this,
-            SLOT(_changeParamNoise()));
+            SLOT(_changePersistence()));
 
     connect(ui->lightXSpinBox, SIGNAL(valueChanged(int)), this,
-            SLOT(_changeParamLight()));
+            SLOT(_changeLightPosition()));
     connect(ui->lightYSpinBox, SIGNAL(valueChanged(int)), this,
-            SLOT(_changeParamLight()));
+            SLOT(_changeLightPosition()));
     connect(ui->lightZSpinBox, SIGNAL(valueChanged(int)), this,
-            SLOT(_changeParamLight()));
+            SLOT(_changeLightPosition()));
 
     connect(ui->K_dSpinBox, SIGNAL(valueChanged(double)), this,
-            SLOT(_changeParamLight()));
+            SLOT(_changeLightK_d()));
     connect(ui->I_0SpinBox, SIGNAL(valueChanged(double)), this,
-            SLOT(_changeParamLight()));
+            SLOT(_changeLightI_0()));
 
     connect(ui->widthSpinBox, SIGNAL(valueChanged(int)), this,
             SLOT(_changeLandscapeSize()));
@@ -65,14 +65,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->rotateZSpinbox, SIGNAL(valueChanged(int)), this,
             SLOT(_changeRotateParams()));
 
-    this->__changeParamNoise();
-    this->__changeParamLight();
-    this->__changeMoveParams();
-    this->__changeRotateParams();
-    this->__changeScaleParams();
-    this->__changeLandscapeSize();
-
-    this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
+    this->_init();
 }
 
 MainWindow::~MainWindow()
@@ -80,125 +73,116 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::__changeParamNoise()
+void MainWindow::_init()
 {
-    int seed = ui->seedSpinBox->value();
-    int octaves = ui->octavesSpinBox->value();
-    double frequency = ui->frequencySpinBox->value();
-    double lacunarity = ui->lacunaritySpinBox->value();
-    double amplitude = ui->amplitudeSpinBox->value();
-    double persistence = ui->persistenceSpinBox->value();
+    this->_paramNoise.setSeed(ui->seedSpinBox->value());
+    this->_paramNoise.setOctaves(ui->octavesSpinBox->value());
+    this->_paramNoise.setFrequency(ui->frequencySpinBox->value());
+    this->_paramNoise.setLacunarity(ui->lacunaritySpinBox->value());
+    this->_paramNoise.setAmplitude(ui->amplitudeSpinBox->value());
+    this->_paramNoise.setPersistense(ui->persistenceSpinBox->value());
 
-    this->_paramNoise = PerlinNoise(seed, octaves, frequency, lacunarity, amplitude, persistence);
+    this->_landscape.setMaxGenHeight(ui->maxHeightSpinBox->value());
+    this->_landscape.resize(ui->widthSpinBox->value(), ui->lenghtSpinBox->value());
+
+    this->_light.setPosition(QVector3D(ui->lightXSpinBox->value(),
+                                       ui->lightYSpinBox->value(),
+                                       ui->lightZSpinBox->value()));
+    this->_light.setI_0(ui->I_0SpinBox->value());
+    this->_light.setK_d(ui->K_dSpinBox->value());
+
+    Move move = {ui->moveXSpinbox->value(), ui->moveYSpinbox->value(), ui->moveZSpinbox->value()};
+    LandscapeManager::moveLandscape(this->_landscape, move);
+
+    Rotate rotate = {ui->rotateXSpinbox->value(),
+                     ui->rotateYSpinbox->value(),
+                     ui->rotateZSpinbox->value()};
+    QVector3D center(ui->rotateXcSpinBox->value(),
+                     ui->rotateYcSpinBox->value(),
+                     ui->rotateZcSpinBox->value());
+    LandscapeManager::rotateLandscape(this->_landscape, rotate, center);
+
+    Scale scale = {ui->scaleXSpinbox->value(),
+                   ui->scaleYSpinbox->value(),
+                   ui->scaleZSpinbox->value()};
+
+    QVector3D center2(ui->scaleXcSpinBox->value(), ui->scaleYcSpinBox->value(), ui->scaleZcSpinBox->value());
+    LandscapeManager::scaleLandscape(this->_landscape, scale, center2);
 
     LandscapeManager::updateLandscape(this->_landscape, this->_paramNoise, this->_light);
+
+    this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
 
     ui->waterlevelSlider->setMaximum(this->_landscape.getMaxHeight());
     ui->waterLevelSpinbox->setMaximum(this->_landscape.getMaxHeight());
 }
 
-void MainWindow::_changeParamNoise()
+void MainWindow::_changeSeed()
 {
-    this->__changeParamNoise();
+    this->_paramNoise.setSeed(ui->seedSpinBox->value());
+    LandscapeManager::updateLandscape(this->_landscape, this->_paramNoise, this->_light);
     this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
 }
 
-void MainWindow::__changeParamLight()
+void MainWindow::_changeOctaves()
 {
-    QVector3D lightPosition(ui->lightXSpinBox->value(),
-                            ui->lightYSpinBox->value(),
-                            ui->lightZSpinBox->value());
+    this->_paramNoise.setOctaves(ui->octavesSpinBox->value());
+    LandscapeManager::updateLandscape(this->_landscape, this->_paramNoise, this->_light);
+    this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
+}
 
-    double K_d = ui->K_dSpinBox->value();
-    double I_0 = ui->I_0SpinBox->value();
+void MainWindow::_changeFrequency()
+{
+    this->_paramNoise.setFrequency(ui->frequencySpinBox->value());
+    LandscapeManager::updateLandscape(this->_landscape, this->_paramNoise, this->_light);
+    this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
+}
 
-    this->_light = Light(lightPosition, K_d, I_0);
+void MainWindow::_changeLacunarity()
+{
+    this->_paramNoise.setLacunarity(ui->lacunaritySpinBox->value());
+    LandscapeManager::updateLandscape(this->_landscape, this->_paramNoise, this->_light);
+    this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
+}
 
+void MainWindow::_changeAmplitude()
+{
+    this->_paramNoise.setAmplitude(ui->amplitudeSpinBox->value());
+    LandscapeManager::updateLandscape(this->_landscape, this->_paramNoise, this->_light);
+    this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
+}
+
+void MainWindow::_changePersistence()
+{
+    this->_paramNoise.setPersistense(ui->persistenceSpinBox->value());
+    LandscapeManager::updateLandscape(this->_landscape, this->_paramNoise, this->_light);
+    this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
+}
+
+void MainWindow::_changeLightPosition()
+{
+    this->_light.setPosition(QVector3D(ui->lightXSpinBox->value(),
+                                       ui->lightYSpinBox->value(),
+                                       ui->lightZSpinBox->value()));
     LandscapeManager::calcIntensityForEachVertex(this->_landscape, this->_light);
-}
-
-void MainWindow::_changeParamLight()
-{
-    std::cout << ui->landscapeGraphicsView->width() << std::endl;
-    std::cout << ui->landscapeGraphicsView->height() << std::endl;
-
-    this->__changeParamLight();
     this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
 }
 
-void MainWindow::__changeMoveParams()
+void MainWindow::_changeLightK_d()
 {
-    Move move;
-    move.dx = ui->moveXSpinbox->value();
-    move.dy = ui->moveYSpinbox->value();
-    move.dz = ui->moveZSpinbox->value();
-
-    LandscapeManager::moveLandscape(this->_landscape, move);
-
-    LandscapeManager::calcNormalForEachPlane(this->_landscape);
-    LandscapeManager::calcNormalForEachVertex(this->_landscape);
+    this->_light.setK_d(ui->K_dSpinBox->value());
     LandscapeManager::calcIntensityForEachVertex(this->_landscape, this->_light);
-}
-
-void MainWindow::_changeMoveParams()
-{
-    this->__changeMoveParams();
     this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
 }
 
-void MainWindow::__changeRotateParams()
+void MainWindow::_changeLightI_0()
 {
-    Rotate rotate;
-    rotate.xAngle = ui->rotateXSpinbox->value();
-    rotate.yAngle = ui->rotateYSpinbox->value();
-    rotate.zAngle = ui->rotateZSpinbox->value();
-
-    int rotateXc = ui->rotateXcSpinBox->value();
-    int rotateYc = ui->rotateYcSpinBox->value();
-    int rotateZc = ui->rotateZcSpinBox->value();
-
-    QVector3D centerRotate(rotateXc, rotateYc, rotateZc);
-
-    LandscapeManager::rotateLandscape(this->_landscape, rotate, centerRotate);
-
-    LandscapeManager::calcNormalForEachPlane(this->_landscape);
-    LandscapeManager::calcNormalForEachVertex(this->_landscape);
+    this->_light.setI_0(ui->I_0SpinBox->value());
     LandscapeManager::calcIntensityForEachVertex(this->_landscape, this->_light);
-}
-
-void MainWindow::_changeRotateParams()
-{
-    this->__changeRotateParams();
     this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
 }
 
-void MainWindow::__changeScaleParams()
-{
-    Scale scale;
-    scale.kx = ui->scaleXSpinbox->value();
-    scale.ky = ui->scaleYSpinbox->value();
-    scale.kz = ui->scaleZSpinbox->value();
-
-    int scaleXc = ui->scaleXcSpinBox->value();
-    int scaleYc = ui->scaleYcSpinBox->value();
-    int scaleZc = ui->scaleZcSpinBox->value();
-
-    QVector3D centerScale(scaleXc, scaleYc, scaleZc);
-
-    LandscapeManager::scaleLandscape(this->_landscape, scale, centerScale);
-
-    LandscapeManager::calcNormalForEachPlane(this->_landscape);
-    LandscapeManager::calcNormalForEachVertex(this->_landscape);
-    LandscapeManager::calcIntensityForEachVertex(this->_landscape, this->_light);
-}
-
-void MainWindow::_changeScaleParams()
-{
-    this->__changeScaleParams();
-    this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
-}
-
-void MainWindow::__changeLandscapeSize()
+void MainWindow::_changeLandscapeSize()
 {
     int newWidth = ui->widthSpinBox->value();
     int newLenght = ui->lenghtSpinBox->value();
@@ -207,11 +191,43 @@ void MainWindow::__changeLandscapeSize()
     this->_landscape.resize(newWidth, newLenght);
 
     LandscapeManager::updateLandscape(this->_landscape, this->_paramNoise, this->_light);
+    this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
 }
 
-void MainWindow::_changeLandscapeSize()
+void MainWindow::_changeMoveParams()
 {
-    this->__changeLandscapeSize();
+    Move move = {ui->moveXSpinbox->value(), ui->moveYSpinbox->value(), ui->moveZSpinbox->value()};
+
+    LandscapeManager::moveLandscape(this->_landscape, move);
+
+    LandscapeManager::updateLandscapeLight(this->_landscape, this->_light);
+
+    this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
+}
+
+void MainWindow::_changeRotateParams()
+{
+    Rotate rotate = {ui->rotateXSpinbox->value(), ui->rotateYSpinbox->value(), ui->rotateZSpinbox->value()};
+
+    QVector3D centerRotate(ui->rotateXcSpinBox->value(), ui->rotateYcSpinBox->value(), ui->rotateZcSpinBox->value());
+
+    LandscapeManager::rotateLandscape(this->_landscape, rotate, centerRotate);
+
+    LandscapeManager::updateLandscapeLight(this->_landscape, this->_light);
+
+    this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
+}
+
+void MainWindow::_changeScaleParams()
+{
+    Scale scale = {ui->scaleXSpinbox->value(), ui->scaleYSpinbox->value(), ui->scaleZSpinbox->value()};
+
+    QVector3D centerScale(ui->scaleXcSpinBox->value(), ui->scaleYcSpinBox->value(), ui->scaleZcSpinBox->value());
+
+    LandscapeManager::scaleLandscape(this->_landscape, scale, centerScale);
+
+    LandscapeManager::updateLandscapeLight(this->_landscape, this->_light);
+
     this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
 }
 
@@ -219,9 +235,7 @@ void MainWindow::on_waterlevelSlider_valueChanged(int value)
 {
     LandscapeManager::changeWaterlevel(this->_landscape, value);
 
-    LandscapeManager::calcNormalForEachPlane(this->_landscape);
-    LandscapeManager::calcNormalForEachVertex(this->_landscape);
-    LandscapeManager::calcIntensityForEachVertex(this->_landscape, this->_light);
+    LandscapeManager::updateLandscapeLight(this->_landscape, this->_light);
 
     this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
 }

@@ -171,9 +171,7 @@ void LandscapeManager::calcNormalForEachPlane(Landscape &landscape)
             normalPlane1.normalize();
             normalPlane2.normalize();
 
-            pair<QVector3D, QVector3D> normals(normalPlane1, normalPlane2);
-
-            normalMap[i][j] = normals;
+            normalMap[i][j] = pair<QVector3D, QVector3D>(normalPlane1, normalPlane2);
         }
 }
 
@@ -259,10 +257,8 @@ void LandscapeManager::calcIntensityForEachVertex(Landscape &landscape, Light &l
     Matrix<QVector3D> &normalVertexMap = landscape.getNormalVertexMap();
     Matrix<QVector3D> &screenHeightMap = landscape.getScreenHeightMap();
 
-// цикл по всем вершинам ландшафтной сетки
-#pragma omp parallel for
+    // цикл по всем вершинам ландшафтной сетки
     for (int i = 0; i < rows; ++i)
-#pragma omp parallel for
         for (int j = 0; j < cols; ++j)
         {
             // получили вектор направления света
@@ -283,6 +279,15 @@ void LandscapeManager::updateLandscape(Landscape &landscape, PerlinNoise &paramN
     //    std::cout << "[INFO] call updateLandscape" << std::endl;
 
     generateHeightMap(landscape, paramNoise);
+    calcNormalForEachPlane(landscape);
+    calcNormalForEachVertex(landscape);
+    calcIntensityForEachVertex(landscape, light);
+}
+
+void LandscapeManager::updateLandscapeLight(Landscape &landscape, Light &light)
+{
+    //    std::cout << "[INFO] call updateLandscape" << std::endl;
+
     calcNormalForEachPlane(landscape);
     calcNormalForEachVertex(landscape);
     calcIntensityForEachVertex(landscape, light);

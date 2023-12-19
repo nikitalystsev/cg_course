@@ -21,20 +21,19 @@ using Matrix = std::vector<std::vector<T>>;
 class Landscape
 {
 private:
-    Matrix<double> _heightMap;                  // карта высот
-    Matrix<double> _withoutWaterHeightMap = {}; // карта высот без учета уровня воды
-    Matrix<QVector3D> _screenHeightMap;         // карта высот для вывода на экран
-    Matrix<pair<QVector3D, QVector3D>>
-        _normalMap;                     // матрица векторов внешней нормали к каждой из граней
-    Matrix<QVector3D> _normalVertexMap; // матрица векторов нормалей для каждой вершины
-    Matrix<double> _intensityVertexMap; // матрица интенсивности в каждой вершине
-    int _rows, _cols;                   // размеры ландшафтных матриц
-    int _width, _lenght;                // длина и ширина карты высот (в количестве полигонов)
-    double _waterlevel;                 // уровень воды
-    double _maxHeight = 0;              // максимальная сгенерированная высота
-    int _maxGenHeight = 1000;           // максимально возможная генерируемая высота
-    vector<Operation> _operations;      // цепочка преобразований, выполненных над ландшафтом
-    int _square = 3;                    // казмер одного квадрата
+    Matrix<double> _heightMap;                     // карта высот
+    Matrix<double> _withoutWaterHeightMap = {};    // карта высот без учета уровня воды
+    Matrix<QVector3D> _screenHeightMap;            // карта высот для вывода на экран
+    Matrix<pair<QVector3D, QVector3D>> _normalMap; // матрица векторов внешней нормали к каждой из граней
+    Matrix<QVector3D> _normalVertexMap;            // матрица векторов нормалей для каждой вершины
+    Matrix<double> _intensityVertexMap;            // матрица интенсивности в каждой вершине
+    int _rows, _cols;                              // размеры ландшафтных матриц
+    int _width, _lenght;                           // длина и ширина карты высот (в количестве полигонов)
+    double _waterlevel;                            // уровень моря
+    double _maxHeight = 0;                         // максимальная сгенерированная высота
+    int _maxGenHeight = 1000;                      // максимально возможная генерируемая высота
+    vector<Operation> _operations;                 // цепочка преобразований, выполненных над ландшафтом
+    int _square = 3;                               // размер одного квадрата
 
 public:
     Landscape();

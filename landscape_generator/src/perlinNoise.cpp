@@ -15,7 +15,7 @@ PerlinNoise::PerlinNoise(const int seed,
     _octaves(octaves), _frequency(frequency),
     _lacunarity(lacunarity), _amplitude(amplitude), _persistence(persistence)
 {
-    this->_createPtable();
+    this->_formPtableBySeed();
 }
 
 PerlinNoise::PerlinNoise(const PerlinNoise &other)
@@ -27,7 +27,8 @@ PerlinNoise::PerlinNoise(const PerlinNoise &other)
     this->_amplitude = other._amplitude;
     this->_persistence = other._persistence;
 
-    this->_ptable = other._ptable;
+    for (int i = 0; i < 512; ++i)
+        this->_ptable[i] = other._ptable[i];
 }
 
 PerlinNoise::PerlinNoise(PerlinNoise &&other) noexcept
@@ -39,7 +40,8 @@ PerlinNoise::PerlinNoise(PerlinNoise &&other) noexcept
     this->_amplitude = other._amplitude;
     this->_persistence = other._persistence;
 
-    this->_ptable = other._ptable;
+    for (int i = 0; i < 512; ++i)
+        this->_ptable[i] = other._ptable[i];
 }
 
 PerlinNoise &PerlinNoise::operator=(const PerlinNoise &other)
@@ -51,7 +53,8 @@ PerlinNoise &PerlinNoise::operator=(const PerlinNoise &other)
     this->_amplitude = other._amplitude;
     this->_persistence = other._persistence;
 
-    this->_ptable = other._ptable;
+    for (int i = 0; i < 512; ++i)
+        this->_ptable[i] = other._ptable[i];
 
     return *this;
 }
@@ -65,7 +68,8 @@ PerlinNoise &PerlinNoise::operator=(PerlinNoise &&other) noexcept
     this->_amplitude = other._amplitude;
     this->_persistence = other._persistence;
 
-    this->_ptable = other._ptable;
+    for (int i = 0; i < 512; ++i)
+        this->_ptable[i] = other._ptable[i];
 
     return *this;
 }
@@ -91,17 +95,17 @@ double PerlinNoise::generateNoise(const double x, const double y)
     return result / sum_ampl;
 }
 
-void PerlinNoise::_createPtable()
+void PerlinNoise::_formPtableBySeed()
 {
+    // Заполнение _ptable значениями от 0 до 255
     for (int i = 0; i < 256; ++i)
-        this->_ptable.push_back(i);
+        this->_ptable[i] = i;
 
-    shuffle(this->_ptable.begin(),
-            this->_ptable.end(),
-            std::default_random_engine(this->_seed));
+    // Перемешивание первых 256 элементов
+    std::shuffle(this->_ptable, this->_ptable + 256, std::default_random_engine(this->_seed));
 
-    for (int i = 0; i < 256; ++i)
-        this->_ptable.push_back(this->_ptable[i]);
+    // Копирование первых 256 элементов в оставшиеся 256 элементов
+    std::copy(this->_ptable, this->_ptable + 256, this->_ptable + 256);
 }
 
 double PerlinNoise::_noise(double x, double y)
@@ -123,9 +127,7 @@ double PerlinNoise::_noise(double x, double y)
     double x1 = this->lerp(tl, br, u);
     double x2 = this->lerp(tr, bl, u);
 
-    double res = this->lerp(0, 1, this->lerp(x1, x2, v));
-
-    return res;
+    return this->lerp(0, 1, this->lerp(x1, x2, v));
 }
 
 double PerlinNoise::smooth(const double t) // функция сглаживания

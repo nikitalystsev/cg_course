@@ -23,24 +23,25 @@ public:
     ~MainWindow();
 
 private:
-    void __changeParamNoise();
-    void __changeParamLight();
-    void __changeMoveParams();
-    void __changeScaleParams();
-    void __changeRotateParams();
-    void __changeLandscapeSize();
-private slots:
-    void _changeParamNoise();
+    void _init();
 
-    void _changeParamLight();
+private slots:
+    void _changeSeed();
+    void _changeOctaves();
+    void _changeFrequency();
+    void _changeLacunarity();
+    void _changeAmplitude();
+    void _changePersistence();
+
+    void _changeLightPosition();
+    void _changeLightK_d();
+    void _changeLightI_0();
 
     void _changeLandscapeSize();
 
     void _changeMoveParams();
-
-    void _changeScaleParams();
-
     void _changeRotateParams();
+    void _changeScaleParams();
 
     void on_waterlevelSlider_valueChanged(int value);
 

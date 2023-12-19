@@ -20,6 +20,8 @@ public:
     static void calcNormalForEachPlane(Landscape &landscape);
     static void calcNormalForEachVertex(Landscape &landscape);
     static void calcIntensityForEachVertex(Landscape &landscape, Light &light);
+
+    static void updateLandscapeLight(Landscape &landscape, Light &light);
     static void updateLandscape(Landscape &landscape, PerlinNoise &paramNoise, Light &light);
 
     static void rotateLandscape(Landscape &landscape, Rotate &rotate, QVector3D &centerRotate);

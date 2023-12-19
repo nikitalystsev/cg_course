@@ -16,9 +16,9 @@ private:
     double _amplitude;   // амплитуда
     double _persistence; // стойкость - параметр, отвечающий за изменение амплидуты
 
-    vector<int> _ptable;
+    int _ptable[512];
 
-    void _createPtable();
+    void _formPtableBySeed();
     double _noise(double x, double y);
 
 public:
@@ -37,6 +37,13 @@ public:
     PerlinNoise &operator=(PerlinNoise &&other) noexcept;
 
     double generateNoise(const double x, const double y);
+
+    void setSeed(const int seed) { this->_seed = seed, this->_formPtableBySeed(); }
+    void setOctaves(const int octaves) { this->_octaves = octaves; }
+    void setFrequency(const double frequency) { this->_frequency = frequency; }
+    void setLacunarity(const double lacunarity) { this->_lacunarity = lacunarity; }
+    void setAmplitude(const double amplitude) { this->_amplitude = amplitude; }
+    void setPersistense(const double persistence) { this->_persistence = persistence; }
 
 public:
     static double smooth(const double t);
