@@ -53,21 +53,21 @@ void Renderer::_renderPlane(const Plane &screenPlane, const vector<double> &heig
                   { return a.vec.x() < b.vec.x(); });
 
         double deltaX = yn[yn.size() - 1].vec.x() - yn[0].vec.x();
-        double invDeltaX = 1.0 / deltaX;
-        double x0 = yn[0].vec.x(), I0 = yn[0].I, Z0 = yn[0].vec.z();
+        double x0 = yn[0].vec.x();
 
         double z = screenPlane.caclZ(x0, y);
 
-        for (int x = x0; x <= yn[yn.size() - 1].vec.x(); ++x)
+        double I = yn[0].I, deltaI = I - yn[yn.size() - 1].I;
+        double height = yn[0].vec.z(), deltaZ = height - yn[yn.size() - 1].vec.z();
+
+        for (int x = yn[0].vec.x(); x <= yn[yn.size() - 1].vec.x(); ++x)
         {
             int sceneX = this->toSceneX(x), sceneY = this->toSceneY(y);
 
             if (sceneX < 0 || sceneX >= this->_screenWidth || sceneY < 0 || sceneY >= this->_screenHeight)
                 continue;
 
-            double u = (x - x0) * invDeltaX;
-            double I = (deltaX == 0) ? I0 : (u * I0 + (1 - u) * yn[yn.size() - 1].I);
-            double height = (deltaX == 0) ? Z0 : (u * Z0 + (1 - u) * yn[yn.size() - 1].vec.z());
+            double deltaU = (x - x0) / deltaX - 0;
 
             if (z > this->_zbuffer[sceneX][sceneY])
             {
@@ -77,6 +77,8 @@ void Renderer::_renderPlane(const Plane &screenPlane, const vector<double> &heig
             }
 
             z -= (a / c);
+            I += (deltaI * deltaU);
+            height += (deltaZ * deltaU);
         }
     }
 }
