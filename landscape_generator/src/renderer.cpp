@@ -21,7 +21,6 @@ Renderer::~Renderer() {}
 
 void Renderer::_renderPlane(const Plane &screenPlane, const vector<double> &heights, const vector<double> &intensity, const double waterlevel, const double maxHeight)
 {
-    //    std::cout << "[INFO] call _renderPlane" << std::endl;
     double yMin = screenPlane.getPMin().y();
     double уMax = screenPlane.getPMax().y();
     double a = screenPlane.getA(), c = screenPlane.getC();
@@ -118,10 +117,8 @@ int Renderer::_getCorrectChannel(int channel, double I)
 {
     int value = channel * I;
 
-    if (value > 255)
-        value = 255;
-    else if (value < 0)
-        value = 0;
+    value = (value > 255) ? 255 : value;
+    value = (value < 0) ? 0 : value;
 
     return value;
 }
@@ -179,8 +176,6 @@ void Renderer::_calcParamsLine(vector<Pixel> &line, const double &IPStart, const
 
 void Renderer::renderLandscape(Landscape &landscape, QGraphicsScene *scene)
 {
-    //    std::cout << "[INFO] call renderLandscape" << std::endl;
-
     this->clean();
 
     Matrix<double> &heightMap = landscape.getHeightMap();
@@ -190,46 +185,31 @@ void Renderer::renderLandscape(Landscape &landscape, QGraphicsScene *scene)
     int waterlevel = landscape.getWaterlevel();
     int maxHeight = landscape.getMaxHeight();
 
-    int width = landscape.getWidth();
-    int height = landscape.getLenght();
+    int width = landscape.getWidth(), lenght = landscape.getLenght();
 
     vector<double> heights1, heights2;
     vector<double> intensities1, intensities2;
 
     // идем по всем квадратам ландшафной сетки
     for (int i = 0; i < width; ++i)
-        for (int j = 0; j < height; ++j)
+        for (int j = 0; j < lenght; ++j)
         {
             // в каждом квадрате сетки 2 треугольника - 2 плоскости
             Plane plane1(screenHeightMap[i][j], screenHeightMap[i + 1][j], screenHeightMap[i + 1][j + 1]);
             Plane plane2(screenHeightMap[i][j], screenHeightMap[i][j + 1], screenHeightMap[i + 1][j + 1]);
 
-            // определяем высоты вершин квадрата
-            double z1 = heightMap[i][j];
-            double z2 = heightMap[i + 1][j];
-            double z3 = heightMap[i + 1][j + 1];
-            double z4 = heightMap[i][j + 1];
+            heights1 = {heightMap[i][j], heightMap[i + 1][j], heightMap[i + 1][j + 1]};
+            heights2 = {heightMap[i][j], heightMap[i][j + 1], heightMap[i + 1][j + 1]};
 
-            // определяем интенсивности вершин квадрата
-            double I1 = intensityVertexMap[i][j];
-            double I2 = intensityVertexMap[i + 1][j];
-            double I3 = intensityVertexMap[i + 1][j + 1];
-            double I4 = intensityVertexMap[i][j + 1];
-
-            heights1 = {z1, z2, z3};
-            heights2 = {z1, z4, z3};
-
-            intensities1 = {I1, I2, I3};
-            intensities2 = {I1, I4, I3};
+            intensities1 = {intensityVertexMap[i][j], intensityVertexMap[i + 1][j], intensityVertexMap[i + 1][j + 1]};
+            intensities2 = {intensityVertexMap[i][j], intensityVertexMap[i][j + 1], intensityVertexMap[i + 1][j + 1]};
 
             //  определяем текущее состояние z-буффера
             this->_renderPlane(plane1, heights1, intensities1, waterlevel, maxHeight);
             this->_renderPlane(plane2, heights2, intensities2, waterlevel, maxHeight);
         }
 
-    QPixmap pixmap = QPixmap::fromImage(this->_framebuffer);
-    scene->clear();
-    scene->addPixmap(pixmap);
+    scene->addPixmap(QPixmap::fromImage(this->_framebuffer));
 }
 
 void Renderer::clean()

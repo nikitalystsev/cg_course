@@ -195,7 +195,7 @@
         <item row="1" column="1">
          <widget class="QSpinBox" name="lenghtSpinBox">
           <property name="maximum">
-           <number>120</number>
+           <number>150</number>
           </property>
           <property name="value">
            <number>120</number>
@@ -205,7 +205,7 @@
         <item row="0" column="1">
          <widget class="QSpinBox" name="widthSpinBox">
           <property name="maximum">
-           <number>120</number>
+           <number>150</number>
           </property>
           <property name="value">
            <number>120</number>
@@ -444,7 +444,7 @@
       <item>
        <widget class="QTabWidget" name="tabWidget">
         <property name="currentIndex">
-         <number>2</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="rotateTab">
          <attribute name="title">
@@ -498,7 +498,7 @@
                <number>180</number>
               </property>
               <property name="value">
-               <number>0</number>
+               <number>-60</number>
               </property>
              </widget>
             </item>

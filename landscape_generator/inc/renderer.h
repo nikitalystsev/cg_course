@@ -6,6 +6,7 @@
 #include "plane.h"
 #include "transform.h"
 #include <QColor>
+#include <thread>
 #include <vector>
 
 template <typename T>
@@ -39,7 +40,7 @@ private:
                          const double &ZPStart,
                          const double &ZPEnd);
     void _renderPlane(const Plane &screenPlane, const vector<double> &heights, const vector<double> &intensity, const double waterlevel, const double maxHeight);
-    int _getCorrectChannel(int _R, double I);
+    int _getCorrectChannel(int channel, double I);
     QColor _getColorByHeight(double I, double height, double maxHeight, double waterlevel);
 
 public:
