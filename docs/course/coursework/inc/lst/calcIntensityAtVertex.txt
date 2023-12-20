@@ -1,0 +1,9 @@
+double LightManager::caclIntensityAtVertex(const Light &light,
+                                           const QVector3D &direction,
+                                           const QVector3D &normal)
+{
+    double _scalar_product = QVector3D::dotProduct(direction, normal);
+    double I = light.getI_0() * light.getK_d() * std::max(0.0, _scalar_product);
+
+    return I;
+}

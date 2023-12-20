@@ -1,0 +1,20 @@
+double PerlinNoise::generateNoise(const double x, const double y)
+{
+    int octaves = this->_octaves;
+    double frequency = this->_frequency;
+    double amplitude = this->_amplitude;
+
+    double result = 0;
+    double sum_ampl = 0; 
+
+    for (; octaves > 0; octaves--)
+    {
+        result += this->_noise(x * frequency, y * frequency) * amplitude;
+        sum_ampl += amplitude;
+
+        amplitude *= this->_persistence;
+        frequency *= this->_lacunarity;
+    }
+
+    return result / sum_ampl;
+}

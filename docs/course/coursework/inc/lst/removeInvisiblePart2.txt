@@ -1,0 +1,30 @@
+ std::sort(yn.begin(), yn.end(), [](const Pixel &a, const Pixel &b)
+                  { return a.vec.x() < b.vec.x(); });
+
+        double deltaX = yn[yn.size() - 1].vec.x() - yn[0].vec.x();
+        double x0 = yn[0].vec.x();
+
+        double z = screenPlane.caclZ(x0, y);
+
+        double I = yn[0].I, deltaI = I - yn[yn.size() - 1].I;
+        double height = yn[0].vec.z(), deltaZ = height - yn[yn.size() - 1].vec.z();
+
+        for (int x = yn[0].vec.x(); x <= yn[yn.size() - 1].vec.x(); ++x)
+        {
+            int sceneX = this->toSceneX(x), sceneY = this->toSceneY(y);
+            if (sceneX < 0 || sceneX >= this->_screenWidth || sceneY < 0 || sceneY >= this->_screenHeight)
+                continue;
+
+            double deltaU = (x - x0) / deltaX - 0;
+
+            if (z > this->_zbuffer[sceneX][sceneY])
+            {
+                this->_zbuffer[sceneX][sceneY] = z;
+                this->_framebuffer.setPixelColor(sceneX, sceneY, this->_getColorByHeight(I, height, maxHeight, waterlevel));
+            }
+            z -= (a / c);
+            I += (deltaI * deltaU);
+            height += (deltaZ * deltaU);
+        }
+    }
+}

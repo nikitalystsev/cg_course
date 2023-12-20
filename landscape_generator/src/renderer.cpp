@@ -30,12 +30,10 @@ void Renderer::_renderPlane(const Plane &screenPlane, const vector<double> &heig
     vector<Pixel> line2 = this->_getLineByBresenham(screenPlane.getP2(), screenPlane.getP3());
     vector<Pixel> line3 = this->_getLineByBresenham(screenPlane.getP3(), screenPlane.getP1());
 
-    // расчет интенсивности на ребрах
     this->_calcParamsLine(line1, intensity[0], intensity[1], heights[0], heights[1]);
     this->_calcParamsLine(line2, intensity[1], intensity[2], heights[1], heights[2]);
     this->_calcParamsLine(line3, intensity[2], intensity[0], heights[2], heights[0]);
 
-    // Объединение трех векторов
     vector<Pixel> allLines;
     allLines.insert(allLines.end(), line1.begin(), line1.end());
     allLines.insert(allLines.end(), line2.begin(), line2.end());

@@ -1,0 +1,17 @@
+double PerlinNoise::_noise(double x, double y)
+{
+    int xi = (int)(floor(x)) & 255;
+    int yi = (int)(floor(y)) & 255; 
+    x -= floor(x);
+    y -= floor(y);
+    double u = smooth(x), v = smooth(y);
+    
+    double tl = grad(this->_ptable[this->_ptable[xi] + yi], x, y, 0);
+    double tr = grad(this->_ptable[this->_ptable[xi] + yi + 1], x, y - 1, 0);
+    double bl = grad(this->_ptable[this->_ptable[xi + 1] + yi + 1], x - 1, y - 1, 0);
+    double br = grad(this->_ptable[this->_ptable[xi + 1] + yi], x - 1, y, 0);
+
+    double x1 = this->lerp(tl, br, u), x2 = this->lerp(tr, bl, u);
+
+    return this->lerp(0, 1, this->lerp(x1, x2, v));
+}
