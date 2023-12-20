@@ -33,10 +33,14 @@ private:
     double _km;
 
     vector<Pixel> _getLineByBresenham(const QVector3D &p1, const QVector3D &p2);
-    void _calcIntensityForLine(vector<Pixel> &line, const double &IPStart, const double &IPEnd);
-    void _calcHeightForLine(vector<Pixel> &line, const double &ZPStart, const double &ZPEnd);
+    void _calcParamsLine(vector<Pixel> &line,
+                         const double &IPStart,
+                         const double &IPEnd,
+                         const double &ZPStart,
+                         const double &ZPEnd);
     void _renderPlane(const Plane &screenPlane, const vector<double> &heights, const vector<double> &intensity, const double waterlevel, const double maxHeight);
     int _getCorrectChannel(int _R, double I);
+    QColor _getColorByHeight(double I, double height, double maxHeight, double waterlevel);
 
 public:
     Renderer();

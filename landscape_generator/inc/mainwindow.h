@@ -49,8 +49,9 @@ private:
     Ui::MainWindow *ui;
 
     PerlinNoise _paramNoise;
-    Light _light;
     Landscape _landscape;
     Renderer _renderer;
+    Light _light;
 };
+
 #endif // MAINWINDOW_H
