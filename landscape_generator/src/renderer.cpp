@@ -55,8 +55,7 @@ void Renderer::_renderPlane(const Plane &screenPlane, const vector<double> &heig
 
         double deltaX = yn[yn.size() - 1].vec.x() - yn[0].vec.x();
         double invDeltaX = 1.0 / deltaX;
-        double x0 = yn[0].vec.x(), I0 = yn[0].I;
-        double Z0 = yn[0].vec.z();
+        double x0 = yn[0].vec.x(), I0 = yn[0].I, Z0 = yn[0].vec.z();
 
         double z = screenPlane.caclZ(x0, y);
 
