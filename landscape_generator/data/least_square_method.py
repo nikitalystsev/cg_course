@@ -1,5 +1,6 @@
 import math as m
 
+import matplotlib.pyplot as plt
 import numpy as np
 
 
@@ -22,9 +23,9 @@ class LeastSquareMethod:
 
         self.__read_file()
 
-        self.__square_interp()
-        self.__power_func_interp()
-        self.__exponen_func_interp()
+        self.__square_approx()
+        self.__power_func_approx()
+        self.__exponen_func_approx()
 
     def __read_file(self) -> None:
         """
@@ -40,7 +41,7 @@ class LeastSquareMethod:
                 self.__arr_y.append(data[1])
                 self._n += 1
 
-    def __square_interp(self):
+    def __square_approx(self) -> None:
         """
         Интерполяция квадратичной функцией
         :return:
@@ -79,14 +80,33 @@ class LeastSquareMethod:
 
         solve = np.linalg.solve(mtr_coeff, vec_target)
 
+        def approx_func(_x: float):  # полученная аппроксимирующая функция
+            return solve[0] * (_x ** 2) + solve[1] * _x + solve[2]
+
         residual = 0
         for i in range(self._n):
-            residual += (solve[0] * (self.__arr_x[i] ** 2) + solve[1] * self.__arr_x[i] + solve[2] - self.__arr_y[
+            residual += (approx_func(self.__arr_x[i]) - self.__arr_y[
                 i]) ** 2
 
+        print(f"Функция: {solve[0]:.5f} * x^2 + {solve[1]} * x + {solve[2]}")
         print("Невязка при аппроксимации квадратичной функцией: ", residual)
 
-    def __power_func_interp(self):
+        x = np.array(self.__arr_x)
+        y = np.array(self.__arr_y)
+
+        # Построение графика данных и аппроксимирующей функции
+        plt.scatter(x, y, label='Построение одного кадра ландшафта', color='black', marker='o')
+        plt.plot(x, approx_func(x), label='Аппроксимирующая функция', color='red', linestyle='--')
+        plt.xlabel('Число октав')
+        plt.ylabel('Время, с')
+        plt.legend()
+
+        # Включение отображения сетки
+        plt.grid(True, linestyle='--', linewidth=0.5, alpha=0.7)
+        # Сохранение графика в формате SVG
+        plt.savefig(self.__filename[:-3] + 'svg', format='svg')
+
+    def __power_func_approx(self) -> None:
         """
         Интерполяция степенной функцией
         :return:
@@ -121,7 +141,7 @@ class LeastSquareMethod:
 
         print("Невязка при аппроксимации степенной функцией: ", residual)
 
-    def __exponen_func_interp(self):
+    def __exponen_func_approx(self) -> None:
         """
         Интерполяция показательной функцией
         :return:
@@ -161,7 +181,8 @@ def main() -> None:
     Главная функция
     :return:
     """
-    LeastSquareMethod("study1.txt")
+    # LeastSquareMethod("study1.txt")
+    LeastSquareMethod("study2.txt")
 
 
 if __name__ == "__main__":

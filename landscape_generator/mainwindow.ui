@@ -453,6 +453,19 @@
          <layout class="QHBoxLayout" name="horizontalLayout_4">
           <item>
            <layout class="QGridLayout" name="rotateLayout">
+            <item row="2" column="1">
+             <widget class="QSpinBox" name="rotateZcSpinBox"/>
+            </item>
+            <item row="1" column="3">
+             <widget class="QSpinBox" name="rotateYSpinbox">
+              <property name="minimum">
+               <number>-180</number>
+              </property>
+              <property name="maximum">
+               <number>180</number>
+              </property>
+             </widget>
+            </item>
             <item row="1" column="2">
              <widget class="QLabel" name="rotateYLabel">
               <property name="text">
@@ -462,6 +475,29 @@
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
+            </item>
+            <item row="2" column="2">
+             <widget class="QLabel" name="rotateZLabel">
+              <property name="text">
+               <string>Z</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <widget class="QLabel" name="rotateXLabel">
+              <property name="text">
+               <string>X</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QSpinBox" name="rotateYcSpinBox"/>
             </item>
             <item row="2" column="3">
              <widget class="QSpinBox" name="rotateZSpinbox">
@@ -476,13 +512,33 @@
               </property>
              </widget>
             </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="rotateXcLabel">
+              <property name="text">
+               <string>Xc</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="rotateZcLabel">
+              <property name="text">
+               <string>Zc</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
             <item row="0" column="1">
              <widget class="QSpinBox" name="rotateXcSpinBox"/>
             </item>
-            <item row="2" column="2">
-             <widget class="QLabel" name="rotateZLabel">
+            <item row="1" column="0">
+             <widget class="QLabel" name="rotateYcLabel">
               <property name="text">
-               <string>Z</string>
+               <string>Yc</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -499,62 +555,6 @@
               </property>
               <property name="value">
                <number>-60</number>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="2">
-             <widget class="QLabel" name="rotateXLabel">
-              <property name="text">
-               <string>X</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="3">
-             <widget class="QSpinBox" name="rotateYSpinbox">
-              <property name="minimum">
-               <number>-180</number>
-              </property>
-              <property name="maximum">
-               <number>180</number>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="rotateXcLabel">
-              <property name="text">
-               <string>Xc</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QSpinBox" name="rotateYcSpinBox"/>
-            </item>
-            <item row="2" column="1">
-             <widget class="QSpinBox" name="rotateZcSpinBox"/>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="rotateYcLabel">
-              <property name="text">
-               <string>Yc</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="rotateZcLabel">
-              <property name="text">
-               <string>Zc</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>

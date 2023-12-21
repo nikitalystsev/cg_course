@@ -39,14 +39,12 @@ void Renderer::_renderPlane(const Plane &screenPlane, const vector<double> &heig
     allLines.insert(allLines.end(), line2.begin(), line2.end());
     allLines.insert(allLines.end(), line3.begin(), line3.end());
 
-#pragma omp parallel for
     for (int y = yMin; y <= уMax; ++y)
     {
         vector<Pixel> yn;
         std::copy_if(allLines.begin(), allLines.end(), std::back_inserter(yn), [y](const Pixel &point)
                      { return point.vec.y() == y; });
 
-        // Сортировка вектора объектов Point по x
         std::sort(yn.begin(), yn.end(), [](const Pixel &a, const Pixel &b)
                   { return a.vec.x() < b.vec.x(); });
 

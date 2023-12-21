@@ -9,7 +9,8 @@ int main(int argc, char *argv[])
     w.setWindowTitle("Генератор трехмерного ландшафта");
     w.show();
 
-    w._measureRenderLandscapeTime();
+    //    w._measureRenderLandscapeTimeSize();
+    //    w._measureRenderLandscapeTimeOctaves();
 
-    //    return a.exec();
+    return a.exec();
 }

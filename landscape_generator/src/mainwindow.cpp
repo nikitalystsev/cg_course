@@ -240,22 +240,10 @@ void MainWindow::on_waterlevelSlider_valueChanged(int value)
     this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
 }
 
-unsigned long long MainWindow::getSecondsCpuTime()
-{
-    struct timespec t;
-
-    if (clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t))
-    {
-        perror("clock_gettime");
-        return 0;
-    }
-
-    return t.tv_sec + t.tv_nsec / 1000000000LL; // Возвращаем время в секундах
-}
-
 double MainWindow::_getRenderLandscapeTimeBySize(const int size, const int nreps)
 {
-    std::cout << "[INFO] call _getRenderLandscapeTimeBySize" << std::endl;
+    std::cout << "[INFO] call _getRenderLandscapeTimeBySize ";
+    std::cout << size << std::endl;
 
     this->_landscape.resize(size, size);
 
@@ -307,11 +295,11 @@ double MainWindow::_getRenderLandscapeTimeBySize(const int size, const int nreps
     return std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count() / nreps;
 }
 
-void MainWindow::_measureRenderLandscapeTime()
+void MainWindow::_measureRenderLandscapeTimeSize()
 {
     std::cout << "[INFO] call _measureRenderLandscapeTime" << std::endl;
 
-    int size[9] = {10, 25, 50, 100, 150, 250, 350, 500, 750};
+    vector<int> sizes = {10, 50, 100, 200, 300, 400, 500, 600, 700};
 
     std::ofstream dataResults("../landscape_generator/data/study1.txt");
 
@@ -321,14 +309,94 @@ void MainWindow::_measureRenderLandscapeTime()
         return;
     }
 
-    for (int i = 0; i < 9; ++i)
+    for (int i = 0; i < sizes.size(); ++i)
     {
-        double res = this->_getRenderLandscapeTimeBySize(size[i], 10);
+        double res = this->_getRenderLandscapeTimeBySize(sizes[i], 20);
 
-        dataResults << size[i] << "   " << res << std::endl;
+        dataResults << sizes[i] << "   " << res << std::endl;
     }
 
     dataResults.close();
 
     std::cout << "[INFO] end _measureRenderLandscapeTime" << std::endl;
+}
+
+void MainWindow::_measureRenderLandscapeTimeOctaves()
+{
+    std::cout << "[INFO] call _measureRenderLandscapeTimeOctaves" << std::endl;
+
+    vector<int> octaves = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+
+    std::ofstream dataResults("../landscape_generator/data/study2.txt");
+
+    if (!dataResults.is_open())
+    {
+        std::cout << "[ERROR] Ошибка открытия файла" << std::endl;
+        return;
+    }
+
+    for (int i = 0; i < octaves.size(); ++i)
+    {
+        double res = this->_getZRenderLandscapeTimeByCntOctaves(octaves[i], 40);
+
+        dataResults << octaves[i] << "   " << res << std::endl;
+    }
+
+    dataResults.close();
+
+    std::cout << "[INFO] end _measureRenderLandscapeTimeOctaves" << std::endl;
+}
+
+double MainWindow::_getZRenderLandscapeTimeByCntOctaves(const int cntOctaves, const int nreps)
+{
+    std::cout << "[INFO] call _getZRenderLandscapeTimeByCntOctaves ";
+    std::cout << cntOctaves << std::endl;
+
+    this->_paramNoise.setSeed(ui->seedSpinBox->value());
+    this->_paramNoise.setOctaves(cntOctaves);
+    this->_paramNoise.setFrequency(ui->frequencySpinBox->value());
+    this->_paramNoise.setLacunarity(ui->lacunaritySpinBox->value());
+    this->_paramNoise.setAmplitude(ui->amplitudeSpinBox->value());
+    this->_paramNoise.setPersistense(ui->persistenceSpinBox->value());
+
+    this->_landscape.setMaxGenHeight(ui->maxHeightSpinBox->value());
+    this->_landscape.resize(ui->widthSpinBox->value(), ui->lenghtSpinBox->value());
+
+    this->_light.setPosition(QVector3D(ui->lightXSpinBox->value(),
+                                       ui->lightYSpinBox->value(),
+                                       ui->lightZSpinBox->value()));
+    this->_light.setI_0(ui->I_0SpinBox->value());
+    this->_light.setK_d(ui->K_dSpinBox->value());
+
+    Move move = {ui->moveXSpinbox->value(), ui->moveYSpinbox->value(), ui->moveZSpinbox->value()};
+
+    Rotate rotate = {ui->rotateXSpinbox->value(),
+                     ui->rotateYSpinbox->value(),
+                     ui->rotateZSpinbox->value()};
+    QVector3D center(ui->rotateXcSpinBox->value(),
+                     ui->rotateYcSpinBox->value(),
+                     ui->rotateZcSpinBox->value());
+
+    Scale scale = {ui->scaleXSpinbox->value(),
+                   ui->scaleYSpinbox->value(),
+                   ui->scaleZSpinbox->value()};
+
+    QVector3D center2(ui->scaleXcSpinBox->value(),
+                      ui->scaleYcSpinBox->value(),
+                      ui->scaleZcSpinBox->value());
+
+    auto start = std::chrono::high_resolution_clock::now();
+
+    for (int i = 0; i < nreps; ++i)
+    {
+        LandscapeManager::moveLandscape(this->_landscape, move);
+        LandscapeManager::rotateLandscape(this->_landscape, rotate, center);
+        LandscapeManager::scaleLandscape(this->_landscape, scale, center2);
+        LandscapeManager::updateLandscape(this->_landscape, this->_paramNoise, this->_light);
+        this->_renderer.renderLandscape(this->_landscape, ui->landscapeGraphicsView->scene());
+    }
+
+    auto end = std::chrono::high_resolution_clock::now();
+
+    return std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count() / nreps;
 }

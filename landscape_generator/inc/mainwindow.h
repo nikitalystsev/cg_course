@@ -25,12 +25,14 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    void _measureRenderLandscapeTime();
+    void _measureRenderLandscapeTimeSize();
+    void _measureRenderLandscapeTimeOctaves();
 
 private:
     void _init();
     double _getRenderLandscapeTimeBySize(const int size, const int nreps);
-    unsigned long long getSecondsCpuTime();
+    double _getZRenderLandscapeTimeByCntOctaves(const int cntOctaves, const int nreps);
+
 private slots:
     void _changeSeed();
     void _changeOctaves();
