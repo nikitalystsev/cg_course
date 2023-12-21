@@ -6,6 +6,9 @@
 #include "renderer.h"
 #include <QMainWindow>
 #include <QVector3D>
+#include <chrono>
+#include <fstream>
+#include <iostream>
 
 QT_BEGIN_NAMESPACE
 namespace Ui
@@ -22,9 +25,12 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    void _measureRenderLandscapeTime();
+
 private:
     void _init();
-
+    double _getRenderLandscapeTimeBySize(const int size, const int nreps);
+    unsigned long long getSecondsCpuTime();
 private slots:
     void _changeSeed();
     void _changeOctaves();

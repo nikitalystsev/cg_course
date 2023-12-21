@@ -58,7 +58,7 @@ void Renderer::_renderPlane(const Plane &screenPlane, const vector<double> &heig
         double I = yn[0].I, deltaI = I - yn[yn.size() - 1].I;
         double height = yn[0].vec.z(), deltaZ = height - yn[yn.size() - 1].vec.z();
 
-        for (int x = yn[0].vec.x(); x <= yn[yn.size() - 1].vec.x(); ++x)
+        for (int x = x0; x <= yn[yn.size() - 1].vec.x(); ++x)
         {
             int sceneX = this->toSceneX(x), sceneY = this->toSceneY(y);
 
