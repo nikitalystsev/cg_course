@@ -19,7 +19,7 @@ Renderer::Renderer(const int &width, const int &height) :
 
 Renderer::~Renderer() {}
 
-void Renderer::_renderPlane(const Plane &screenPlane, const vector<double> &heights, const vector<double> &intensity, const double waterlevel, const double maxHeight)
+void Renderer::_renderPlane(const Plane &screenPlane, const double heights[], const double intensity[], const double waterlevel, const double maxHeight)
 {
     double yMin = screenPlane.getPMin().y();
     double уMax = screenPlane.getPMax().y();
@@ -162,6 +162,7 @@ void Renderer::_calcParamsLine(vector<Pixel> &line, const double &IPStart, const
 {
     int lineSize = line.size();
 
+#pragma omp parallel for
     for (int i = 0; i < lineSize; ++i)
     {
         // длина, она же  AQ/AB из Роджерса
@@ -185,39 +186,49 @@ void Renderer::renderLandscape(Landscape &landscape, QGraphicsScene *scene)
 
     int width = landscape.getWidth(), lenght = landscape.getLenght();
 
-    vector<double> heights1, heights2;
-    vector<double> intensities1, intensities2;
+    double heights1[3], heights2[3];
+    double intensities1[3], intensities2[3];
 
     // идем по всем квадратам ландшафной сетки
     for (int i = 0; i < width; ++i)
         for (int j = 0; j < lenght; ++j)
         {
+            //            std::cout << "[INFO] заполнил значениями" << std::endl;
             // в каждом квадрате сетки 2 треугольника - 2 плоскости
             Plane plane1(screenHeightMap[i][j], screenHeightMap[i + 1][j], screenHeightMap[i + 1][j + 1]);
             Plane plane2(screenHeightMap[i][j], screenHeightMap[i][j + 1], screenHeightMap[i + 1][j + 1]);
 
-            heights1 = {heightMap[i][j], heightMap[i + 1][j], heightMap[i + 1][j + 1]};
-            heights2 = {heightMap[i][j], heightMap[i][j + 1], heightMap[i + 1][j + 1]};
+            heights1[0] = heightMap[i][j];
+            heights1[1] = heightMap[i + 1][j];
+            heights1[2] = heightMap[i + 1][j + 1];
+            //            std::cout << "[INFO] заполнил значениями" << std::endl;
 
-            intensities1 = {intensityVertexMap[i][j], intensityVertexMap[i + 1][j], intensityVertexMap[i + 1][j + 1]};
-            intensities2 = {intensityVertexMap[i][j], intensityVertexMap[i][j + 1], intensityVertexMap[i + 1][j + 1]};
+            heights2[0] = heightMap[i][j];
+            heights2[1] = heightMap[i][j + 1];
+            heights2[2] = heightMap[i + 1][j + 1];
+
+            intensities1[0] = intensityVertexMap[i][j];
+            intensities1[1] = intensityVertexMap[i + 1][j];
+            intensities1[2] = intensityVertexMap[i + 1][j + 1];
+
+            intensities2[0] = intensityVertexMap[i][j];
+            intensities2[1] = intensityVertexMap[i][j + 1];
+            intensities2[2] = intensityVertexMap[i + 1][j + 1];
 
             //  определяем текущее состояние z-буффера
             this->_renderPlane(plane1, heights1, intensities1, waterlevel, maxHeight);
             this->_renderPlane(plane2, heights2, intensities2, waterlevel, maxHeight);
         }
-
     scene->addPixmap(QPixmap::fromImage(this->_framebuffer));
 }
 
 void Renderer::clean()
 {
     for (int i = 0; i < this->_screenWidth; ++i)
-        for (int j = 0; j < this->_screenHeight; ++j)
-        {
-            this->_zbuffer[i][j] = INT_MIN;
-            this->_framebuffer.setPixelColor(i, j, QColor(0, 0, 0));
-        }
+        this->_zbuffer[i].assign(this->_screenHeight, INT_MIN);
+
+    // Установка цвета для всего изображения
+    this->_framebuffer.fill(QColor(0, 0, 0));
 }
 
 int Renderer::toSceneX(double originX)

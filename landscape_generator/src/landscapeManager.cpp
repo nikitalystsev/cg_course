@@ -23,13 +23,11 @@ void LandscapeManager::generateHeightMap(Landscape &landscape, PerlinNoise &para
 
     vector<Operation> &operations = landscape.getOperations();
 
-    //#pragma omp parallel for
-
     for (int i = 0, m = a; i < rows && m <= c; ++i, m += square)
         for (int j = 0, n = b; j < cols && n <= d; ++j, n += square)
         {
-            double nx = i / (double)rows - 1 - 0.5;
-            double ny = j / (double)cols - 1 - 0.5;
+            double nx = i / ((double)rows - 1) - 0.5;
+            double ny = j / ((double)cols - 1) - 0.5;
 
             double height = paramNoise.generateNoise(nx, ny);
 
@@ -68,8 +66,6 @@ void LandscapeManager::changeWaterlevel(Landscape &landscape, int newWaterlevel)
     int b = -((landscape.getLenght() * square) / 2);
     int c = -a;
     int d = -b;
-
-    //#pragma omp parallel for
 
     for (int i = 0, m = a; i < rows && m <= c; ++i, m += square)
         for (int j = 0, n = b; j < cols && n <= d; ++j, n += square)
@@ -147,17 +143,13 @@ void LandscapeManager::applyOperation(QVector3D &point, vector<Operation> &opera
 
 void LandscapeManager::calcNormalForEachPlane(Landscape &landscape)
 {
-    //    std::cout << "[INFO] call calcNormalForEachPlane" << std::endl;
-
     int width = landscape.getWidth();
     int lenght = landscape.getLenght();
 
     Matrix<QVector3D> &screenHeightMap = landscape.getScreenHeightMap();
     Matrix<pair<QVector3D, QVector3D>> &normalMap = landscape.getNormalMap();
-    //#pragma omp parallel for
-    // идем по всем квадратам ландшафной сетки
+
     for (int i = 0; i < width; ++i)
-        //#pragma omp parallel for
         for (int j = 0; j < lenght; ++j)
         {
             // в каждом квадрате сетки 2 треугольника - 2 плоскости
@@ -305,24 +297,14 @@ void LandscapeManager::rotateLandscape(Landscape &landscape, Rotate &rotate, QVe
         for (auto &point : row)
             Transform::rotate(point, rotate, centerRotate);
 
-    Operation newOperation;
-
     if (rotate.xAngle != 0)
-    {
-        newOperation = {2, 0, (double)rotate.xAngle, centerRotate};
-        operations.push_back(newOperation);
-    }
+        operations.push_back({2, 0, (double)rotate.xAngle, centerRotate});
+
     if (rotate.yAngle != 0)
-    {
-        newOperation = {2, 1, (double)rotate.yAngle, centerRotate};
-        operations.push_back(newOperation);
-    }
+        operations.push_back({2, 1, (double)rotate.yAngle, centerRotate});
 
     if (rotate.zAngle != 0)
-    {
-        newOperation = {2, 2, (double)rotate.zAngle, centerRotate};
-        operations.push_back(newOperation);
-    }
+        operations.push_back({2, 2, (double)rotate.zAngle, centerRotate});
 }
 
 void LandscapeManager::moveLandscape(Landscape &landscape, Move &move)
@@ -337,24 +319,14 @@ void LandscapeManager::moveLandscape(Landscape &landscape, Move &move)
         for (auto &point : row)
             Transform::move(point, move);
 
-    Operation newOperation;
-
     if (move.dx != 0)
-    {
-        newOperation = {0, 0, (double)move.dx};
-        operations.push_back(newOperation);
-    }
+        operations.push_back({0, 0, (double)move.dx});
+
     if (move.dy != 0)
-    {
-        newOperation = {0, 1, (double)move.dy};
-        operations.push_back(newOperation);
-    }
+        operations.push_back({0, 1, (double)move.dy});
 
     if (move.dz != 0)
-    {
-        newOperation = {0, 2, (double)move.dz};
-        operations.push_back(newOperation);
-    }
+        operations.push_back({0, 2, (double)move.dz});
 }
 
 void LandscapeManager::scaleLandscape(Landscape &landscape, Scale &scale, QVector3D &centerScale)
@@ -369,21 +341,12 @@ void LandscapeManager::scaleLandscape(Landscape &landscape, Scale &scale, QVecto
         for (auto &point : row)
             Transform::scale(point, scale, centerScale);
 
-    Operation newOperation;
-
     if (scale.kx != 0)
-    {
-        newOperation = {1, 0, scale.kx, centerScale};
-        operations.push_back(newOperation);
-    }
+        operations.push_back({1, 0, scale.kx, centerScale});
+
     if (scale.ky != 0)
-    {
-        newOperation = {1, 1, scale.ky, centerScale};
-        operations.push_back(newOperation);
-    }
+        operations.push_back({1, 1, scale.ky, centerScale});
+
     if (scale.kz != 0)
-    {
-        newOperation = {1, 2, scale.kz, centerScale};
-        operations.push_back(newOperation);
-    }
+        operations.push_back({1, 2, scale.kz, centerScale});
 }
