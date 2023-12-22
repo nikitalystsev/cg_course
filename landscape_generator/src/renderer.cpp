@@ -193,7 +193,6 @@ void Renderer::renderLandscape(Landscape &landscape, QGraphicsScene *scene)
     for (int i = 0; i < width; ++i)
         for (int j = 0; j < lenght; ++j)
         {
-            //            std::cout << "[INFO] заполнил значениями" << std::endl;
             // в каждом квадрате сетки 2 треугольника - 2 плоскости
             Plane plane1(screenHeightMap[i][j], screenHeightMap[i + 1][j], screenHeightMap[i + 1][j + 1]);
             Plane plane2(screenHeightMap[i][j], screenHeightMap[i][j + 1], screenHeightMap[i + 1][j + 1]);
