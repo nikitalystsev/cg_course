@@ -45,3 +45,4 @@ landscape_generator/landscape_generator
 landscape_generator/landscape_generator_autogen/
 landscape_generator/CMakeLists.txt.user
 landscape_generator_old
+landscape_generator/data/.idea/

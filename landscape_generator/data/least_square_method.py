@@ -23,6 +23,7 @@ class LeastSquareMethod:
 
         self.__read_file()
 
+        self.__linear_approx()
         self.__square_approx()
         self.__power_func_approx()
         self.__exponen_func_approx()
@@ -40,6 +41,59 @@ class LeastSquareMethod:
                 self.__arr_x.append(data[0])
                 self.__arr_y.append(data[1])
                 self._n += 1
+
+    def __linear_approx(self) -> None:
+        """
+        Интерполяция линейной функцией
+        :return:
+        """
+
+        one = 0
+        for x in self.__arr_x:
+            one += (x ** 2)
+
+        two = 0
+        for x in self.__arr_x:
+            two += x
+
+        three = 0
+        for i, x in enumerate(self.__arr_x):
+            three += (x * self.__arr_y[i])
+
+        four = 0
+        for y in self.__arr_y:
+            four += y
+
+        mtr_coeff: np.ndarray = np.array([[one, two], [two, self._n]])
+        vec_target: np.ndarray = np.array([three, four])
+
+        solve = np.linalg.solve(mtr_coeff, vec_target)
+
+        def approx_func(_x: float):  # полученная аппроксимирующая функция
+            return solve[0] * _x + solve[1]
+
+        residual = 0
+        for i in range(self._n):
+            residual += (approx_func(self.__arr_x[i]) - self.__arr_y[
+                i]) ** 2
+
+        print(f"Функция: {solve[0]:.5f} * x + {solve[1]} * x")
+        print("Невязка при аппроксимации линейной функцией: ", residual)
+        #
+        # x = np.array(self.__arr_x)
+        # y = np.array(self.__arr_y)
+        #
+        # # Построение графика данных и аппроксимирующей функции
+        # plt.scatter(x, y, label='Построение одного кадра ландшафта', color='black', marker='o')
+        # plt.plot(x, approx_func(x), label='Аппроксимирующая функция', color='red', linestyle='--')
+        # plt.xlabel('Число октав')
+        # plt.ylabel('Время, с')
+        # plt.legend()
+        #
+        # # Включение отображения сетки
+        # plt.grid(True, linestyle='--', linewidth=0.5, alpha=0.7)
+        # # Сохранение графика в формате SVG
+        # plt.savefig(self.__filename[:-3] + 'svg', format='svg')
 
     def __square_approx(self) -> None:
         """

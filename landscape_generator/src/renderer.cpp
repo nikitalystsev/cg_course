@@ -200,7 +200,6 @@ void Renderer::renderLandscape(Landscape &landscape, QGraphicsScene *scene)
             heights1[0] = heightMap[i][j];
             heights1[1] = heightMap[i + 1][j];
             heights1[2] = heightMap[i + 1][j + 1];
-            //            std::cout << "[INFO] заполнил значениями" << std::endl;
 
             heights2[0] = heightMap[i][j];
             heights2[1] = heightMap[i][j + 1];
@@ -227,7 +226,7 @@ void Renderer::clean()
         this->_zbuffer[i].assign(this->_screenHeight, INT_MIN);
 
     // Установка цвета для всего изображения
-    this->_framebuffer.fill(QColor(0, 0, 0));
+    this->_framebuffer.fill(QColor(165, 181, 212));
 }
 
 int Renderer::toSceneX(double originX)

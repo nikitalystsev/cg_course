@@ -14,7 +14,6 @@
             int sceneX = this->toSceneX(x), sceneY = this->toSceneY(y);
             if (sceneX < 0 || sceneX >= this->_screenWidth || sceneY < 0 || sceneY >= this->_screenHeight)
                 continue;
-
             double deltaU = (x - x0) / deltaX - 0;
 
             if (z > this->_zbuffer[sceneX][sceneY])

@@ -5,11 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bcd3789e-1492-4399-a0e9-1c066ec5f7a9" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/least_square_method.py" beforeDir="false" afterPath="$PROJECT_DIR$/least_square_method.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/study.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/study1.gpi" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/study1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/study1.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/study2.txt" beforeDir="false" afterPath="$PROJECT_DIR$/study2.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../src/mainwindow.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../src/mainwindow.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/renderer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../src/renderer.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,18 +34,18 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.gauss.executor": "Run",
-    "Python.least _square_method.executor": "Run",
-    "Python.least_square_method.executor": "Run",
-    "Python.test.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "/home/nikita/bmstu/cg_course/landscape_generator/data"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.gauss.executor&quot;: &quot;Run&quot;,
+    &quot;Python.least _square_method.executor&quot;: &quot;Run&quot;,
+    &quot;Python.least_square_method.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/nikita/bmstu/cg_course/landscape_generator/data&quot;
   }
-}]]></component>
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>

@@ -337,7 +337,7 @@ void MainWindow::_measureRenderLandscapeTimeOctaves()
 
     for (int i = 0; i < octaves.size(); ++i)
     {
-        double res = this->_getZRenderLandscapeTimeByCntOctaves(octaves[i], 40);
+        double res = this->_getZRenderLandscapeTimeByCntOctaves(octaves[i], 50);
 
         dataResults << octaves[i] << "   " << res << std::endl;
     }
