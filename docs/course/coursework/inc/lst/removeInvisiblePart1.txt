@@ -15,7 +15,7 @@ void Renderer::_renderPlane(const Plane &screenPlane, const vector<double> &heig
     allLines.insert(allLines.end(), line1.begin(), line1.end());
     allLines.insert(allLines.end(), line2.begin(), line2.end());
     allLines.insert(allLines.end(), line3.begin(), line3.end());
-#pragma omp parallel for
+
     for (int y = yMin; y <= уMax; ++y)
     {
         vector<Pixel> yn;

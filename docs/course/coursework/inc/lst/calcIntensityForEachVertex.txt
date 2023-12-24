@@ -10,15 +10,9 @@ void LandscapeManager::calcIntensityForEachVertex(Landscape &landscape, Light &l
     for (int i = 0; i < rows; ++i)
         for (int j = 0; j < cols; ++j)
         {
-            // получили вектор направления света
             QVector3D direction = LightManager::caclDirectionVector(light, screenHeightMap[i][j]);
-            // // нормализуем вектора, чтобы были единичной длины
             direction.normalize();
             normalVertexMap[i][j].normalize();
-
-            // вот она, интенсивность в вершине
-            intensityVertexMap[i][j] = LightManager::caclIntensityAtVertex(light,
-                                                                           direction,
-                                                                           normalVertexMap[i][j]);
+            intensityVertexMap[i][j] = LightManager::caclIntensityAtVertex(light, direction, normalVertexMap[i][j]);
         }
 }

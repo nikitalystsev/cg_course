@@ -1,4 +1,4 @@
- std::sort(yn.begin(), yn.end(), [](const Pixel &a, const Pixel &b)
+	std::sort(yn.begin(), yn.end(), [](const Pixel &a, const Pixel &b)
                   { return a.vec.x() < b.vec.x(); });
 
         double deltaX = yn[yn.size() - 1].vec.x() - yn[0].vec.x();
