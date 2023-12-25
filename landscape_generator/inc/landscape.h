@@ -33,7 +33,8 @@ private:
     double _maxHeight = 0;                         // максимальная сгенерированная высота
     int _maxGenHeight = 1000;                      // максимально возможная генерируемая высота
     vector<Operation> _operations;                 // цепочка преобразований, выполненных над ландшафтом
-    int _square = 5;                               // размер одного квадрата
+
+    int _square = 5; // размер одного квадрата
 
 public:
     Landscape();
