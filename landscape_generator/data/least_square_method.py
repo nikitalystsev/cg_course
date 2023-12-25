@@ -151,14 +151,14 @@ class LeastSquareMethod:
         # Построение графика данных и аппроксимирующей функции
         plt.scatter(x, y, label='Построение одного кадра ландшафта', color='black', marker='o')
         plt.plot(x, approx_func(x), label='Аппроксимирующая функция', color='red', linestyle='--')
-        plt.xlabel('Количество полигонов ландшафтной сетки')
+        plt.xlabel('Линейный размер ландшафта в количестве полигонов')
         plt.ylabel('Время, с')
         plt.legend()
 
         # Включение отображения сетки
         plt.grid(True, linestyle='--', linewidth=0.5, alpha=0.7)
         # Сохранение графика в формате SVG
-        plt.savefig(self.__filename[:-3] + 'png', format='png')
+        plt.savefig(self.__filename[:-3] + 'svg', format='svg')
 
     def __power_func_approx(self) -> None:
         """
