@@ -79,21 +79,21 @@ class LeastSquareMethod:
 
         print(f"Функция: {solve[0]:.5f} * x + {solve[1]} * x")
         print("Невязка при аппроксимации линейной функцией: ", residual)
-        #
-        # x = np.array(self.__arr_x)
-        # y = np.array(self.__arr_y)
-        #
-        # # Построение графика данных и аппроксимирующей функции
-        # plt.scatter(x, y, label='Построение одного кадра ландшафта', color='black', marker='o')
-        # plt.plot(x, approx_func(x), label='Аппроксимирующая функция', color='red', linestyle='--')
-        # plt.xlabel('Число октав')
-        # plt.ylabel('Время, с')
-        # plt.legend()
-        #
-        # # Включение отображения сетки
-        # plt.grid(True, linestyle='--', linewidth=0.5, alpha=0.7)
-        # # Сохранение графика в формате SVG
-        # plt.savefig(self.__filename[:-3] + 'svg', format='svg')
+
+        x = np.array(self.__arr_x)
+        y = np.array(self.__arr_y)
+
+        # Построение графика данных и аппроксимирующей функции
+        plt.scatter(x, y, label='Построение одного кадра ландшафта', color='black', marker='o')
+        plt.plot(x, approx_func(x), label='Аппроксимирующая функция', color='red', linestyle='--')
+        plt.xlabel('Число октав')
+        plt.ylabel('Время, с')
+        plt.legend()
+
+        # Включение отображения сетки
+        plt.grid(True, linestyle='--', linewidth=0.5, alpha=0.7)
+        # Сохранение графика в формате SVG
+        plt.savefig(self.__filename[:-3] + 'png', format='png')
 
     def __square_approx(self) -> None:
         """
@@ -145,20 +145,20 @@ class LeastSquareMethod:
         print(f"Функция: {solve[0]:.5f} * x^2 + {solve[1]} * x + {solve[2]}")
         print("Невязка при аппроксимации квадратичной функцией: ", residual)
 
-        x = np.array(self.__arr_x)
-        y = np.array(self.__arr_y)
-
-        # Построение графика данных и аппроксимирующей функции
-        plt.scatter(x, y, label='Построение одного кадра ландшафта', color='black', marker='o')
-        plt.plot(x, approx_func(x), label='Аппроксимирующая функция', color='red', linestyle='--')
-        plt.xlabel('Линейный размер ландшафта в количестве полигонов')
-        plt.ylabel('Время, с')
-        plt.legend()
-
-        # Включение отображения сетки
-        plt.grid(True, linestyle='--', linewidth=0.5, alpha=0.7)
-        # Сохранение графика в формате SVG
-        plt.savefig(self.__filename[:-3] + 'svg', format='svg')
+        # x = np.array(self.__arr_x)
+        # y = np.array(self.__arr_y)
+        #
+        # # Построение графика данных и аппроксимирующей функции
+        # plt.scatter(x, y, label='Построение одного кадра ландшафта', color='black', marker='o')
+        # plt.plot(x, approx_func(x), label='Аппроксимирующая функция', color='red', linestyle='--')
+        # plt.xlabel('Линейный размер ландшафта в количестве полигонов')
+        # plt.ylabel('Время, с')
+        # plt.legend()
+        #
+        # # Включение отображения сетки
+        # plt.grid(True, linestyle='--', linewidth=0.5, alpha=0.7)
+        # # Сохранение графика в формате SVG
+        # plt.savefig(self.__filename[:-3] + 'svg', format='svg')
 
     def __power_func_approx(self) -> None:
         """
@@ -235,8 +235,8 @@ def main() -> None:
     Главная функция
     :return:
     """
-    LeastSquareMethod("study1.txt")
-    # LeastSquareMethod("study2.txt")
+    # LeastSquareMethod("study1.txt")
+    LeastSquareMethod("study2.txt")
 
 
 if __name__ == "__main__":
