@@ -284,7 +284,11 @@
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="waterLevelSpinbox"/>
+         <widget class="QSpinBox" name="waterLevelSpinbox">
+          <property name="minimum">
+           <number>-10000</number>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -807,7 +811,7 @@
     <item>
      <widget class="QSlider" name="waterlevelSlider">
       <property name="minimum">
-       <number>0</number>
+       <number>-10000</number>
       </property>
       <property name="maximum">
        <number>400</number>
