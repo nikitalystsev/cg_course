@@ -197,6 +197,9 @@
           <property name="maximum">
            <number>200</number>
           </property>
+          <property name="singleStep">
+           <number>2</number>
+          </property>
           <property name="value">
            <number>120</number>
           </property>
@@ -206,6 +209,9 @@
          <widget class="QSpinBox" name="widthSpinBox">
           <property name="maximum">
            <number>200</number>
+          </property>
+          <property name="singleStep">
+           <number>2</number>
           </property>
           <property name="value">
            <number>120</number>
@@ -454,7 +460,14 @@
           <item>
            <layout class="QGridLayout" name="rotateLayout">
             <item row="2" column="1">
-             <widget class="QSpinBox" name="rotateZcSpinBox"/>
+             <widget class="QSpinBox" name="rotateZcSpinBox">
+              <property name="minimum">
+               <number>-10000</number>
+              </property>
+              <property name="maximum">
+               <number>10000</number>
+              </property>
+             </widget>
             </item>
             <item row="1" column="3">
              <widget class="QSpinBox" name="rotateYSpinbox">
@@ -497,7 +510,14 @@
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="QSpinBox" name="rotateYcSpinBox"/>
+             <widget class="QSpinBox" name="rotateYcSpinBox">
+              <property name="minimum">
+               <number>-10000</number>
+              </property>
+              <property name="maximum">
+               <number>10000</number>
+              </property>
+             </widget>
             </item>
             <item row="2" column="3">
              <widget class="QSpinBox" name="rotateZSpinbox">
@@ -533,7 +553,14 @@
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="QSpinBox" name="rotateXcSpinBox"/>
+             <widget class="QSpinBox" name="rotateXcSpinBox">
+              <property name="minimum">
+               <number>-10000</number>
+              </property>
+              <property name="maximum">
+               <number>10000</number>
+              </property>
+             </widget>
             </item>
             <item row="1" column="0">
              <widget class="QLabel" name="rotateYcLabel">
@@ -641,7 +668,14 @@
           <item>
            <layout class="QGridLayout" name="scaleLayout">
             <item row="1" column="1">
-             <widget class="QSpinBox" name="scaleYcSpinBox"/>
+             <widget class="QSpinBox" name="scaleYcSpinBox">
+              <property name="minimum">
+               <number>-10000</number>
+              </property>
+              <property name="maximum">
+               <number>10000</number>
+              </property>
+             </widget>
             </item>
             <item row="0" column="2">
              <widget class="QLabel" name="scaleXLabel">
@@ -713,10 +747,24 @@
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="QSpinBox" name="scaleXcSpinBox"/>
+             <widget class="QSpinBox" name="scaleXcSpinBox">
+              <property name="minimum">
+               <number>-10000</number>
+              </property>
+              <property name="maximum">
+               <number>10000</number>
+              </property>
+             </widget>
             </item>
             <item row="2" column="1">
-             <widget class="QSpinBox" name="scaleZcSpinBox"/>
+             <widget class="QSpinBox" name="scaleZcSpinBox">
+              <property name="minimum">
+               <number>-10000</number>
+              </property>
+              <property name="maximum">
+               <number>10000</number>
+              </property>
+             </widget>
             </item>
             <item row="0" column="0">
              <widget class="QLabel" name="scaleXcLabel">
